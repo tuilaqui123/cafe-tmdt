@@ -1,0 +1,78 @@
+.form-container {
+    width: 60%;
+    padding: 20px 50px 20px 50px;
+    color: black;
+    background-color: white;
+    text-align: center;
+}
+.form-header {
+    padding: 5px;
+    margin-bottom: 20px;
+}
+.form-greeting {
+    font-size: 30px;
+}
+.form-toggle {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    margin: auto;
+    width: 70%;
+}
+.sign-in-btn, .sign-up-btn {
+    flex: 1;
+    padding: 10px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+}
+.sign-in-btn.active, .sign-up-btn.active {
+    border-bottom: 2px solid #000;
+}
+.toggle-btn {
+    flex: 1;
+    padding: 10px;
+    cursor: pointer;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+    border-right: none;
+}
+.toggle-btn:last-child {
+    border-radius: 0 5px 5px 0;
+    border-right: 1px solid #ddd;
+}
+.toggle-btn.enable {
+    background: #fff;
+    border-bottom: 2px solid #000;
+}
+.form-body {
+    /* padding: 40px; */
+    border-radius: 8px;
+    /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); */
+    text-align: center;
+    width: 85%;
+    margin: auto;
+    color: #fff;
+}
+.form-group {
+    margin-bottom: 20px;
+}
+.name-group {
+    display: flex;
+    gap: 20px;
+}
+.name-group input[type="text"]{
+    flex: 1;
+}
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: grey solid 2px;
+    border-radius: 4px;
+    font-size: 16px;
+}

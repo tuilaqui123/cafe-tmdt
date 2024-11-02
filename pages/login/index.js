@@ -1,6 +1,6 @@
 'use client'
 
-import React from "react"
+import React, { useState } from "react"
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, A11y, Autoplay } from 'swiper/modules';
 import { Images } from "@/data/poster";
@@ -8,12 +8,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import './test.css'
+import './index.css'
 
 const Login = () => {
+    const [isSignUp, setIsSignUp] = useState(true);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     return (
-        <div className="main">
+        <div className="container">
             <Swiper
                 modules={[Pagination, A11y, Autoplay]}
                 pagination={{
@@ -40,18 +45,85 @@ const Login = () => {
                             />
                             <Link
                                 href="/testPage"
-                                className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
+                                className="link-back"
                             >
-                                <p className="back-to-website" style={{backgroundColor: "#64589e", opacity: 0.7}}>Back to Website →</p>
+                                <p className="back-to-website">Back to Website →</p>
                             </Link>
                         </SwiperSlide>
                     )
                 })}
             </Swiper>
-            <div className="login-form">
-                <button className="btn-primary">Add to Cart</button>
-                <button className="btn-secondary">Buy Now</button>
-            </div>        
+            <div className="form-container">
+                <div className="form-header">
+                    <h2 className="form-greeting">Welcome Back</h2>
+                    <p>Welcome Back to Our Website, Please enter Your details Informations</p>
+                    <div className="form-toggle">
+                        <button
+                            type="button"
+                            className={`toggle-btn ${!isSignUp ? 'enable' : ''}`}
+                            onClick={() => setIsSignUp(false)}
+                        >
+                            Sign In
+                        </button>
+                        <button
+                            type="button"
+                            className={`toggle-btn ${isSignUp ? 'enable' : ''}`}
+                            onClick={() => setIsSignUp(true)}
+                        >
+                            Signup
+                        </button>
+                    </div>
+                </div>
+                <div className="form-body">
+                    <div className="form-group name-group">
+                        <input
+                            type="text"
+                            placeholder="First name"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            required
+                        />
+                        <input
+                            type="text"
+                            placeholder="Last name"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="password"
+                            placeholder="Enter your password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    {/* <div className="form-group terms">
+                        <input
+                            type="checkbox"
+                            id="terms"
+                            // checked={agreeToTerms}
+                            onChange={(e) => setAgreeToTerms(e.target.checked)}
+                            required    
+                        />
+                        <label htmlFor="terms">
+                            I agree to the <a href="/terms">Terms & Conditions</a>
+                        </label>
+                    </div> */}
+                    <button type="submit" className="create-account-btn">Create account</button>
+                </div>
+            </div>   
         </div>
     )
 }

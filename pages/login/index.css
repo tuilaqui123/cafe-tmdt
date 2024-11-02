@@ -1,0 +1,16 @@
+/* Style Swiper */
+@import url("./css/swiper.module.css");
+/* Style Login Form */
+@import url("./css/form.module.css");
+
+.container {
+    height: 100%;
+    width: 60%;
+    display: flex;
+    flex-direction: row;
+    padding: 15px;
+    /* background-color: #30243c; */
+    
+    background-color: grey;
+    border-radius: 15px;
+}
