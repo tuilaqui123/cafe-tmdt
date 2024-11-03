@@ -29,7 +29,7 @@ const Login = () => {
                     delay: 3000,
                     disableOnInteraction: false,
                 }}
-                className="my-swiper"
+                className="swiper-container"
                 slidesPerView={1}
                 loop={true}
             >
@@ -75,7 +75,7 @@ const Login = () => {
                     </div>
                 </div>
                 <div className="form-body">
-                    <div className="form-group name-group">
+                    <div className="form-input name-group">
                         <input
                             type="text"
                             placeholder="First name"
@@ -91,16 +91,16 @@ const Login = () => {
                             required
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-input">
                         <input
                             type="email"
-                            placeholder="Email"
+                            placeholder="Email/Phone Number"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-input">
                         <input
                             type="password"
                             placeholder="Enter your password"
@@ -121,7 +121,18 @@ const Login = () => {
                             I agree to the <a href="/terms">Terms & Conditions</a>
                         </label>
                     </div> */}
-                    <button type="submit" className="create-account-btn">Create account</button>
+                    <button type="submit" className="signup-button">Sign up</button>
+                </div>
+                <div className="form-footer">
+                    <div className="form-separator">
+                        <span className="horizontal-line"></span>
+                        <div className="register-text">Or register with</div>
+                        <span className="horizontal-line"></span>
+                    </div>    
+                    <div className="social-signup">
+                        <button className="google-btn">Google</button>
+                        <button className="facebook-btn">Facebook</button>
+                    </div>
                 </div>
             </div>   
         </div>

@@ -1,4 +1,4 @@
-.my-swiper {
+.swiper-container {
     width: 40%;
     height: 100%;
     border-radius: 15px;
@@ -8,7 +8,7 @@
     cursor: pointer;
 }
 .swiper-pagination-bullet {
-    background-color: #534c5b; 
+    background-color: #534c5b;
     opacity: 1;
     width: 30px; 
     height: 5px; 
