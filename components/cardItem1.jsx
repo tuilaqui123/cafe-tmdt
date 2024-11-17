@@ -29,7 +29,7 @@ export default function CardItem1() {
             <span className="relative z-10 font-bold">$23.99</span>
           </button>
           <button className="rounded-md w-[18%] aspect-square text-center bg-[#4c2113] flex items-center justify-center font-bold">
-            <TiPlus size={22} />
+            <TiPlus size={22} color="white"/>
           </button>
         </div>
       </div>
