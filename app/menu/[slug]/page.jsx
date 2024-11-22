@@ -84,7 +84,7 @@ export default function ItemView() {
                   <button key={index} className={`flex items-center justify-center gap-2 rounded-lg px-4 py-2 hover:shadow-md ${isClickIndex === index ? "bg-[#A45C23]" : "border-2 border-gray-300"}`}
                           onClick={() => handleClickSize(type.size, type.price, index)}>
                     <span className={`${isClickIndex === index ? "text-white" : "text-gray-600"} font-medium`}>
-                      {(type.size==="L") ? "Nhỏ" : ((type.size==="M") ? "Vừa" : "Lớn")} + <span className="font-semibold">{formatNumber(caculatePrice(type))}đ</span>
+                      {(type.size==="S") ? "Nhỏ" : ((type.size==="M") ? "Vừa" : "Lớn")} <span className="font-semibold">{formatNumber(caculatePrice(type))}đ</span>
                     </span>
                   </button>
                 )
