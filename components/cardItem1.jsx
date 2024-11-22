@@ -17,6 +17,7 @@ export default function CardItem1({id, image, name, description, discount, type}
           className="w-full aspect-square"
           width={300}
           height={300}
+          priority={true}
         />
       </div>
       <div className="p-5">
