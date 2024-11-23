@@ -13,6 +13,7 @@ const Login = () => {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [password, setPassword] = useState('');
 
     return (
@@ -60,14 +61,14 @@ const Login = () => {
                     <div className="flex justify-center mb-[20px] mx-auto w-[70%]">
                         <button
                             type="button"
-                            className={`flex-1 p-[10px] cursor-pointer bg-[#f0f0f0] border rounded-tl-[5px] rounded-bl-[5px] transition-all duration-300 ease-in-out ${!isSignUp ? 'bg-[#B38B60] border-black' : 'border-[#ddd]'}`}
+                            className={`flex-1 p-[10px] cursor-pointer border rounded-tl-[5px] rounded-bl-[5px] transition-all duration-400 ease-in-out ${!isSignUp ? 'bg-[#B38B60] border-black' : 'border-[#ddd] bg-[#f0f0f0]'}`}
                             onClick={() => setIsSignUp(false)}
                         >
                             Sign In
                         </button>
                         <button
                             type="button"
-                            className={`flex-1 p-[10px] cursor-pointer bg-[#f0f0f0] border rounded-tr-[5px] rounded-br-[5px] transition-all duration-300 ease-in-out ${isSignUp ? 'bg-[#B38B60] border-black' : 'border-[#ddd]'}`}
+                            className={`flex-1 p-[10px] cursor-pointer border rounded-tr-[5px] rounded-br-[5px] transition-all duration-400 ease-in-out ${isSignUp ? 'bg-[#B38B60] border-black' : 'border-[#ddd] bg-[#f0f0f0]'}`}
                             onClick={() => setIsSignUp(true)}
                         >
                             Signup
@@ -97,9 +98,19 @@ const Login = () => {
                         <input
                             type="email"
                             className="w-full p-[10px] mb-[10px] border-2 border-gray-500 rounded-[4px] text-[16px]"
-                            placeholder="Email/Phone Number"
+                            placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="mb-[20px]">
+                        <input
+                            type="email"
+                            className="w-full p-[10px] mb-[10px] border-2 border-gray-500 rounded-[4px] text-[16px]"
+                            placeholder="Phone Number"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
                             required
                         />
                     </div>
