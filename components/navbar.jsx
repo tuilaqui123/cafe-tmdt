@@ -1,8 +1,9 @@
 // components/Navbar.js
 "use client"
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { MdLogout } from "react-icons/md";
 
 const navList = [
   {
@@ -34,7 +35,6 @@ const Navbar = () => {
             <p>Logo</p>
           </Link>
         </div>
-        {/* Navigation Links */}
         <ul className="flex space-x-6 text-[#4c2113] font-extralight">
           {navList.map((value) => (
             <li key={value.id}>
@@ -45,11 +45,29 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-        <button className="relative flex px-6 py-2 rounded-md items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-56">
-          <Link href="/login">
-            <span className="relative z-10">Login</span>
-          </Link>
-        </button>
+        {localStorage.token===undefined ? (
+          <button className="relative flex px-6 py-2 rounded-md items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-56">
+            <Link href="/login">
+              <span className="relative z-10">Login</span>
+            </Link>
+          </button>
+
+        ) : (
+          <div className="flex items-center gap-4 px-4 py-2 bg-[#A0522D] text-white rounded-md shadow-lg">
+            <span className="text-base font-medium cursor-pointer">
+              {JSON.parse(localStorage.user).name}
+            </span>
+            <div className="cursor-pointer"
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('user');
+                  window.location.reload();
+                }}    
+            >
+              <MdLogout />
+            </div>
+          </div>
+        )}
       </nav>
     </header>
   );

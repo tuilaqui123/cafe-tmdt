@@ -9,6 +9,29 @@ export const AppProvider = ({ children }) => {
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [product, setProduct] = useState({})
+    const [user, setUser] = useState()
+    const [errorSignup, setErrorSignup] = useState(null)
+
+    // sign up
+    const signup = async (name, email, address, phone, password) => {
+        setErrorSignup(null)
+        const res = await axios.post('http://localhost:8081/v1/api/signup', {
+            name: name,
+            email: email,
+            address: address,
+            phone: phone,
+            password: password
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (res.data.success) {
+            setUser(res.data)
+        }
+        return res.data
+    }
 
     // get all products
     const fetchProduct = () => {
@@ -52,7 +75,8 @@ export const AppProvider = ({ children }) => {
     return <AppContext.Provider value={{
         products, setProducts, fetchProduct,
         product, setProduct, getProductById,
-        categories, setCategories, getCategoríes
+        categories, setCategories, getCategoríes,
+        user, signup, errorSignup, setErrorSignup
     }}>
         {children}
     </AppContext.Provider>
