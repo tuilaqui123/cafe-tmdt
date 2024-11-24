@@ -1,6 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react'
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
+import { FaPlus, FaMinus } from "react-icons/fa";
 
 const CheckOut = () => {
 
@@ -136,7 +137,7 @@ const CheckOut = () => {
                                                 <td className="text-center h-[130px]">{item.size}</td>
                                                 <td className="h-[130px] flex items-center justify-center">
                                                     <div
-                                                        className='bg-[black] w-8 h-8 text-center leading-[30px] rounded-[5px] hover:cursor-pointer hover:opacity-70'
+                                                        className='flex justify-center items-center bg-[black] w-8 h-8 text-center leading-[30px] rounded-[5px] hover:cursor-pointer hover:opacity-70'
                                                         onClick={() => {
                                                             const updatedData = fakedata.map((i) => {
                                                                 if (item.id == i.id && i.quantity > 0) {
@@ -149,7 +150,7 @@ const CheckOut = () => {
                                                             setfakedata(updatedData);
                                                         }}
                                                     >
-                                                        <p className=' text-[30px] text-white font-extrabold'>-</p>
+                                                        <FaMinus className='text-[20px] text-white font-extrabold' />
                                                     </div>
 
                                                     <input className={`w-[50px] text-center rounded-[3px] mx-5`}
@@ -170,7 +171,7 @@ const CheckOut = () => {
                                                     />
 
                                                     <div
-                                                        className='bg-[black] w-8 h-8 text-center leading-[30px] rounded-[5px] hover:cursor-pointer hover:opacity-70'
+                                                        className='flex justify-center items-center bg-[black] w-8 h-8 text-center leading-[30px] rounded-[5px] hover:cursor-pointer hover:opacity-70'
                                                         onClick={() => {
                                                             const updatedData = fakedata.map((i) => {
                                                                 if (item.id == i.id) {
@@ -183,7 +184,7 @@ const CheckOut = () => {
                                                             setfakedata(updatedData);
                                                         }}
                                                     >
-                                                        <p className=' text-[30px] text-white font-extrabold'>+</p>
+                                                        <FaPlus className='text-[20px] text-white font-extrabold' />
                                                     </div>
                                                 </td>
                                                 <td className="text-center h-[130px]">{item.price.toLocaleString('vi-VN')} đ</td>
