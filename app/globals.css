@@ -23,3 +23,16 @@ body {
 body::-webkit-scrollbar {
   display: none;
 }
+
+.swiper-pagination-bullet {
+  background-color: #534c5b;
+  opacity: 1;
+  width: 30px; 
+  height: 5px; 
+  margin: 0 5px; 
+  border-radius: 4px;
+}
+
+.swiper-pagination-bullet-active {
+  background-color: #ededed;
+}

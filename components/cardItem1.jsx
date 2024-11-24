@@ -23,7 +23,7 @@ export default function CardItem1({id, image, name, description, discount, type}
       <div className="p-5">
         <div>
           <Link href={`/menu/${id}`}>
-            <p className="text-xl font-bold">{formatNameProduct(name)}</p>
+            <p className="text-xl font-bold truncate">{formatNameProduct(name)}</p>
           </Link>
           <p className="text-sm text-gray-200 py-2 truncate">
             {description}
