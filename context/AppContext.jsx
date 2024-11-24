@@ -5,11 +5,12 @@ import axios from 'axios'
 export const AppContext = createContext({});
 
 export const AppProvider = ({ children }) => {
-
     const [products, setProducts] = useState([])
     const [categories, setCategories] = useState([])
     const [product, setProduct] = useState({})
     const [user, setUser] = useState()
+    const [cart, setCart] = useState([])
+    const [totalCart, setTotalCart] = useState(null)
     const [errorSignup, setErrorSignup] = useState(null)
 
     // sign up
@@ -49,6 +50,48 @@ export const AppProvider = ({ children }) => {
         return res.data
     }
 
+    // get cart by userId
+    const getCartByUserId = () => {
+        if (localStorage.user) {
+            const userObj = JSON.parse(localStorage.user)
+            const userId = userObj._id;
+
+            axios.get(`http://localhost:8081/v1/api/user/carts/getCartByUserId/${userId}`)
+               .then((res) => {
+                    setCart(res.data.items)
+                    setTotalCart(res.data.total)
+                })
+               .catch((error) => {
+                    console.error('Error fetching cart:', error);
+                })
+        }
+    }
+
+    // add item to cart
+    const addItemToCart = async (productId, size, quantity) => {
+        if (localStorage.user) {
+            const userObj = JSON.parse(localStorage.user)
+            const userId = userObj._id;
+
+            const res = await axios.post('http://localhost:8081/v1/api/user/carts/addItemCart', {
+                userId: userId,
+                productId: productId,
+                size: size,
+                quantity: quantity
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            console.log(res.data)
+            // return res.data
+            // if (res.data.success) {
+            //     setUser(res.data)
+            // }
+            // return res.data
+        }
+    }
+
     // get all products
     const fetchProduct = () => {
         axios.get('http://localhost:8081/v1/api/user/products')
@@ -75,7 +118,6 @@ export const AppProvider = ({ children }) => {
     const getCategoríes = () => {
         axios.get(`http://localhost:8081/v1/api/user/products/categories`)
            .then((res) => {
-
                 setCategories(res.data)
             })
            .catch((error) => {
@@ -86,13 +128,16 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         fetchProduct()
         getCategoríes()
+        getCartByUserId()
     }, [])
 
     return <AppContext.Provider value={{
         products, setProducts, fetchProduct,
         product, setProduct, getProductById,
         categories, setCategories, getCategoríes,
-        user, signup, errorSignup, setErrorSignup, signin
+        user, signup, errorSignup, setErrorSignup, signin,
+        cart, setCart, getCartByUserId, totalCart,
+        addItemToCart
     }}>
         {children}
     </AppContext.Provider>

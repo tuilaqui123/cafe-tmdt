@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { MdLogout } from "react-icons/md";
+import { FaCartShopping } from "react-icons/fa6";
 
 const navList = [
   {
@@ -52,8 +53,8 @@ const Navbar = () => {
           {navList.map((value) => (
             <li key={value.id}>
               <Link href={value.href}>
-                <p className={`hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav===value.id || pathname===value.href) ? "bg-[#A0522D] text-white" : ""}`}
-                    onClick={()=>setSelectNav(value.id)}>{value.name}</p>
+                <p className={`hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav===value.id || pathname.includes(value.href)) ? "bg-[#A0522D] text-white" : ""}`}
+                    onClick={() => setSelectNav(value.id)}>{value.name}</p>
               </Link>
             </li>
           ))}
@@ -64,10 +65,13 @@ const Navbar = () => {
               {JSON.parse(localStorage.user).name}
             </span>
             <div className="cursor-pointer"
-                onClick={handleLogout}    
+                onClick={handleLogout}
             >
               <MdLogout />
             </div>
+            <Link href="/cart">
+              <FaCartShopping onClick={() => setSelectNav(3)}/> 
+            </Link>
           </div>
         ) : (
           <button className="relative flex px-6 py-2 rounded-md items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-56">

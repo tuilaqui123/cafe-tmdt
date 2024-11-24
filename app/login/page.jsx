@@ -12,7 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { AppContext } from "@/context/AppContext";
 import { useRouter } from 'next/navigation'
 const Login = () => {
-    const {user, signup, setErrorSignup, signin} = useContext(AppContext)
+    const {signup, setErrorSignup, signin} = useContext(AppContext)
     const router = useRouter()
     const [isSignUp, setIsSignUp] = useState(true);
     const [firstName, setFirstName] = useState('');
@@ -21,10 +21,28 @@ const Login = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [address, setAddress] = useState('');
     const [password, setPassword] = useState('');
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const handleGlobalKeyDown = async (event) => {
+        if (event?.key === 'Enter') {
+            if (isSignUp) {
+                await handleSignup(firstName + " " + lastName, email, address, phoneNumber, password)
+            } else {
+                await handleSignin(email, password)
+            }
+        }
+    }
 
     useEffect(() => {
-        setErrorSignup(null);
-      }, [setErrorSignup]);
+        setErrorSignup(null)
+    }, [setErrorSignup])
+
+    useEffect(() => {
+        window.addEventListener('keydown', handleGlobalKeyDown)
+        return () => {
+            window.removeEventListener('keydown', handleGlobalKeyDown)
+        }
+    }, [isSignUp, email, password, firstName, lastName, address, phoneNumber, handleGlobalKeyDown])
 
     const notifyError = (message) => {
         toast.error(message, {

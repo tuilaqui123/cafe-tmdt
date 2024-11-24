@@ -1,7 +1,46 @@
 import Link from "next/link";
-import { TiPlus } from "react-icons/ti";
+import { TiPlus, TiMinus, TiTimes } from "react-icons/ti";
 import Image from "next/image";
+import { AppContext } from "@/context/AppContext";
+import { useContext, useState } from "react";
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer, toast } from "react-toastify";
 export default function CardItem1({id, image, name, description, discount, type}) {
+  const [showOptions, setShowOptions] = useState(false)
+  const [selectedSize, setSelectedSize] = useState(type[0].size)
+  const [quantity, setQuantity] = useState(1)
+  const {addItemToCart} = useContext(AppContext)
+
+  const notifySuccess = (message) => {
+    toast.success(message, {
+        position: "top-right",
+        autoClose: 700,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+    })
+}
+
+  const handleAddItem = async (id, size, quantity) => {
+    await addItemToCart(id, size, quantity)
+    toast.success("Thêm vào giỏ hàng thành công", {
+      position: "top-right",
+      autoClose: 700,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      onClose: () => {
+        setShowOptions(false)
+      }
+    })
+  }
+
   const formatNumber = (number) => {
     return new Intl.NumberFormat('de-DE').format(number)
   }
@@ -10,6 +49,7 @@ export default function CardItem1({id, image, name, description, discount, type}
 
   return (
     <div className="w-full bg-[#a45c23] rounded-lg shadow-xl">
+      <ToastContainer />
       <div className="bg-[#dcb485] rounded-t-lg">
         <Image
           src={image}
@@ -28,11 +68,6 @@ export default function CardItem1({id, image, name, description, discount, type}
           <p className="text-sm text-gray-200 py-2 truncate">
             {description}
           </p>
-          <div>
-            <p className="font-semibold text-lg"></p>
-            {/* <p>$30.99</p> */}
-            {/* <p>$24.99</p> */}
-          </div>
         </div>
         <div className="flex flex-row gap-3 mt-4">
           <button className="text-[#4c2113] w-[80%] hover:before:bg-red relative rounded-md overflow-hidden bg-white shadow-2xl transition-all before:absolute before:bottom-0 before:left-0 before:top-0 before:z-0 before:h-full before:w-0 before:bg-[#4c2113] before:transition-all before:duration-500 hover:text-white hover:shadow-[#4c2113] hover:before:left-0 hover:before:w-full">
@@ -44,9 +79,73 @@ export default function CardItem1({id, image, name, description, discount, type}
             </div>
           </button>
           <button className="rounded-md w-[18%] aspect-square text-center bg-[#4c2113] flex items-center justify-center font-bold">
-            <TiPlus size={22} color="white"/>
+            <TiPlus size={22} color="white" onClick={() => setShowOptions(!showOptions)}/>
           </button>
         </div>
+
+        {showOptions && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="relative w-[90%] max-w-md bg-white p-5 rounded-lg shadow-xl">
+              <button
+                className="absolute top-3 right-3 text-red-500 hover:text-red-700 rounded-full p-2"
+                onClick={() => setShowOptions(false)}
+              >
+                <TiTimes className="text-2xl"/>
+              </button>
+
+              <h2 className="text-lg font-bold text-center mb-4">Chọn Size và Số Lượng</h2>
+              <div>
+                <label className="text-sm font-semibold">Size:</label>
+                <select
+                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
+                  value={selectedSize}
+                  onChange={(e) => {
+                    const size = type.find((t) => t.size === e.target.value)
+                    setSelectedSize(size)
+                  }}
+                >
+                  {type.map((ele, index) => (
+                    <option key={index} value={ele.size}>
+                      {ele.size} - ({formatNumber(ele.price)}đ)
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mt-4">
+                <label className="text-sm font-semibold">Quantity:</label>
+                <div className="flex items-center gap-2 mt-1">
+                  <button
+                    className="px-3 py-2 bg-[#4c2113] text-white rounded-md hover:bg-[#A0522D]"
+                    onClick={() => setQuantity((prev) => (prev > 1 ? prev - 1 : 1))}
+                  >
+                    <TiMinus />
+                  </button>
+                  <input
+                    type="number"
+                    className="w-16 text-center p-2 border border-gray-300 rounded-md"
+                    value={quantity}
+                    min="1"
+                    onChange={(e) => setQuantity(Number(e.target.value) || 1)}
+                  />
+                  <button
+                    className="px-3 py-2 bg-[#4c2113] text-white rounded-md hover:bg-[#A0522D]"
+                    onClick={() => setQuantity((prev) => prev + 1)}
+                  >
+                    <TiPlus />
+                  </button>
+                </div>
+              </div>
+
+              <button
+                className="mt-6 w-full bg-[#4c2113] hover:bg-[#A0522D] text-white font-bold py-2 rounded-md transition-all duration-400 ease-in-out"
+                onClick={() => handleAddItem(id, selectedSize, quantity)}
+              >
+                Thêm vào giỏ hàng
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
