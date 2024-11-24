@@ -12,7 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { AppContext } from "@/context/AppContext";
 import { useRouter } from 'next/navigation'
 const Login = () => {
-    const {user, signup, errorSignup, setErrorSignup} = useContext(AppContext)
+    const {user, signup, setErrorSignup, signin} = useContext(AppContext)
     const router = useRouter()
     const [isSignUp, setIsSignUp] = useState(true);
     const [firstName, setFirstName] = useState('');
@@ -36,7 +36,23 @@ const Login = () => {
             draggable: true,
             progress: undefined,
             theme: "light",
-        });
+        })
+    }
+
+    const notifySuccess = (message, navigate) => {
+        toast.success(message, {
+            position: "top-right",
+            autoClose: 700,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            onClose: () => {
+                router.push(navigate)
+            }
+        })
     }
 
     const handleSignup = async (name, email, address, phoneNumber, password) => {
@@ -68,20 +84,7 @@ const Login = () => {
         if (res.success) {
             localStorage.setItem('token', res.accessToken)
             localStorage.setItem('user', JSON.stringify(res.user))
-            
-            toast.success("Đăng ký thành công", {
-                position: "top-right",
-                autoClose: 700,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-                onClose: () => {
-                    router.push('/menu')
-                }
-            })
+            notifySuccess("Đăng ký thành công", '/menu')
         } else {
             if (res.type?.message==='Validation Error') {
                 notifyError(res.errors[0].message)
@@ -92,7 +95,7 @@ const Login = () => {
         }
     }
 
-    const handleSignin = (email, password) => {
+    const handleSignin = async (email, password) => {
         if (!email) {
             notifyError('Please enter your email')
             return
@@ -101,6 +104,15 @@ const Login = () => {
             notifyError('Please enter your password')
             return
         }
+
+        const res = await signin(email, password)
+        if (!res.success) {
+            notifyError(res.message)
+            return
+        }
+        localStorage.setItem('token', res.accessToken)
+        localStorage.setItem('user', JSON.stringify(res.user))
+        notifySuccess("Đăng nhập thành công", '/menu')
     }
 
     return (
@@ -125,7 +137,6 @@ const Login = () => {
                         <SwiperSlide key={index}>
                             <Image
                                 src={item.path}
-                                layout="fixed"
                                 className="w-full h-full rounded-[15px] object-cover"
                                 width={item.width}
                                 height={item.height}
@@ -134,7 +145,6 @@ const Login = () => {
                             />
                             <Link
                                 href="/menu"
-                                className="link-back"
                             >
                                 <p className="absolute top-[2px] right-[10px] bg-[rgba(100,88,158,0.7)] text-white px-[10px] py-[5px] rounded-[5px] no-underline transition-colors duration-300">Back to Website →</p>
                             </Link>

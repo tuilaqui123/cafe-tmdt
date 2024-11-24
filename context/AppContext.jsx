@@ -33,6 +33,22 @@ export const AppProvider = ({ children }) => {
         return res.data
     }
 
+    // sign in
+    const signin = async (email, password) => {
+        const res = await axios.post('http://localhost:8081/v1/api/login', {
+            email: email,
+            password: password
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        if (res.data.success) {
+            setUser(res.data)
+        }
+        return res.data
+    }
+
     // get all products
     const fetchProduct = () => {
         axios.get('http://localhost:8081/v1/api/user/products')
@@ -76,7 +92,7 @@ export const AppProvider = ({ children }) => {
         products, setProducts, fetchProduct,
         product, setProduct, getProductById,
         categories, setCategories, getCategoríes,
-        user, signup, errorSignup, setErrorSignup
+        user, signup, errorSignup, setErrorSignup, signin
     }}>
         {children}
     </AppContext.Provider>
