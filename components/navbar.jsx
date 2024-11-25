@@ -26,18 +26,18 @@ const navList = [
 
 const Navbar = () => {
   const [selectNav, setSelectNav] = useState(null)
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null)
   const pathname = usePathname()
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.location.reload();
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    window.location.reload()
   }
 
   useEffect(() => {
     if (typeof window !== "undefined" && localStorage.token) {
-      setUser(JSON.parse(localStorage.user));
+      setUser(JSON.parse(localStorage.user))
     }
   }, [pathname])
 
@@ -74,11 +74,16 @@ const Navbar = () => {
             </Link>
           </div>
         ) : (
-          <button className="relative flex px-6 py-2 rounded-md items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-56">
-            <Link href="/login">
-              <span className="relative z-10">Login</span>
+          <div className="flex items-center gap-3">
+            <button className="relative flex px-6 py-2 rounded-md items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-56">
+              <Link href="/login">
+                <span className="relative z-10">Login</span>
+              </Link>
+            </button>
+            <Link href="/cart">
+              <FaCartShopping className="text-black" onClick={() => setSelectNav(3)}/> 
             </Link>
-          </button>
+          </div>
         )}
       </nav>
     </header>

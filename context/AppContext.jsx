@@ -71,7 +71,7 @@ export const AppProvider = ({ children }) => {
     const addItemToCart = async (productId, size, quantity) => {
         if (localStorage.user) {
             const userObj = JSON.parse(localStorage.user)
-            const userId = userObj._id;
+            const userId = userObj._id
 
             const res = await axios.post('http://localhost:8081/v1/api/user/carts/addItemCart', {
                 userId: userId,
@@ -84,14 +84,29 @@ export const AppProvider = ({ children }) => {
                 }
             })
             console.log(res.data)
-            // return res.data
-            // if (res.data.success) {
-            //     setUser(res.data)
-            // }
-            // return res.data
+            return res.data
         }
     }
 
+    // delete item out of cart
+    const deleteItemFromCart = async (productId, size) => {
+        if (localStorage.user) {
+            const userObj = JSON.parse(localStorage.user)
+            const userId = userObj._id
+
+            const res = await axios.delete('http://localhost:8081/v1/api/user/carts/deleteItemCart', {
+                data: {
+                    userId: userId,
+                    productId: productId,
+                    size: size
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            return res.data
+        }
+    }
     // get all products
     const fetchProduct = () => {
         axios.get('http://localhost:8081/v1/api/user/products')
@@ -137,7 +152,7 @@ export const AppProvider = ({ children }) => {
         categories, setCategories, getCategoríes,
         user, signup, errorSignup, setErrorSignup, signin,
         cart, setCart, getCartByUserId, totalCart,
-        addItemToCart
+        addItemToCart, deleteItemFromCart
     }}>
         {children}
     </AppContext.Provider>

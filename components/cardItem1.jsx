@@ -7,12 +7,14 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
 export default function CardItem1({id, image, name, description, discount, type}) {
   const [showOptions, setShowOptions] = useState(false)
-  const [selectedSize, setSelectedSize] = useState(type[0].size)
+  const [selectedSize, setSelectedSize] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const {addItemToCart} = useContext(AppContext)
-
-  const notifySuccess = (message) => {
-    toast.success(message, {
+  
+  const handleAddItem = async (id, size, quantity) => {
+    if (localStorage.user) {
+      await addItemToCart(id, size, quantity)
+      toast.success("Thêm vào giỏ hàng thành công", {
         position: "top-right",
         autoClose: 700,
         hideProgressBar: false,
@@ -21,24 +23,16 @@ export default function CardItem1({id, image, name, description, discount, type}
         draggable: true,
         progress: undefined,
         theme: "light",
-    })
-}
-
-  const handleAddItem = async (id, size, quantity) => {
-    await addItemToCart(id, size, quantity)
-    toast.success("Thêm vào giỏ hàng thành công", {
-      position: "top-right",
-      autoClose: 700,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-      onClose: () => {
-        setShowOptions(false)
-      }
-    })
+        onClose: () => {
+          setShowOptions(false)
+        }
+      })
+    } else {
+      const userObj = JSON.parse(localStorage.user)
+      const userId = userObj._id;
+      
+      console.log(userId)
+    }
   }
 
   const formatNumber = (number) => {
@@ -46,6 +40,19 @@ export default function CardItem1({id, image, name, description, discount, type}
   }
   
   const formatNameProduct = (name) => name.split(' ').map(word => word[0].toUpperCase() + word.slice(1)).join(' ')
+
+  const handleShowOptions = () => {
+    setQuantity(1)
+    setShowOptions(true)
+    setTimeout(() => {
+      setSelectedSize(type[0])
+    }, 0)
+  }
+
+  const handleSizeChange = (e) => {
+    const size = type.find((t) => t.size === e.target.value)
+    setSelectedSize(size)
+  }
 
   return (
     <div className="w-full bg-[#a45c23] rounded-lg shadow-xl">
@@ -79,7 +86,7 @@ export default function CardItem1({id, image, name, description, discount, type}
             </div>
           </button>
           <button className="rounded-md w-[18%] aspect-square text-center bg-[#4c2113] flex items-center justify-center font-bold">
-            <TiPlus size={22} color="white" onClick={() => setShowOptions(!showOptions)}/>
+            <TiPlus size={22} color="white" onClick={handleShowOptions}/>
           </button>
         </div>
 
@@ -98,11 +105,8 @@ export default function CardItem1({id, image, name, description, discount, type}
                 <label className="text-sm font-semibold">Size:</label>
                 <select
                   className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
-                  value={selectedSize}
-                  onChange={(e) => {
-                    const size = type.find((t) => t.size === e.target.value)
-                    setSelectedSize(size)
-                  }}
+                  value={selectedSize?.size || ''}
+                  onChange={handleSizeChange}
                 >
                   {type.map((ele, index) => (
                     <option key={index} value={ele.size}>
@@ -139,7 +143,8 @@ export default function CardItem1({id, image, name, description, discount, type}
 
               <button
                 className="mt-6 w-full bg-[#4c2113] hover:bg-[#A0522D] text-white font-bold py-2 rounded-md transition-all duration-400 ease-in-out"
-                onClick={() => handleAddItem(id, selectedSize, quantity)}
+                onClick={() => selectedSize && handleAddItem(id, selectedSize.size, quantity)}
+                disabled={!selectedSize}
               >
                 Thêm vào giỏ hàng
               </button>
