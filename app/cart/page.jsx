@@ -60,12 +60,12 @@ const Cart = () => {
         } else {
             getCartById(localStorage?.cartId)
         }
-    }, [cart.length])
+    }, [cart?.items.length])
 
     return (
         <div className="mx-auto rounded-lg w-[90%]">
         <ToastContainer />
-            {(cart.length!==0 || cartNoLog?.length!==0) ? (
+            {(cart.items.length!==0 || cartNoLog.items?.length!==0) ? (
                 <div>
                     <div className='flex gap-3 justify-center cursor-pointer mb-8'>
                         {stateOrder.map((ele, index) => {
@@ -97,10 +97,10 @@ const Cart = () => {
                         <tbody>
                         {(() => {
                             let itemsToRender = []
-                            if (cart && cart.length > 0) {
-                                itemsToRender = cart
-                            } else if (cartNoLog && cartNoLog.length > 0) {
-                                itemsToRender = cartNoLog
+                            if (cart && cart.items.length > 0) {
+                                itemsToRender = cart.items
+                            } else if (cartNoLog && cartNoLog.items.length > 0) {
+                                itemsToRender = cartNoLog.items
                             }
 
                             return itemsToRender.map((item, index) => (
@@ -164,7 +164,7 @@ const Cart = () => {
                 Apply Coupon
                 </button>
             </div> */}
-            {cart.length!==0 && (
+            {cart.items.length!==0 && (
                 <div className="flex items-center gap-3 p-2 border rounded-full shadow-md bg-white w-[40%]">
                     <FaTicketAlt className="text-gray-400 text-xl" />
                     <input

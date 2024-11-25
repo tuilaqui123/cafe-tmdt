@@ -9,8 +9,8 @@ export const AppProvider = ({ children }) => {
     const [categories, setCategories] = useState([])
     const [product, setProduct] = useState({})
     const [user, setUser] = useState()
-    const [cart, setCart] = useState([])
-    // const [cartId, setCartId] = useState(null)
+    const [cart, setCart] = useState({})
+    const [cartId, setCartId] = useState(null)
     const [totalCart, setTotalCart] = useState(null)
     const [cartNoLog, setCartNoLog] = useState([])
     const [totalCartNoLog, setTotalCartNoLog] = useState(null)
@@ -61,7 +61,7 @@ export const AppProvider = ({ children }) => {
 
             axios.get(`http://localhost:8081/v1/api/user/carts/getCartByUserId/${userId}`)
                .then((res) => {
-                    setCart(res.data.items)
+                    setCart(res.data)
                     setTotalCart(res.data.total)
                 })
                .catch((error) => {
@@ -74,7 +74,7 @@ export const AppProvider = ({ children }) => {
     const getCartById = (id) => {
         axios.get(`http://localhost:8081/v1/api/user/carts/getCartById/${id}`)
             .then((res) => {
-                setCartNoLog(res.data.items)
+                setCartNoLog(res.data)
                 setTotalCartNoLog(res.data.total)
             })
             .catch((error) => {
@@ -179,6 +179,7 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         fetchProduct()
         getCategoríes()
+
         if (localStorage.user) {
             getCartByUserId()
         } else {
