@@ -10,7 +10,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
 
 const Cart = () => {
-    const {cart, getCartByUserId, deleteItemFromCart} = useContext(AppContext)
+    const {cart, cartNoLog, getCartByUserId, getCartById, deleteItemFromCart} = useContext(AppContext)
     const formatNumber = (number) => {
         return new Intl.NumberFormat('de-DE').format(number)
     }
@@ -55,13 +55,17 @@ const Cart = () => {
     }
 
     useEffect(() => {
-        getCartByUserId()
+        if (localStorage.user) {
+            getCartByUserId()
+        } else {
+            getCartById(localStorage?.cartId)
+        }
     }, [cart.length])
 
     return (
         <div className="mx-auto rounded-lg w-[90%]">
         <ToastContainer />
-            {cart.length!==0 ? (
+            {(cart.length!==0 || cartNoLog?.length!==0) ? (
                 <div>
                     <div className='flex gap-3 justify-center cursor-pointer mb-8'>
                         {stateOrder.map((ele, index) => {
@@ -91,41 +95,50 @@ const Cart = () => {
                             </tr>
                         </thead>
                         <tbody>
-                        {cart.map((item, index) => (
-                            <tr key={index} className="border-b border-black text-black hover:text-[#A0522D] cursor-pointer">
-                                <td className="p-2 flex items-center">
-                                    <Image
-                                        src={item.product.image}
-                                        alt={item.product.name}
-                                        className="w-20 h-20 mr-3"
-                                        width={500}
-                                        height={300}
-                                        priority
-                                    />
-                                        {item.product.name}
-                                </td>
-                                <td className="p-2">{item.size}</td>
-                                <td className="p-2">{formatNumber(item.price)} đ</td>
-                                <td className="p-2">
-                                    <input
-                                        type="number"
-                                        value={item.quantity}
-                                        min="1"
-                                        className="w-16 border border-gray-300 p-1 rounded"
-                                        onChange={(e) => updateQuantity(item.id, e.target.value)}
-                                    />
-                                </td>
-                            <td className="p-2">{formatNumber(item.price * item.quantity)} đ</td>
-                                <td className="p-2">
-                                    <button
-                                        className="text-red-500 hover:text-red-700"
-                                        onClick={() => handleDeleteItem(item.product._id, item.size)}
-                                    >
-                                        <FaTrashAlt className='text-xl' />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                        {(() => {
+                            let itemsToRender = []
+                            if (cart && cart.length > 0) {
+                                itemsToRender = cart
+                            } else if (cartNoLog && cartNoLog.length > 0) {
+                                itemsToRender = cartNoLog
+                            }
+
+                            return itemsToRender.map((item, index) => (
+                                <tr key={index} className="border-b border-black text-black hover:text-[#A0522D] cursor-pointer">
+                                    <td className="p-2 flex items-center">
+                                        <Image
+                                            src={item.product.image}
+                                            alt={item.product.name}
+                                            className="w-20 h-20 mr-3"
+                                            width={500}
+                                            height={300}
+                                            priority
+                                        />
+                                            {item.product.name}
+                                    </td>
+                                    <td className="p-2">{item.size}</td>
+                                    <td className="p-2">{formatNumber(item.price)} đ</td>
+                                    <td className="p-2">
+                                        <input
+                                            type="number"
+                                            value={item.quantity}
+                                            min="1"
+                                            className="w-16 border border-gray-300 p-1 rounded"
+                                            onChange={(e) => updateQuantity(item.id, e.target.value)}
+                                        />
+                                    </td>
+                                    <td className="p-2">{formatNumber(item.price * item.quantity)} đ</td>
+                                    <td className="p-2">
+                                        <button
+                                            className="text-red-500 hover:text-red-700"
+                                            onClick={() => handleDeleteItem(item.product._id, item.size)}
+                                        >
+                                            <FaTrashAlt className='text-xl' />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ));
+                        })()}
                         </tbody>
                     </table>
                 </div>

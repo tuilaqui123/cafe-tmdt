@@ -57,11 +57,7 @@ export default function Page() {
             <button
               key={i}
               onClick={() => paginate(i + 1)}
-              className={`px-3 py-1 rounded ${
-                currentPage === i + 1
-                  ? 'bg-[#A0522D] text-white'
-                  : 'bg-gray-200 hover:bg-gray-300'
-              }`}
+              className={`px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-[#A0522D] text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
             >
               {i + 1}
             </button>

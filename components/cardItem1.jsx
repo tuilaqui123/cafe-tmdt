@@ -9,29 +9,39 @@ export default function CardItem1({id, image, name, description, discount, type}
   const [showOptions, setShowOptions] = useState(false)
   const [selectedSize, setSelectedSize] = useState(null)
   const [quantity, setQuantity] = useState(1)
-  const {addItemToCart} = useContext(AppContext)
+  const {addNewCart, addItemToCart, addItemToCartNoLog} = useContext(AppContext)
   
+  const notifySuccess = (message) => {
+    toast.success(message, {
+      position: "top-right",
+      autoClose: 700,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+      onClose: () => {
+        setShowOptions(false)
+      }
+    })
+  }
+
   const handleAddItem = async (id, size, quantity) => {
     if (localStorage.user) {
       await addItemToCart(id, size, quantity)
-      toast.success("Thêm vào giỏ hàng thành công", {
-        position: "top-right",
-        autoClose: 700,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        onClose: () => {
-          setShowOptions(false)
-        }
-      })
+      notifySuccess("Thêm vào giỏ hàng thành công")
     } else {
-      const userObj = JSON.parse(localStorage.user)
-      const userId = userObj._id;
-      
-      console.log(userId)
+      if (localStorage.cartId) {
+        await addItemToCartNoLog(localStorage.cartId, id, size, quantity)
+        notifySuccess("Thêm vào giỏ hàng thành công")
+      } else {
+        const cartId = await addNewCart()
+        localStorage.setItem('cartId', cartId)
+
+        await addItemToCartNoLog(localStorage.cartId, id, size, quantity)
+        notifySuccess("Thêm vào giỏ hàng thành công")
+      }
     }
   }
 

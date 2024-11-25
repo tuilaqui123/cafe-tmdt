@@ -130,7 +130,7 @@ const Login = () => {
         }
         localStorage.setItem('token', res.accessToken)
         localStorage.setItem('user', JSON.stringify(res.user))
-        notifySuccess("Đăng nhập thành công", '/menu')
+        notifySuccess("Đăng nhập thành công", '/home')
     }
 
     return (

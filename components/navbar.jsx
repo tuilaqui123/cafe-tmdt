@@ -8,8 +8,8 @@ import { FaCartShopping } from "react-icons/fa6";
 
 const navList = [
   {
-    name: "Dashboard",
-    href: "/dashboard",
+    name: "Home",
+    href: "/home",
     id: 0,
   },
   {

@@ -10,7 +10,10 @@ export const AppProvider = ({ children }) => {
     const [product, setProduct] = useState({})
     const [user, setUser] = useState()
     const [cart, setCart] = useState([])
+    // const [cartId, setCartId] = useState(null)
     const [totalCart, setTotalCart] = useState(null)
+    const [cartNoLog, setCartNoLog] = useState([])
+    const [totalCartNoLog, setTotalCartNoLog] = useState(null)
     const [errorSignup, setErrorSignup] = useState(null)
 
     // sign up
@@ -65,6 +68,39 @@ export const AppProvider = ({ children }) => {
                     console.error('Error fetching cart:', error);
                 })
         }
+    }
+
+    // get cart by id
+    const getCartById = (id) => {
+        axios.get(`http://localhost:8081/v1/api/user/carts/getCartById/${id}`)
+            .then((res) => {
+                setCartNoLog(res.data.items)
+                setTotalCartNoLog(res.data.total)
+            })
+            .catch((error) => {
+                console.error('Error fetching cart:', error);
+            })
+    }
+
+    // add new cart
+    const addNewCart = async () => {
+        const res = await axios.post('http://localhost:8081/v1/api/user/carts/addCart')
+        return res.data
+    }
+
+    // add item to cart (no login)
+    const addItemToCartNoLog = async (cartId, productId, size, quantity) => {
+        const res = await axios.post('http://localhost:8081/v1/api/user/carts/addItemCartNoLogin', {
+            cartId: cartId,
+            productId: productId,
+            size: size,
+            quantity: quantity
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        return res.data
     }
 
     // add item to cart
@@ -143,7 +179,11 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         fetchProduct()
         getCategoríes()
-        getCartByUserId()
+        if (localStorage.user) {
+            getCartByUserId()
+        } else {
+            getCartById(localStorage?.cartId)
+        }
     }, [])
 
     return <AppContext.Provider value={{
@@ -152,7 +192,8 @@ export const AppProvider = ({ children }) => {
         categories, setCategories, getCategoríes,
         user, signup, errorSignup, setErrorSignup, signin,
         cart, setCart, getCartByUserId, totalCart,
-        addItemToCart, deleteItemFromCart
+        addItemToCart, deleteItemFromCart, addItemToCartNoLog,
+        cartNoLog, setCartNoLog, getCartById, totalCartNoLog, addNewCart,
     }}>
         {children}
     </AppContext.Provider>
