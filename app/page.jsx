@@ -1,162 +1,136 @@
-export default function Home() {
-  return (
-    <div>
-      <div>
-        <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-8 gap-y-16 px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Technical Specifications
-            </h2>
-            <p className="mt-4 text-gray-500">
-              The walnut wood card tray is precision milled to perfectly fit a
-              stack of Focus cards. The powder coated steel divider separates
-              active cards from new ones, or can be used to archive important
-              task lists.
-            </p>
+"use client"
+import { useContext, useEffect, useState } from 'react'
+import { AppContext } from '@/context/AppContext'
+import Image from 'next/image'
+import Link from 'next/link'
+import { motion } from "motion/react"
+import { FaCoffee, FaLeaf, FaMugHot } from 'react-icons/fa'
 
-            <dl className="mt-16 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-16 lg:gap-x-8">
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Origin</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  Designed by Good Goods, Inc.
-                </dd>
-              </div>
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Material</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  Solid walnut base with rare earth magnets and powder coated
-                  steel card cover
-                </dd>
-              </div>
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Dimensions</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  6.25&quot; x 3.55&quot; x 1.15&quot;
-                </dd>
-              </div>
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Finish</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  Hand sanded and finished with natural oil
-                </dd>
-              </div>
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Includes</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  Wood card tray and 3 refill packs
-                </dd>
-              </div>
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Considerations</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  Made from natural materials. Grain and color vary with each
-                  item.
-                </dd>
-              </div>
-            </dl>
-          </div>
-          <div className="grid grid-cols-2 grid-rows-2 gap-4 sm:gap-6 lg:gap-8">
-            <img
-              src="https://tailwindui.com/plus/img/ecommerce-images/product-feature-03-detail-01.jpg"
-              alt="Walnut card tray with white powder coated steel divider and 3 punchout holes."
-              className="rounded-lg bg-gray-100"
-            />
-            <img
-              src="https://tailwindui.com/plus/img/ecommerce-images/product-feature-03-detail-02.jpg"
-              alt="Top down view of walnut card tray with embedded magnets and card groove."
-              className="rounded-lg bg-gray-100"
-            />
-            <img
-              src="https://tailwindui.com/plus/img/ecommerce-images/product-feature-03-detail-03.jpg"
-              alt="Side of walnut card tray with card groove and recessed card area."
-              className="rounded-lg bg-gray-100"
-            />
-            <img
-              src="https://tailwindui.com/plus/img/ecommerce-images/product-feature-03-detail-04.jpg"
-              alt="Walnut card tray filled with cards and card angled in dedicated groove."
-              className="rounded-lg bg-gray-100"
-            />
-          </div>
-        </div>
-      </div>
-      <div>
-        <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-8 gap-y-16 px-4 py-24 sm:px-6 sm:py-32 lg:max-w-7xl lg:grid-cols-2 lg:px-8">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Technical Specifications
-            </h2>
-            <p className="mt-4 text-gray-500">
-              The walnut wood card tray is precision milled to perfectly fit a
-              stack of Focus cards. The powder coated steel divider separates
-              active cards from new ones, or can be used to archive important
-              task lists.
-            </p>
+const Home = () => {
+    const { products, categories } = useContext(AppContext)
+    const [featuredProducts, setFeaturedProducts] = useState([])
 
-            <dl className="mt-16 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 sm:gap-y-16 lg:gap-x-8">
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Origin</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  Designed by Good Goods, Inc.
-                </dd>
-              </div>
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Material</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  Solid walnut base with rare earth magnets and powder coated
-                  steel card cover
-                </dd>
-              </div>
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Dimensions</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  6.25&quot; x 3.55&quot; x 1.15&quot;
-                </dd>
-              </div>
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Finish</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  Hand sanded and finished with natural oil
-                </dd>
-              </div>
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Includes</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  Wood card tray and 3 refill packs
-                </dd>
-              </div>
-              <div className="border-t border-gray-200 pt-4">
-                <dt className="font-medium text-gray-900">Considerations</dt>
-                <dd className="mt-2 text-sm text-gray-500">
-                  Made from natural materials. Grain and color vary with each
-                  item.
-                </dd>
-              </div>
-            </dl>
-          </div>
-          <div className="grid grid-cols-2 grid-rows-2 gap-4 sm:gap-6 lg:gap-8">
-            <img
-              src="https://tailwindui.com/plus/img/ecommerce-images/product-feature-03-detail-01.jpg"
-              alt="Walnut card tray with white powder coated steel divider and 3 punchout holes."
-              className="rounded-lg bg-gray-100"
-            />
-            <img
-              src="https://tailwindui.com/plus/img/ecommerce-images/product-feature-03-detail-02.jpg"
-              alt="Top down view of walnut card tray with embedded magnets and card groove."
-              className="rounded-lg bg-gray-100"
-            />
-            <img
-              src="https://tailwindui.com/plus/img/ecommerce-images/product-feature-03-detail-03.jpg"
-              alt="Side of walnut card tray with card groove and recessed card area."
-              className="rounded-lg bg-gray-100"
-            />
-            <img
-              src="https://tailwindui.com/plus/img/ecommerce-images/product-feature-03-detail-04.jpg"
-              alt="Walnut card tray filled with cards and card angled in dedicated groove."
-              className="rounded-lg bg-gray-100"
-            />
-          </div>
+    useEffect(() => {
+        setFeaturedProducts(products.slice(0, 8))
+    }, [products])
+
+    const formatNumber = (number) => {
+        return new Intl.NumberFormat('de-DE').format(number)
+    }
+
+    return (
+        <div className="min-h-screen">
+            <div className="relative h-[600px]">
+                <Image
+                    src="https://res.cloudinary.com/djbelaeen/image/upload/v1732295812/Cafe/Product/tztc09hvn438b5fxtp44.png"
+                    alt="Coffee Shop Hero"
+                    fill
+                    className="object-cover"
+                    priority
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="text-center text-white">
+                        <motion.h1 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-5xl font-bold mb-4"
+                        >
+                            Welcome to Our Coffee Shop
+                        </motion.h1>
+                        <p className="text-xl mb-8">Discover the perfect blend for your day</p>
+                        <Link href="/menu">
+                            <button className="bg-[#A0522D] hover:bg-[#8B4513] text-white px-8 py-3 rounded-full transition-colors">
+                                View Menu
+                            </button>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+
+            <div className="py-16 bg-[#FDF5E6]">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="text-center">
+                            <FaCoffee className="mx-auto text-4xl text-[#A0522D] mb-4" />
+                            <h3 className="text-xl font-semibold mb-2">Premium Beans</h3>
+                            <p className="text-gray-600">Carefully selected coffee beans from around the world</p>
+                        </div>
+                        <div className="text-center">
+                            <FaLeaf className="mx-auto text-4xl text-[#A0522D] mb-4" />
+                            <h3 className="text-xl font-semibold mb-2">Fresh & Organic</h3>
+                            <p className="text-gray-600">100% organic ingredients for the best taste</p>
+                        </div>
+                        <div className="text-center">
+                            <FaMugHot className="mx-auto text-4xl text-[#A0522D] mb-4" />
+                            <h3 className="text-xl font-semibold mb-2">Perfect Brew</h3>
+                            <p className="text-gray-600">Expertly crafted by our skilled baristas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="py-16">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                        {featuredProducts.map((product, index) => (
+                            <motion.div
+                                key={product._id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.1 }}
+                                className="bg-white rounded-lg shadow-lg overflow-hidden h-[400px] flex flex-col"
+                            >
+                                <div className="relative h-48">
+                                    <Image
+                                        src={product.image}
+                                        alt={product.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+                                <div className="p-4 flex flex-col flex-grow">
+                                    <h3 className="text-lg font-semibold mb-2 truncate hover:text-clip hover:overflow-visible">{product.name}</h3>
+                                    <p className="text-gray-600 mb-2 line-clamp-2 flex-grow">{product.description}</p>
+                                    <div className="flex justify-between items-center mt-auto">
+                                        <span className="text-[#A0522D] font-bold">
+                                            {formatNumber(product.type[0].price)}đ
+                                        </span>
+                                        <Link href={`/menu/${product._id}`}>
+                                            <button className="bg-[#A0522D] text-white px-4 py-2 rounded hover:bg-[#8B4513] transition-colors">
+                                                View Details
+                                            </button>
+                                        </Link>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <div className="py-16 bg-[#FDF5E6]">
+                <div className="container mx-auto px-4">
+                    <h2 className="text-3xl font-bold text-center mb-12">Our Categories</h2>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        {categories.map((category, index) => (
+                            <motion.div
+                                key={category._id}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ delay: index * 0.1 }}
+                                className="bg-white rounded-lg shadow-lg p-6 text-center cursor-pointer hover:shadow-xl transition-shadow"
+                            >
+                                <h3 className="text-xl font-semibold mb-2">{category._id}</h3>
+                                <p className="text-gray-600">{category.products.length} products</p>
+                            </motion.div> 
+                        ))}
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
+    )
 }
+
+export default Home
