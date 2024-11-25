@@ -3,7 +3,7 @@ import { useContext, useEffect, useState } from 'react'
 import { AppContext } from '@/context/AppContext'
 import Image from 'next/image'
 import Link from 'next/link'
-// import { motion } from 'framer-motion'
+import { motion } from "motion/react"
 import { FaCoffee, FaLeaf, FaMugHot } from 'react-icons/fa'
 
 const Home = () => {
@@ -20,7 +20,6 @@ const Home = () => {
 
     return (
         <div className="min-h-screen">
-            {/* Hero Section */}
             <div className="relative h-[600px]">
                 <Image
                     src="https://res.cloudinary.com/djbelaeen/image/upload/v1732295812/Cafe/Product/tztc09hvn438b5fxtp44.png"
@@ -31,13 +30,13 @@ const Home = () => {
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                     <div className="text-center text-white">
-                        {/* <motion.h1 
+                        <motion.h1 
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="text-5xl font-bold mb-4"
                         >
                             Welcome to Our Coffee Shop
-                        </motion.h1> */}
+                        </motion.h1>
                         <p className="text-xl mb-8">Discover the perfect blend for your day</p>
                         <Link href="/menu">
                             <button className="bg-[#A0522D] hover:bg-[#8B4513] text-white px-8 py-3 rounded-full transition-colors">
@@ -48,7 +47,6 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Features Section */}
             <div className="py-16 bg-[#FDF5E6]">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us</h2>
@@ -72,18 +70,17 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Featured Products */}
             <div className="py-16">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {/* {featuredProducts.map((product, index) => (
+                        {featuredProducts.map((product, index) => (
                             <motion.div
                                 key={product._id}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.1 }}
-                                className="bg-white rounded-lg shadow-lg overflow-hidden"
+                                className="bg-white rounded-lg shadow-lg overflow-hidden h-[400px] flex flex-col"
                             >
                                 <div className="relative h-48">
                                     <Image
@@ -93,10 +90,10 @@ const Home = () => {
                                         className="object-cover"
                                     />
                                 </div>
-                                <div className="p-4">
-                                    <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-                                    <p className="text-gray-600 mb-2 line-clamp-2">{product.description}</p>
-                                    <div className="flex justify-between items-center">
+                                <div className="p-4 flex flex-col flex-grow">
+                                    <h3 className="text-lg font-semibold mb-2 truncate hover:text-clip hover:overflow-visible">{product.name}</h3>
+                                    <p className="text-gray-600 mb-2 line-clamp-2 flex-grow">{product.description}</p>
+                                    <div className="flex justify-between items-center mt-auto">
                                         <span className="text-[#A0522D] font-bold">
                                             {formatNumber(product.type[0].price)}đ
                                         </span>
@@ -108,17 +105,16 @@ const Home = () => {
                                     </div>
                                 </div>
                             </motion.div>
-                        ))} */}
+                        ))}
                     </div>
                 </div>
             </div>
 
-            {/* Categories Section */}
             <div className="py-16 bg-[#FDF5E6]">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-12">Our Categories</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                        {/* {categories.map((category, index) => (
+                        {categories.map((category, index) => (
                             <motion.div
                                 key={category._id}
                                 initial={{ opacity: 0, scale: 0.9 }}
@@ -129,7 +125,7 @@ const Home = () => {
                                 <h3 className="text-xl font-semibold mb-2">{category._id}</h3>
                                 <p className="text-gray-600">{category.products.length} products</p>
                             </motion.div> 
-                        ))} */}
+                        ))}
                     </div>
                 </div>
             </div>

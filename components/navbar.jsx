@@ -1,4 +1,3 @@
-// components/Navbar.js
 "use client"
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -29,17 +28,32 @@ const Navbar = () => {
   const [user, setUser] = useState(null)
   const pathname = usePathname()
 
-  const handleLogout = () => {
-    localStorage.removeItem("token")
-    localStorage.removeItem("user")
-    window.location.reload()
-  }
+  useEffect(() => {
+    const currentPath = pathname.split('/')[1]
+    const currentNav = navList.find(nav => nav.href.includes(currentPath))
+    if (currentNav) {
+      setSelectNav(currentNav.id)
+    } else {
+      setSelectNav(null)
+    }
+  }, [pathname])
 
   useEffect(() => {
     if (typeof window !== "undefined" && localStorage.token) {
       setUser(JSON.parse(localStorage.user))
     }
   }, [pathname])
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+    localStorage.removeItem("user")
+    window.location.reload()
+  }
+
+  const isActive = (path) => {
+    const currentPath = pathname.split('/')[1]
+    return path.includes(currentPath)
+  }
 
   return (
     <header className="backdrop-blur-lg border border-white/10 shadow-lg fixed top-0 left-0 w-full z-50">
@@ -53,7 +67,7 @@ const Navbar = () => {
           {navList.map((value) => (
             <li key={value.id}>
               <Link href={value.href}>
-                <p className={`hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav===value.id || pathname.includes(value.href)) ? "bg-[#A0522D] text-white" : ""}`}
+                <p className={`hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav===value.id || isActive(value.href)) ? "bg-[#A0522D] text-white" : ""}`}
                     onClick={() => setSelectNav(value.id)}>{value.name}</p>
               </Link>
             </li>
