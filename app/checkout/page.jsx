@@ -93,10 +93,6 @@ const CheckOut = () => {
     }
 
     const getCart = () => {
-        //
-        localStorage.setItem("user", "6737a536be12d2c53c28f7c2")
-        //
-
         setisLoadingCart(true)
         if (localStorage.getItem("user")) {
             fetch(`http://localhost:8081/v1/api/user/carts/getCartByUserId/${localStorage.getItem("user")}`)
@@ -163,23 +159,23 @@ const CheckOut = () => {
                     <p className='lg:text-[38px] text-[30px] font-bold text-black mt-5'>Complete order {cart.userId ? cart.userId?.name + "," : ""}</p>
 
                     <div className='mt-3'>
-                        <div className='hover:opacity-90 hover:cursor-pointer bg-black h-[40px] md:hidden rounded-[5px]' onClick={() => { setIsOpen(!isOpen) }}>
+                        {/* <div className='hover:opacity-90 hover:cursor-pointer bg-black h-[40px] md:hidden rounded-[5px]' onClick={() => { setIsOpen(!isOpen) }}>
                             <p className='text-white text-center leading-[40px]'>Detail Item</p>
-                        </div>
+                        </div> */}
 
                         <div
                             className='overflow-hidden transition-all duration-500'
-                            ref={itemTableElement}
-                            style={{
-                                maxHeight: isOpen ? `${itemTableElement.current?.scrollHeight}px` : "0px",
-                            }}
+                            // ref={itemTableElement}
+                            // style={{
+                            //     maxHeight: isOpen ? `${itemTableElement.current?.scrollHeight}px` : "0px",
+                            // }}
                         >
                             <table className="w-full text-left"
 
                             >
                                 <thead>
                                     <tr className="border-b border-black">
-                                        <th className="p-4 text-center w-[20%]">Image</th>
+                                        <th className="p-4 text-center w-[20%]"></th>
                                         <th className="p-4 text-center">Name</th>
 
                                         <th className="p-4 text-center lg:hidden">Description</th>
@@ -198,7 +194,8 @@ const CheckOut = () => {
                                                         <img
                                                             src={item.product.image}
                                                             alt={item.name}
-                                                            className="mx-auto h-[80%] bg-[#EEEEEE]"
+                                                            className="mx-auto h-[80%] bg-[#EEEEEE] hover:cursor-pointer hover:scale-[1.1] transition-all"
+                                                            onClick={() => router.push(`/menu/${item.product._id}`)}
                                                         />
                                                     </td>
                                                     <td className="text-center h-[130px]">{item.product.name}</td>
@@ -395,8 +392,8 @@ const CheckOut = () => {
 
                     </div>
 
-                    <div className=' md:mt-20 mt-10 flex flex-col md:flex-row justify-between w-full md:w-[86%] mx-auto md:mb-10'>
-                        <div className='md:order-none md:w-[40%] w-full order-2 '>
+                    <div className=' lg:mt-20 mt-10 flex flex-col lg:flex-row justify-between w-full lg:w-[86%] mx-auto lg:mb-10'>
+                        <div className='lg:order-none lg:w-[40%] w-full order-2 '>
                             <p className='text-[20px] font-bold text-black mb-4'>Delivery Information: </p>
 
                             <div className="relative my-5">
@@ -428,6 +425,9 @@ const CheckOut = () => {
                                     getAllDistrictProvince(e.target.value)
                                     setAllDistrict([])
                                     setAllWard([])
+                                    
+                                    setDistrict('')
+                                    setWard('')
                                 }}
                             >
                                 <option value="">
@@ -452,6 +452,7 @@ const CheckOut = () => {
                                 onChange={(e) => {
                                     getAllWardDistrict(e.target.value)
                                     setAllWard([])
+                                    setWard('')
                                 }}
                             >
                                 <option value="">
@@ -474,7 +475,7 @@ const CheckOut = () => {
                                 defaultValue=""
                                 className="my-5 border-2 bg-[#f1debc] border-[black] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 max-h-[50px] focus:bg-white"
                                 onChange={(e) => {
-                                    setWard(e.target.value)
+                                    // setWard(e.target.value)
                                 }}
                             >
                                 <option value="">
@@ -523,7 +524,7 @@ const CheckOut = () => {
                                 <div className=' border-b-2 border-[black] border-solid py-3'>
                                     <div className='text-[#808080] flex justify-between mb-2'>
                                         <p>Subtotal</p>
-                                        <p>{cart.items.reduce((total, item) => total + item.price, 0).toLocaleString('vi-VN')} đ</p>
+                                        <p>{cart.items.reduce((total, item) => total + item.price*item.quantity, 0).toLocaleString('vi-VN')} đ</p>
                                     </div>
 
                                     <div className='text-[#808080] flex justify-between'>
@@ -539,7 +540,7 @@ const CheckOut = () => {
 
                             </div>
 
-                            <div className='md:mt-14 my-8'>
+                            <div className='lg:mt-14 my-8'>
                                 <p className='text-[20px] font-bold text-black mb-3'>Select payment method: </p>
 
                                 <div className=' cursor-pointer flex items-center py-3' onClick={() => { setPaymentMethod('momo') }}>
@@ -559,7 +560,7 @@ const CheckOut = () => {
                                 </div>
                             </div>
 
-                            <div className='hidden md:block w-full bg-[#222222] py-3 rounded-[10px] mt-14 cursor-pointer hover:opacity-90'>
+                            <div className='hidden lg:block w-full bg-[#222222] py-3 rounded-[10px] mt-14 cursor-pointer hover:opacity-90'>
                                 <div className='flex justify-center items-center text-white '>
                                     <p className='mr-3'>Payment</p>
                                     <AiOutlineArrowRight />
@@ -569,7 +570,7 @@ const CheckOut = () => {
 
                     </div>
 
-                    <div className='md:hidden my-5 w-full bg-[#222222] py-4 rounded-[10px] mt-1 cursor-pointer hover:opacity-90'>
+                    <div className='lg:hidden my-5 w-full bg-[#222222] py-4 rounded-[10px] mt-1 cursor-pointer hover:opacity-90'>
                         <div className='flex justify-center items-center text-white '>
                             <p className='mr-3'>Payment</p>
                             <AiOutlineArrowRight />
