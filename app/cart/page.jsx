@@ -60,7 +60,7 @@ const Cart = () => {
         } else {
             getCartById(localStorage?.cartId)
         }
-    }, [cart.items.length])
+    }, [cart?.items])
 
     return (
         <div className="mx-auto rounded-lg w-[90%]">

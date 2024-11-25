@@ -1,6 +1,7 @@
 import localFont from "next/font/local";
 import './globals.css';
 import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 import { AppProvider } from "@/context/AppContext";
 
 const geistSans = localFont({
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
         <AppProvider>
           <Navbar />
           <div className="pt-20">{children}</div>
+          <Footer />
         </AppProvider>
       </body>
     </html>

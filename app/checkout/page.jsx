@@ -1,10 +1,13 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { useRouter } from 'next/navigation'
+import { AppContext } from "@/context/AppContext";
 
 const CheckOut = () => {
+    // const {cart} = useContext(AppContext)
+
     const router = useRouter()
 
     const [paymentMethod, setPaymentMethod] = useState('momo')
@@ -95,11 +98,14 @@ const CheckOut = () => {
     const getCart = () => {
         setisLoadingCart(true)
         if (localStorage.getItem("user")) {
-            fetch(`http://localhost:8081/v1/api/user/carts/getCartByUserId/${localStorage.getItem("user")}`)
+            fetch(`http://localhost:8081/v1/api/user/carts/getCartByUserId/${JSON.parse(localStorage.user)._id}`)
                 .then(res => res.json())
-                .then(data => { setCart(data) })
+                .then(data => { setCart(data) 
+                    console.log(data)
+                })
                 .finally(() => {
                     setisLoadingCart(false)
+                    console.log(cart)
                 })
         }
         else {
@@ -116,6 +122,7 @@ const CheckOut = () => {
     useEffect(() => {
         getAllProvince()
 
+        // console.log(cart)
         getCart()
     }, [])
 
