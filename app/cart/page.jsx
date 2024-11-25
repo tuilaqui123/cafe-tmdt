@@ -15,6 +15,8 @@ const Cart = () => {
         return new Intl.NumberFormat('de-DE').format(number)
     }
 
+    console.log(cart)
+
     const stateOrder = [
         { id: 1, name: "Shopping Cart" },
         { id: 2, name: "Payment & Delivery Options" },
@@ -60,7 +62,7 @@ const Cart = () => {
         } else {
             getCartById(localStorage?.cartId)
         }
-    }, [cart?.items.length])
+    }, [cart?.items])
 
     return (
         <div className="mx-auto rounded-lg w-[90%]">
