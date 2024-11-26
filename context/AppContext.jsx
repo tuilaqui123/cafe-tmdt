@@ -163,14 +163,45 @@ export const AppProvider = ({ children }) => {
     }
 
     // check voucher
-    const checkVoucher = async (cartId) => {
+    const checkVoucher = async (voucherId) => {
         if (localStorage.user) {
             const userObj = JSON.parse(localStorage.user)
             const userId = userObj._id
 
             const res = await axios.post('http://localhost:8081/v1/api/user/vouchers/checkVoucher', {
-                id: cartId,
+                id: voucherId,
                 userId: userId,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            return res.data
+        }
+    }
+
+    // get id voucher by name voucher
+    const getIdByName = async (name) => {
+        const res = await axios.post('http://localhost:8081/v1/api/user/vouchers/vouchersToId', {
+            vouchers: [name],
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        return res.data
+    }
+
+    // get total discount
+    const getTotalDiscount = async (total, vouchers) => {
+        if (localStorage.user) {
+            const userObj = JSON.parse(localStorage.user)
+            const userId = userObj._id
+        
+            const res = await axios.post('http://localhost:8081/v1/api/user/vouchers/getTotalUsedVouchers', {
+                userId: userId,
+                total: total,
+                vouchers: vouchers
             }, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -223,8 +254,6 @@ export const AppProvider = ({ children }) => {
         } else {
             getCartById(localStorage?.cartId)
         }
-
-        console.log(cart)
     }, [])
 
     return <AppContext.Provider value={{
@@ -236,7 +265,8 @@ export const AppProvider = ({ children }) => {
         addItemToCart, deleteItemFromCart, addItemToCartNoLog,
         cartNoLog, setCartNoLog, getCartById, totalCartNoLog, addNewCart,
         deleteItemFromCartNoLog,
-        vouchers, setVouchers, checkVoucher
+        vouchers, setVouchers, checkVoucher, getIdByName,
+        getTotalDiscount
     }}>
         {children}
     </AppContext.Provider>

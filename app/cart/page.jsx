@@ -10,14 +10,26 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
 
 const Cart = () => {
-    const {cart, cartNoLog, getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog} = useContext(AppContext)
+    const {cart, cartNoLog, getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog, vouchers, setVouchers, checkVoucher, getIdByName} = useContext(AppContext)
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [itemToDelete, setItemToDelete] = useState(null)
-    const [coupons, setCoupons] = useState([])
     const [currentCoupon, setCurrentCoupon] = useState('')
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('de-DE').format(number)
+    }
+
+    const notifyError = (message) => {
+        toast.error(message, {
+            position: "top-right",
+            autoClose: 700,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        })
     }
 
     const stateOrder = [
@@ -39,16 +51,7 @@ const Cart = () => {
             : await deleteItemFromCartNoLog(itemToDelete.productId, itemToDelete.size)
 
         if (res.success === false) {
-            toast.error(res.message, {
-                position: "top-right",
-                autoClose: 700,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "light",
-            });
+            notifyError(res.message)
         } else {
             toast.success("Xóa sản phẩm thành công", {
                 position: "top-right",
@@ -64,20 +67,44 @@ const Cart = () => {
                 }
             });
         }
-
         setShowConfirmModal(false)
         setItemToDelete(null)
     }
 
-    const handleAddCoupon = () => {
+    const handleCheckVoucher = async () => {
+        if (currentCoupon == "") {
+            toast.warn("Hãy nhập mã voucher", {
+                position: "top-right",
+                autoClose: 700,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+            });
+            return
+        }
+
+        const resVoucherId = await getIdByName(currentCoupon)
+        if (resVoucherId.success==false) {
+            notifyError(resVoucherId.message)
+            return
+        }
+        const isValidVoucher = await checkVoucher(resVoucherId)
+        if (isValidVoucher.success==false) {
+            notifyError(isValidVoucher.message)
+            return
+        }
+
         if (currentCoupon.trim()) {
-            setCoupons([...coupons, currentCoupon.trim()])
-            setCurrentCoupon('');
+            setVouchers([...vouchers, resVoucherId[0]])
+            setCurrentCoupon('')
         }
     }
 
     const handleRemoveCoupon = (index) => {
-        setCoupons(coupons.filter((_, i) => i !== index))
+        setVouchers(vouchers.filter((_, i) => i !== index))
     }
 
     useEffect(() => {
@@ -87,6 +114,10 @@ const Cart = () => {
             getCartById(localStorage?.cartId)
         }
     }, [cart.items?.length])
+
+    useEffect(() => {
+        
+    }, [vouchers])
 
     return (
         <div className="mx-auto rounded-lg w-[90%]">
@@ -204,8 +235,8 @@ const Cart = () => {
                 </div>
             )}
 
-            <div className={`flex ${localStorage.user ? "items-center justify-between" : "justify-end"}`}>   
-                {(cart.items?.length!==0 && localStorage.user) && (
+            <div className={`flex ${(localStorage.user) ? "items-center justify-between" : "justify-end"}`}>   
+                {(cart.items?.length!==0 && localStorage.user ) && (
                     <div className="w-[40%]">
                         <div className="flex items-center gap-3 p-2 border rounded-full shadow-md bg-white mb-4">
                             <FaTicketAlt className="text-gray-400 text-xl" />
@@ -218,18 +249,18 @@ const Cart = () => {
                             />
                             <div className="h-8 border-l border-gray-400"></div>
                             <button 
-                                onClick={handleAddCoupon}
+                                onClick={handleCheckVoucher}
                                 className="px-4 py-2 bg-white text-gray-600 font-medium rounded-lg hover:text-[#A0522D] transition cursor-pointer"
                             >
                                 Check
                             </button>
                         </div>
 
-                        {coupons.length > 0 && (
+                        {vouchers.length > 0 && (
                             <div className="bg-white rounded-lg shadow-md p-4">
-                                <h3 className="text-lg font-semibold mb-3 text-gray-800">Applied Coupons</h3>
+                                <h3 className="text-lg font-semibold mb-3 text-gray-800">Checked Coupons</h3>
                                 <div className="space-y-2">
-                                    {coupons.map((coupon, index) => (
+                                    {vouchers.map((coupon, index) => (
                                         <div 
                                             key={index} 
                                             className="flex items-center justify-between bg-gray-50 p-2 rounded-lg"
