@@ -1,7 +1,7 @@
 "use client"
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
-import { FaPlus, FaMinus } from "react-icons/fa";
+import { FaPlus, FaMinus, FaTrashAlt } from "react-icons/fa";
 import { useRouter } from 'next/navigation'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
@@ -36,6 +36,8 @@ const CheckOut = () => {
     const [totalPrice, setTotalPrice] = useState(0)
     const [subTotal, setSubTotal] = useState(0)
 
+    const [itemToDelete, setItemToDelete] = useState('')
+
     const [allProvince, setAllProvince] = useState([])
     const [allDistrict, setAllDistrict] = useState([])
     const [allWard, setAllWard] = useState([])
@@ -44,6 +46,8 @@ const CheckOut = () => {
     const [isLoadingAllPrvince, setisLoadingAllPrvince] = useState(true)
     const [isLoadingCart, setisLoadingCart] = useState(true)
     const [isLoadingGetTotalCartAfterDiscount, setisLoadingGetTotalCartAfterDiscount] = useState(true)
+
+    const [showConfirmModal, setShowConfirmModal] = useState(false)
 
     const getAllProvince = () => {
         fetch("https://provinces.open-api.vn/api/p/")
@@ -71,8 +75,19 @@ const CheckOut = () => {
     }
 
     const addOrder = () => {
+        for (const item of cart.items) {
+            if (item.quantity == '') {
+                alert("Vui lòng nhập số lượng của sản phẩm")
+
+                return
+            }
+        }
+
+        console.log(name, phone, address, "hehe", ward, district, province)
+        console.log(ward)
+        console.log(province, 'kk')
+
         if (localStorage.user) {
-            console.log("haha")
             fetch(`http://localhost:8081/v1/api/user/orders`, {
                 method: 'POST',
                 headers: {
@@ -84,7 +99,7 @@ const CheckOut = () => {
                     voucher: discounts,
                     paymentStatus: "paid",
                     paymentMethod: "momo",
-                    address: address + " " + ward + " " + + district + " " + + province,
+                    address: address + " " + ward + " " + + district + " " + province,
                     note: note
                 })
             })
@@ -134,7 +149,7 @@ const CheckOut = () => {
                     paymentMethod: "momo",
                     name: name,
                     phone: phone,
-                    address: address + " " + ward + " " + + district + " " + + province,
+                    address: address + " " + ward + " " + district + " " + province,
                     note: note
                 })
             })
@@ -230,6 +245,11 @@ const CheckOut = () => {
             })
     }
 
+    const handleDeleteClick = (index) => {
+        setItemToDelete(index)
+        setShowConfirmModal(true)
+    };
+
     useEffect(() => {
         getAllProvince()
 
@@ -288,6 +308,36 @@ const CheckOut = () => {
             {
                 !isLoading ? <div className='lg:mx-20 mx-4 select-none'>
                     <ToastContainer />
+
+                    {showConfirmModal && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                            <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                                <h3 className="text-lg font-semibold mb-4">Xác nhận xóa</h3>
+                                <p className="text-gray-600 mb-6">
+                                    Bạn có chắc chắn muốn xóa sản phẩm này?
+                                </p>
+                                <div className="flex justify-end gap-4">
+                                    <button
+                                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+                                        onClick={() => setShowConfirmModal(false)}
+                                    >
+                                        Hủy
+                                    </button>
+                                    <button
+                                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                                        onClick={() => {
+                                            cart.items.splice(itemToDelete, 1)
+
+                                            setShowConfirmModal(false)
+                                        }}
+                                    >
+                                        Xóa
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <div className='flex mt-5 items-center hover:cursor-pointer' onClick={() => router.push('/cart')}>
                         <AiOutlineArrowLeft />
                         <p className=' text-[15px] text-black ml-2'>Back to cart</p>
@@ -320,6 +370,7 @@ const CheckOut = () => {
                                         <th className="p-4 text-center lg:table-cell hidden">Size</th>
                                         <th className="p-4 text-center lg:table-cell hidden">Quantity</th>
                                         <th className="p-4 text-center lg:table-cell hidden">Price</th>
+                                        <th className="p-4 text-center"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -348,17 +399,23 @@ const CheckOut = () => {
                                                                 className='flex justify-center items-center bg-[black] w-12 h-10 text-center leading-[30px] rounded-[5px] hover:cursor-pointer hover:opacity-70'
                                                                 onClick={() => {
                                                                     if (item.quantity !== '') {
-                                                                        const updatedData = {
-                                                                            ...cart,
-                                                                            items: cart.items.map((i) => {
-                                                                                if (item.product._id === i.product._id && i.quantity > 0) {
-                                                                                    return { ...i, quantity: i.quantity - 1 };
-                                                                                }
-                                                                                return i;
-                                                                            }),
-                                                                        };
+                                                                        if (item.quantity > 1) {
 
-                                                                        setCart(updatedData);
+                                                                            const updatedData = {
+                                                                                ...cart,
+                                                                                items: cart.items.map((i) => {
+                                                                                    if (item.product._id === i.product._id && i.quantity > 0) {
+                                                                                        return { ...i, quantity: i.quantity - 1 };
+                                                                                    }
+                                                                                    return i;
+                                                                                }),
+                                                                            };
+
+                                                                            setCart(updatedData);
+                                                                        }
+                                                                        else {
+                                                                            handleDeleteClick(index)
+                                                                        }
                                                                     }
                                                                 }}
                                                             >
@@ -371,7 +428,7 @@ const CheckOut = () => {
                                                                 value={item.quantity}
                                                                 onChange={(e) => {
                                                                     const value = e.target.value;
-                                                                    if (/^\d*$/.test(value) && (value === "" || Number(value) >= 0)) {
+                                                                    if (/^(?!0$)\d*$/.test(value) && (value === "" || Number(value) >= 0)) {
                                                                         if (value === '' || Number(value) < 0) {
                                                                             e.target.style.borderColor = "red";
                                                                             e.target.style.borderWidth = "2px";
@@ -436,17 +493,23 @@ const CheckOut = () => {
                                                             className='flex justify-center items-center bg-[black] w-8 h-8 text-center leading-[30px] rounded-[5px] hover:cursor-pointer hover:opacity-70'
                                                             onClick={() => {
                                                                 if (item.quantity !== '') {
-                                                                    const updatedData = {
-                                                                        ...cart,
-                                                                        items: cart.items.map((i) => {
-                                                                            if (item.product._id === i.product._id && i.quantity > 0) {
-                                                                                return { ...i, quantity: i.quantity - 1 };
-                                                                            }
-                                                                            return i;
-                                                                        }),
-                                                                    };
+                                                                    if (item.quantity > 1) {
 
-                                                                    setCart(updatedData);
+                                                                        const updatedData = {
+                                                                            ...cart,
+                                                                            items: cart.items.map((i) => {
+                                                                                if (item.product._id === i.product._id && i.quantity > 0) {
+                                                                                    return { ...i, quantity: i.quantity - 1 };
+                                                                                }
+                                                                                return i;
+                                                                            }),
+                                                                        };
+
+                                                                        setCart(updatedData);
+                                                                    }
+                                                                    else {
+                                                                        handleDeleteClick(index)
+                                                                    }
                                                                 }
                                                             }}
                                                         >
@@ -460,7 +523,7 @@ const CheckOut = () => {
                                                             onChange={(e) => {
                                                                 const value = e.target.value;
 
-                                                                if (/^\d*$/.test(value) && (value === "" || Number(value) >= 0)) {
+                                                                if (/^(?!0$)\d*$/.test(value) && (value === "" || Number(value) >= 0)) {
                                                                     if (value === '' || Number(value) < 0) {
                                                                         e.target.style.borderColor = "red";
                                                                         e.target.style.borderWidth = "2px";
@@ -519,6 +582,15 @@ const CheckOut = () => {
                                                         </div>
                                                     </td>
                                                     <td className="text-center h-[130px] lg:table-cell hidden">{item.price.toLocaleString('vi-VN')} đ</td>
+
+                                                    <td className="text-center h-[130px]">
+                                                        <button
+                                                            onClick={() => handleDeleteClick(index)}
+                                                            className="text-red-500 hover:text-red-700 transition-colors"
+                                                        >
+                                                            <FaTrashAlt />
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                             )
                                         })
@@ -559,12 +631,17 @@ const CheckOut = () => {
                                 defaultValue=""
                                 className="my-5 border-2 bg-[#f1debc] border-[black] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 max-h-[50px] focus:bg-white"
                                 onChange={(e) => {
-                                    getAllDistrictProvince(e.target.value)
-                                    setAllDistrict([])
-                                    setAllWard([])
+                                    const selectedProvince = allProvince.find(p => p.code == e.target.value)
 
-                                    setDistrict('')
-                                    setWard('')
+                                    if (selectedProvince) {
+                                        setProvince(selectedProvince.name);
+                                    }
+
+                                    getAllDistrictProvince(e.target.value);
+                                    setAllDistrict([]);
+                                    setAllWard([]);
+                                    setDistrict('');
+                                    setWard('');
                                 }}
                             >
                                 <option value="">
@@ -573,9 +650,7 @@ const CheckOut = () => {
                                 {
                                     allProvince.map((p, index) => {
                                         return (
-                                            <option key={index} value={p.code} onClick={() => {
-                                                setProvince(p.name)
-                                            }}>
+                                            <option key={index} value={p.code}>
                                                 {p.name}
                                             </option>
                                         )
@@ -587,6 +662,12 @@ const CheckOut = () => {
                                 defaultValue=""
                                 className="my-5 border-2 bg-[#f1debc] border-[black] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 max-h-[50px] focus:bg-white"
                                 onChange={(e) => {
+                                    const selectedDistrict = allDistrict.find(p => p.code == e.target.value)
+
+                                    if (selectedDistrict) {
+                                        setDistrict(selectedDistrict.name);
+                                    }
+
                                     getAllWardDistrict(e.target.value)
                                     setAllWard([])
                                     setWard('')
@@ -598,9 +679,7 @@ const CheckOut = () => {
                                 {
                                     allDistrict.map((p, index) => {
                                         return (
-                                            <option key={index} value={p.code} onClick={() => {
-                                                setDistrict(p.name)
-                                            }}>
+                                            <option key={index} value={p.code}>
                                                 {p.name}
                                             </option>
                                         )
@@ -612,7 +691,11 @@ const CheckOut = () => {
                                 defaultValue=""
                                 className="my-5 border-2 bg-[#f1debc] border-[black] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 max-h-[50px] focus:bg-white"
                                 onChange={(e) => {
-                                    // setWard(e.target.value)
+                                    const selectedWard = allWard.find(p => p.code == e.target.value)
+
+                                    if (selectedWard) {
+                                        setWard(selectedWard.name);
+                                    }
                                 }}
                             >
                                 <option value="">
