@@ -1,9 +1,11 @@
 "use client"
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { usePathname } from "next/navigation";
 import { MdLogout } from "react-icons/md";
 import { FaCartShopping } from "react-icons/fa6";
+import { IoIosArrowDown } from "react-icons/io";
+import { AppContext } from "@/context/AppContext";
 
 const navList = [
   {
@@ -24,8 +26,10 @@ const navList = [
 ];
 
 const Navbar = () => {
+  const { categories } = useContext(AppContext)
   const [selectNav, setSelectNav] = useState(null)
   const [user, setUser] = useState(null)
+  const dropdownRef = useRef(null)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -66,10 +70,46 @@ const Navbar = () => {
         <ul className="flex space-x-6 text-[#4c2113] font-extralight">
           {navList.map((value) => (
             <li key={value.id}>
-              <Link href={value.href}>
-                <p className={`hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav===value.id || isActive(value.href)) ? "bg-[#A0522D] text-white" : ""}`}
-                    onClick={() => setSelectNav(value.id)}>{value.name}</p>
-              </Link>
+              {value.name === "Menu" ? (
+                <div className="relative group" ref={dropdownRef}>
+                  <button
+                    className={`flex items-center hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav === value.id || isActive(value.href))? "bg-[#A0522D] text-white" : ""}`}
+                  >
+                    {value.name}
+                    <IoIosArrowDown className="ml-1 transform transition-transform duration-300 group-hover:rotate-180" />
+                  </button>
+
+                  <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <div className="py-1">
+                      <Link href="/menu">
+                        <p className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
+                          All Products
+                        </p>
+                      </Link>
+                      {categories.map((category) => (
+                        <Link 
+                          key={category._id} 
+                          href={`/menu/category/${category._id.toLowerCase().replace(/\s+/g, '-')}`}
+                          onClick={() => setSelectNav(value.id)}
+                        >
+                          <p className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
+                            {category._id}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Link href={value.href}>
+                  <p
+                    className={`hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav === value.id || isActive(value.href)) ? "bg-[#A0522D] text-white" : ""}`}
+                    onClick={() => setSelectNav(value.id)}
+                  >
+                    {value.name}
+                  </p>
+                </Link>
+              )}
             </li>
           ))}
         </ul>
@@ -95,7 +135,7 @@ const Navbar = () => {
               </Link>
             </button>
             <Link href="/cart">
-              <FaCartShopping className="text-black" onClick={() => setSelectNav(3)}/> 
+              <FaCartShopping className="text-black" onClick={() => setSelectNav(navList.length)}/> 
             </Link>
           </div>
         )}
