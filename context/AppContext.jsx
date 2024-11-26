@@ -223,6 +223,8 @@ export const AppProvider = ({ children }) => {
         } else {
             getCartById(localStorage?.cartId)
         }
+
+        console.log(cart)
     }, [])
 
     return <AppContext.Provider value={{
