@@ -126,7 +126,7 @@ export default function CardItem1({id, image, name, description, discount, type}
                 >
                   {type.map((ele, index) => (
                     <option key={index} value={ele.size}>
-                      {ele.size} - ({formatNumber(ele.price)}đ)
+                      {ele.size} - ({formatNumber(ele.price - (ele.price*discount)/100)}đ)
                     </option>
                   ))}
                 </select>

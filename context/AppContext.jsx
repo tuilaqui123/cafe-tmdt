@@ -14,6 +14,7 @@ export const AppProvider = ({ children }) => {
     const [totalCart, setTotalCart] = useState(null)
     const [cartNoLog, setCartNoLog] = useState([])
     const [totalCartNoLog, setTotalCartNoLog] = useState(null)
+    const [vouchers, setVouchers] = useState([])
     const [errorSignup, setErrorSignup] = useState(null)
 
     // sign up
@@ -105,7 +106,6 @@ export const AppProvider = ({ children }) => {
 
     // add item to cart
     const addItemToCart = async (productId, size, quantity) => {
-        console.log(productId)
         if (localStorage.user) {
             const userObj = JSON.parse(localStorage.user)
             const userId = userObj._id
@@ -120,7 +120,6 @@ export const AppProvider = ({ children }) => {
                     'Content-Type': 'application/json'
                 }
             })
-            console.log(res.data)
             return res.data
         }
     }
@@ -144,6 +143,44 @@ export const AppProvider = ({ children }) => {
             return res.data
         }
     }
+
+    // delete item out of cart (no login)
+    const deleteItemFromCartNoLog = async (productId, size) => {
+        if (localStorage.cartId) {
+            const res = await axios.delete('http://localhost:8081/v1/api/user/carts/deleteItemCartNoLogin', {
+                data: {
+                    cartId: localStorage.cartId,
+                    productId: productId,
+                    size: size
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            console.log(res.data)
+            return res.data
+        }
+    }
+
+    // check voucher
+    const checkVoucher = async (cartId) => {
+        if (localStorage.user) {
+            const userObj = JSON.parse(localStorage.user)
+            const userId = userObj._id
+
+            const res = await axios.post('http://localhost:8081/v1/api/user/vouchers/checkVoucher', {
+                id: cartId,
+                userId: userId,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            console.log(res.data)
+            return res.data
+        }
+    }
+
     // get all products
     const fetchProduct = () => {
         axios.get('http://localhost:8081/v1/api/user/products')
@@ -196,6 +233,8 @@ export const AppProvider = ({ children }) => {
         cart, setCart, getCartByUserId, totalCart,
         addItemToCart, deleteItemFromCart, addItemToCartNoLog,
         cartNoLog, setCartNoLog, getCartById, totalCartNoLog, addNewCart,
+        deleteItemFromCartNoLog,
+        vouchers, setVouchers, checkVoucher
     }}>
         {children}
     </AppContext.Provider>

@@ -1,5 +1,5 @@
 "use client"
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useContext } from 'react';
@@ -10,7 +10,12 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
 
 const Cart = () => {
-    const {cart, cartNoLog, getCartByUserId, getCartById, deleteItemFromCart} = useContext(AppContext)
+    const {cart, cartNoLog, getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog} = useContext(AppContext)
+    const [showConfirmModal, setShowConfirmModal] = useState(false)
+    const [itemToDelete, setItemToDelete] = useState(null)
+    const [coupons, setCoupons] = useState([])
+    const [currentCoupon, setCurrentCoupon] = useState('')
+
     const formatNumber = (number) => {
         return new Intl.NumberFormat('de-DE').format(number)
     }
@@ -21,10 +26,19 @@ const Cart = () => {
         { id: 3, name: "Order Received" },
     ]
 
-    const handleDeleteItem = async (productId, size) => {
-        const res = await deleteItemFromCart(productId, size)
+    const handleDeleteClick = (productId, size) => {
+        setItemToDelete({ productId, size })
+        setShowConfirmModal(true)
+    };
 
-        if (res.success===false) {
+    const handleConfirmDelete = async () => {
+        if (!itemToDelete) return
+
+        const res = (localStorage.user) 
+            ? await deleteItemFromCart(itemToDelete.productId, itemToDelete.size) 
+            : await deleteItemFromCartNoLog(itemToDelete.productId, itemToDelete.size)
+
+        if (res.success === false) {
             toast.error(res.message, {
                 position: "top-right",
                 autoClose: 700,
@@ -34,24 +48,36 @@ const Cart = () => {
                 draggable: true,
                 progress: undefined,
                 theme: "light",
-            })
-
-            return
+            });
+        } else {
+            toast.success("Xóa sản phẩm thành công", {
+                position: "top-right",
+                autoClose: 700,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                onClose: () => {
+                    (localStorage.user) ? getCartByUserId() : getCartById(localStorage?.cartId)
+                }
+            });
         }
 
-        toast.success("Xóa sản phẩm thành công", {
-            position: "top-right",
-            autoClose: 700,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            onClose: () => {
-                getCartByUserId()
-            }
-        })
+        setShowConfirmModal(false)
+        setItemToDelete(null)
+    }
+
+    const handleAddCoupon = () => {
+        if (currentCoupon.trim()) {
+            setCoupons([...coupons, currentCoupon.trim()])
+            setCurrentCoupon('');
+        }
+    }
+
+    const handleRemoveCoupon = (index) => {
+        setCoupons(coupons.filter((_, i) => i !== index))
     }
 
     useEffect(() => {
@@ -64,7 +90,7 @@ const Cart = () => {
 
     return (
         <div className="mx-auto rounded-lg w-[90%]">
-        <ToastContainer />
+            <ToastContainer />
             {(cart.items?.length!==0 && cartNoLog.items?.length!==0) ? (
                 <div>
                     <div className='flex gap-3 justify-center cursor-pointer mb-8'>
@@ -117,7 +143,7 @@ const Cart = () => {
                                             {item.product.name}
                                     </td>
                                     <td className="p-2">{item.size}</td>
-                                    <td className="p-2">{formatNumber(item.price)} đ</td>
+                                    <td className="p-2">{formatNumber(item.price - (item.price*item.discount)/100)} đ</td>
                                     <td className="p-2">
                                         <input
                                             type="number"
@@ -127,11 +153,11 @@ const Cart = () => {
                                             onChange={(e) => updateQuantity(item.id, e.target.value)}
                                         />
                                     </td>
-                                    <td className="p-2">{formatNumber(item.price * item.quantity)} đ</td>
+                                    <td className="p-2">{formatNumber((item.price - (item.price*item.discount)/100) * item.quantity)} đ</td>
                                     <td className="p-2">
                                         <button
                                             className="text-red-500 hover:text-red-700"
-                                            onClick={() => handleDeleteItem(item.product._id, item.size)}
+                                            onClick={() => handleDeleteClick(item.product._id, item.size)}
                                         >
                                             <FaTrashAlt className='text-xl' />
                                         </button>
@@ -153,35 +179,131 @@ const Cart = () => {
                 </div>
             )}
 
-            {/* Coupon Input */}
-            {/* <div className="flex items-center gap-4 mb-6">
-                <input
-                type="text"
-                placeholder="Coupon Code"
-                className="flex-1 border border-gray-300 p-2 rounded"
-                />
-                <button className="bg-yellow-500 text-white px-4 py-2 rounded">
-                Apply Coupon
-                </button>
-            </div> */}
-            {cart.items?.length!==0 && (
-                <div className="flex items-center gap-3 p-2 border rounded-full shadow-md bg-white w-[40%]">
-                    <FaTicketAlt className="text-gray-400 text-xl" />
-                    <input
-                        type="text"
-                        placeholder="Coupon Code"
-                        className="flex-1 border-none outline-none text-gray-500 placeholder-gray-400"
-                    />
-
-                    <div className="h-8 border-l border-gray-400"></div>
-
-                    <div className="px-4 py-2 bg-white text-gray-600 font-medium rounded-lg hover:text-[#A0522D] transition cursor-pointer">
-                        Apply Coupon
+            {showConfirmModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                    <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                        <h3 className="text-lg font-semibold mb-4">Xác nhận xóa</h3>
+                        <p className="text-gray-600 mb-6">
+                            Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?
+                        </p>
+                        <div className="flex justify-end gap-4">
+                            <button
+                                className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
+                                onClick={() => setShowConfirmModal(false)}
+                            >
+                                Hủy
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                                onClick={handleConfirmDelete}
+                            >
+                                Xóa
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
-            {/* <CartTotals total={calculateTotal()} /> */}
-    </div>
+
+            <div className={`flex ${localStorage.user ? "items-center justify-between" : "justify-end"}`}>   
+                {(cart.items?.length!==0 && localStorage.user) && (
+                    <div className="w-[40%]">
+                        <div className="flex items-center gap-3 p-2 border rounded-full shadow-md bg-white mb-4">
+                            <FaTicketAlt className="text-gray-400 text-xl" />
+                            <input
+                                type="text"
+                                value={currentCoupon}
+                                onChange={(e) => setCurrentCoupon(e.target.value)}
+                                placeholder="Coupon Code"
+                                className="flex-1 border-none outline-none text-gray-500 placeholder-gray-400"
+                            />
+                            <div className="h-8 border-l border-gray-400"></div>
+                            <button 
+                                onClick={handleAddCoupon}
+                                className="px-4 py-2 bg-white text-gray-600 font-medium rounded-lg hover:text-[#A0522D] transition cursor-pointer"
+                            >
+                                Check
+                            </button>
+                        </div>
+
+                        {coupons.length > 0 && (
+                            <div className="bg-white rounded-lg shadow-md p-4">
+                                <h3 className="text-lg font-semibold mb-3 text-gray-800">Applied Coupons</h3>
+                                <div className="space-y-2">
+                                    {coupons.map((coupon, index) => (
+                                        <div 
+                                            key={index} 
+                                            className="flex items-center justify-between bg-gray-50 p-2 rounded-lg"
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <FaTicketAlt className="text-[#A0522D]" />
+                                                <span className="text-gray-700">{coupon}</span>
+                                            </div>
+                                            <button
+                                                onClick={() => handleRemoveCoupon(index)}
+                                                className="text-red-500 hover:text-red-700 transition-colors"
+                                            >
+                                                <FaTrashAlt />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="mt-3 pt-3 border-t border-gray-200">
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-gray-600">Total Savings:</span>
+                                        <span className="text-green-600 font-semibold">
+                                            {formatNumber(0)} đ
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                <div className="w-1/2">
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                        <h2 className="text-xl font-bold mb-4 text-gray-800">Cart Summary</h2>
+
+                        <div className="space-y-3 mb-4">
+                            <div className="flex justify-between text-gray-600">
+                                <span>Subtotal</span>
+                                <span>{formatNumber(cart.total || cartNoLog.total)} đ</span>
+                            </div>
+                            <div className="flex justify-between text-gray-600">
+                                <span>Shipping</span>
+                                <span>Free</span>
+                            </div>
+                            <div className="flex justify-between text-green-600">
+                                <span>Discount</span>
+                                {/* <span>- {formatNumber(discount)} đ</span> */}
+                            </div>
+                        </div>
+
+                        <div className="border-t border-gray-200 pt-4 mb-6">
+                            <div className="flex justify-between font-bold text-lg">
+                                <span>Total</span>
+                                <span className="text-[#A0522D]">{formatNumber(cart.total || cartNoLog.total)} đ</span>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <Link
+                                href="/menu"
+                                className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 text-center rounded-lg font-bold hover:bg-gray-300 transition-colors"
+                            >
+                                Continue Shopping
+                            </Link>
+                            <Link
+                                href="/checkout"
+                                className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold hover:bg-[#8B4513] transition-colors"
+                            >
+                                Checkout
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     )
 }
 

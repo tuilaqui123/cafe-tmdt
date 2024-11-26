@@ -23,7 +23,6 @@ export default function CategoryPage({ params }) {
     if (category) {
       const productsArray = Array.isArray(category.products) ? category.products : []
       setCategoryProducts(productsArray)
-      console.log("cate page 1: " + JSON.stringify(category))
       setActiveCategory(category._id)
     } else {
       setCategoryProducts([])
@@ -34,7 +33,6 @@ export default function CategoryPage({ params }) {
   const indexOfFirstProduct = indexOfLastProduct - PRODUCTS_PER_PAGE
   const currentProducts = categoryProducts.length > 0 ? categoryProducts.slice(indexOfFirstProduct, indexOfLastProduct) : []
   const totalPages = Math.ceil(categoryProducts.length / PRODUCTS_PER_PAGE)
-  console.log("cate page: " + JSON.stringify(currentProducts))
   
   const handleCategoryChange = (category) => {
     const categoryPath = category._id.toLowerCase().replace(/\s+/g, '-')
