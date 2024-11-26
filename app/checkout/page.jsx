@@ -3,10 +3,15 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { FaPlus, FaMinus } from "react-icons/fa";
 import { useRouter } from 'next/navigation'
-import { AppContext } from "@/context/AppContext";
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer, toast } from "react-toastify";
 
 const CheckOut = () => {
-    // const {cart} = useContext(AppContext)
+    let discounts = [
+        // "6744a39d390acb8b17458696",
+        "6744a3c2390acb8b1745869b",
+        // "6744a355390acb8b17458682"
+    ]
 
     const router = useRouter()
 
@@ -28,6 +33,8 @@ const CheckOut = () => {
 
     const [isOpen, setIsOpen] = useState(true)
 
+    const [totalPrice, setTotalPrice] = useState(0)
+    const [subTotal, setSubTotal] = useState(0)
 
     const [allProvince, setAllProvince] = useState([])
     const [allDistrict, setAllDistrict] = useState([])
@@ -36,6 +43,7 @@ const CheckOut = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [isLoadingAllPrvince, setisLoadingAllPrvince] = useState(true)
     const [isLoadingCart, setisLoadingCart] = useState(true)
+    const [isLoadingGetTotalCartAfterDiscount, setisLoadingGetTotalCartAfterDiscount] = useState(true)
 
     const getAllProvince = () => {
         fetch("https://provinces.open-api.vn/api/p/")
@@ -63,68 +71,189 @@ const CheckOut = () => {
     }
 
     const addOrder = () => {
-        if (localStorage.getItem("user")) {
+        if (localStorage.user) {
+            console.log("haha")
             fetch(`http://localhost:8081/v1/api/user/orders`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    user: localStorage.getItem("user"),
+                    user: JSON.parse(localStorage.user)._id,
                     items: cart.items,
-                    voucher: [],
+                    voucher: discounts,
                     paymentStatus: "paid",
                     paymentMethod: "momo",
+                    address: address + " " + ward + " " + + district + " " + + province,
                     note: note
                 })
             })
-                .then(() => {
-                    getAllFavoriteFilms()
+                .then(res => res.json())
+                .then((data) => {
+                    console.log(data)
+                    if (data.success === false) {
+                        toast.error(data.message, {
+                            position: "top-right",
+                            autoClose: 700,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                        })
+
+                        return
+                    }
+
+                    toast.success("Thêm hóa đơn thành công", {
+                        position: "top-right",
+                        autoClose: 700,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    })
+                    router.push('/cart')
                 })
                 .catch((e) => {
                     console.log(e)
                 })
         }
         else {
-            fetch(`http://localhost:8081/v1/api/user/carts/getCartById/${localStorage.getItem("cart")}`)
+            fetch(`http://localhost:8081/v1/api/user/orders`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    items: cart.items,
+                    paymentStatus: "paid",
+                    paymentMethod: "momo",
+                    name: name,
+                    phone: phone,
+                    address: address + " " + ward + " " + + district + " " + + province,
+                    note: note
+                })
+            })
                 .then(res => res.json())
-                .then(data => { setCart(data) })
-                .finally(() => {
-                    setisLoadingCart(false)
+                .then((data) => {
+                    if (data.success === false) {
+                        toast.error(data.message, {
+                            position: "top-right",
+                            autoClose: 700,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                        })
+
+                        return
+                    }
+
+                    toast.success("Thêm hóa đơn thành công", {
+                        position: "top-right",
+                        autoClose: 700,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        onClose: () => {
+                            router.push('/cart')
+                        }
+                    })
+                })
+                .catch((e) => {
+                    console.log(e)
                 })
         }
     }
 
     const getCart = () => {
         setisLoadingCart(true)
-        if (localStorage.getItem("user")) {
+        if (localStorage.user) {
             fetch(`http://localhost:8081/v1/api/user/carts/getCartByUserId/${JSON.parse(localStorage.user)._id}`)
                 .then(res => res.json())
-                .then(data => { setCart(data) 
-                    console.log(data)
+                .then(data => {
+                    setCart(data)
                 })
                 .finally(() => {
                     setisLoadingCart(false)
-                    console.log(cart)
                 })
         }
         else {
-            fetch(`http://localhost:8081/v1/api/user/carts/getCartById/${localStorage.getItem("cart")}`)
+            fetch(`http://localhost:8081/v1/api/user/carts/getCartById/${localStorage.getItem("cartId")}`)
                 .then(res => res.json())
-                .then(data => { setCart(data) })
+                .then(data => {
+                    setCart(data)
+                    console.log(data)
+                })
                 .finally(() => {
                     setisLoadingCart(false)
                 })
         }
     }
 
+    const getTotalAfterDiscount = () => {
+        setisLoadingGetTotalCartAfterDiscount(true)
+        fetch(`http://localhost:8081/v1/api/user/vouchers/getTotalUsedVouchers`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                userId: JSON.parse(localStorage.user)._id,
+                total: cart.items.reduce((total, item) => total + item.price * (1 - item.discount / 100) * item.quantity, 0),
+                vouchers: discounts,
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                setTotalPrice(data.total)
+            })
+            .finally(() => {
+                setisLoadingGetTotalCartAfterDiscount(false)
+
+                const calculatedSubtotal = cart.items.reduce(
+                    (total, item) =>
+                        total + item.price * (1 - item.discount / 100) * item.quantity,
+                    0
+                );
+                setSubTotal(calculatedSubtotal);
+            })
+    }
 
     useEffect(() => {
         getAllProvince()
 
-        // console.log(cart)
         getCart()
     }, [])
+
+    useEffect(() => {
+        if (!isLoading) {
+            if (localStorage.user) {
+                getTotalAfterDiscount()
+            }
+            else {
+                const calculatedSubtotal = cart.items.reduce(
+                    (total, item) =>
+                        total + item.price * (1 - item.discount / 100) * item.quantity,
+                    0
+                );
+
+                setSubTotal(calculatedSubtotal);
+                setTotalPrice(calculatedSubtotal)
+            }
+        }
+    }, [cart, isLoading])
+
 
     useEffect(() => {
         const handleIsLoanding = () => {
@@ -138,26 +267,27 @@ const CheckOut = () => {
         handleIsLoanding()
     }, [isLoadingAllPrvince, isLoadingCart])
 
-    useEffect(() => {
-        if (!isLoading) {
-            const handleWindowResize = () => {
-                if (window.innerWidth > 768) {
-                    setIsOpen(true)
-                }
-            }
+    // useEffect(() => {
+    //     if (!isLoading) {
+    //         const handleWindowResize = () => {
+    //             if (window.innerWidth > 768) {
+    //                 setIsOpen(true)
+    //             }
+    //         }
 
-            window.addEventListener('resize', handleWindowResize)
+    //         window.addEventListener('resize', handleWindowResize)
 
-            return () => {
-                window.removeEventListener('resize', handleWindowResize)
-            }
-        }
-    }, [isLoading])
+    //         return () => {
+    //             window.removeEventListener('resize', handleWindowResize)
+    //         }
+    //     }
+    // }, [isLoading])
 
     return (
         <>
             {
                 !isLoading ? <div className='lg:mx-20 mx-4 select-none'>
+                    <ToastContainer />
                     <div className='flex mt-5 items-center hover:cursor-pointer' onClick={() => router.push('/cart')}>
                         <AiOutlineArrowLeft />
                         <p className=' text-[15px] text-black ml-2'>Back to cart</p>
@@ -172,10 +302,10 @@ const CheckOut = () => {
 
                         <div
                             className='overflow-hidden transition-all duration-500'
-                            // ref={itemTableElement}
-                            // style={{
-                            //     maxHeight: isOpen ? `${itemTableElement.current?.scrollHeight}px` : "0px",
-                            // }}
+                        // ref={itemTableElement}
+                        // style={{
+                        //     maxHeight: isOpen ? `${itemTableElement.current?.scrollHeight}px` : "0px",
+                        // }}
                         >
                             <table className="w-full text-left"
 
@@ -242,7 +372,7 @@ const CheckOut = () => {
                                                                 onChange={(e) => {
                                                                     const value = e.target.value;
                                                                     if (/^\d*$/.test(value) && (value === "" || Number(value) >= 0)) {
-                                                                        if (!value || Number(value) <= 0) {
+                                                                        if (value === '' || Number(value) < 0) {
                                                                             e.target.style.borderColor = "red";
                                                                             e.target.style.borderWidth = "2px";
                                                                             e.target.style.borderStyle = "solid";
@@ -331,7 +461,7 @@ const CheckOut = () => {
                                                                 const value = e.target.value;
 
                                                                 if (/^\d*$/.test(value) && (value === "" || Number(value) >= 0)) {
-                                                                    if (!value || Number(value) <= 0) {
+                                                                    if (value === '' || Number(value) < 0) {
                                                                         e.target.style.borderColor = "red";
                                                                         e.target.style.borderWidth = "2px";
                                                                         e.target.style.borderStyle = "solid";
@@ -432,7 +562,7 @@ const CheckOut = () => {
                                     getAllDistrictProvince(e.target.value)
                                     setAllDistrict([])
                                     setAllWard([])
-                                    
+
                                     setDistrict('')
                                     setWard('')
                                 }}
@@ -531,18 +661,18 @@ const CheckOut = () => {
                                 <div className=' border-b-2 border-[black] border-solid py-3'>
                                     <div className='text-[#808080] flex justify-between mb-2'>
                                         <p>Subtotal</p>
-                                        <p>{cart.items.reduce((total, item) => total + item.price*item.quantity, 0).toLocaleString('vi-VN')} đ</p>
+                                        <p>{subTotal.toLocaleString('vi-VN')} đ</p>
                                     </div>
 
                                     <div className='text-[#808080] flex justify-between'>
                                         <p>Discount</p>
-                                        <p>200000</p>
+                                        <p>{(subTotal - totalPrice).toLocaleString('vi-VN')} đ</p>
                                     </div>
                                 </div>
 
                                 <div className='border-b-2 border-[black] border-solid flex justify-between py-3 font-bold'>
                                     <p className='text-[18px] text-black  '>Total: </p>
-                                    <p className='text-black'>50.000.000 đ</p>
+                                    <p className='text-black'>{totalPrice.toLocaleString('vi-VN')} đ</p>
                                 </div>
 
                             </div>
@@ -568,7 +698,10 @@ const CheckOut = () => {
                             </div>
 
                             <div className='hidden lg:block w-full bg-[#222222] py-3 rounded-[10px] mt-14 cursor-pointer hover:opacity-90'>
-                                <div className='flex justify-center items-center text-white '>
+                                <div
+                                    className='flex justify-center items-center text-white '
+                                    onClick={() => { addOrder() }}
+                                >
                                     <p className='mr-3'>Payment</p>
                                     <AiOutlineArrowRight />
                                 </div>
@@ -578,7 +711,10 @@ const CheckOut = () => {
                     </div>
 
                     <div className='lg:hidden my-5 w-full bg-[#222222] py-4 rounded-[10px] mt-1 cursor-pointer hover:opacity-90'>
-                        <div className='flex justify-center items-center text-white '>
+                        <div
+                            className='flex justify-center items-center text-white '
+                            onClick={() => { addOrder() }}
+                        >
                             <p className='mr-3'>Payment</p>
                             <AiOutlineArrowRight />
                         </div>
