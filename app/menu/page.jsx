@@ -25,9 +25,10 @@ export default function Page() {
     router.push(`/menu/category/${categoryPath}`)
   }
 
+  console.log("menu page: ",currentProducts)
   const toggleCategoryVisibility = () => setIsCategoryOpen((prev) => !prev)
   const paginate = (pageNumber) => setCurrentPage(pageNumber)
-
+  
   useEffect(() => {
     getCategoríes()
   }, [])

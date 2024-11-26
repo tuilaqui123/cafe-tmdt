@@ -10,7 +10,7 @@ export default function CardItem1({id, image, name, description, discount, type}
   const [selectedSize, setSelectedSize] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const {addNewCart, addItemToCart, addItemToCartNoLog} = useContext(AppContext)
-  
+
   const notifySuccess = (message) => {
     toast.success(message, {
       position: "top-right",
@@ -81,7 +81,7 @@ export default function CardItem1({id, image, name, description, discount, type}
         <div>
           <Link href={`/menu/${id}`}>
             <div className="group relative">
-              <p className="text-xl font-bold hover:text-gray-200 transition-colors min-h-[56px] truncate">
+              <p className="text-xl font-bold hover:text-gray-200 transition-colors min-h-[56px]">
                 <span>{formatNameProduct(name)}</span>
               </p>
               <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 absolute z-10 p-2 bg-gray-800 text-white text-sm rounded-md shadow-lg -top-1 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap">

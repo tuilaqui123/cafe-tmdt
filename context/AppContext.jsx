@@ -105,6 +105,7 @@ export const AppProvider = ({ children }) => {
 
     // add item to cart
     const addItemToCart = async (productId, size, quantity) => {
+        console.log(productId)
         if (localStorage.user) {
             const userObj = JSON.parse(localStorage.user)
             const userId = userObj._id

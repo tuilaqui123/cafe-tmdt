@@ -65,7 +65,7 @@ const Cart = () => {
     return (
         <div className="mx-auto rounded-lg w-[90%]">
         <ToastContainer />
-            {(cart.items.length!==0 || cartNoLog.items?.length!==0) ? (
+            {(cart.items?.length!==0 && cartNoLog.items?.length!==0) ? (
                 <div>
                     <div className='flex gap-3 justify-center cursor-pointer mb-8'>
                         {stateOrder.map((ele, index) => {
@@ -97,9 +97,9 @@ const Cart = () => {
                         <tbody>
                         {(() => {
                             let itemsToRender = []
-                            if (cart && cart.items.length > 0) {
+                            if (cart && cart.items?.length > 0) {
                                 itemsToRender = cart.items
-                            } else if (cartNoLog && cartNoLog.items.length > 0) {
+                            } else if (cartNoLog && cartNoLog.items?.length > 0) {
                                 itemsToRender = cartNoLog.items
                             }
 
@@ -164,7 +164,7 @@ const Cart = () => {
                 Apply Coupon
                 </button>
             </div> */}
-            {cart.items.length!==0 && (
+            {cart.items?.length!==0 && (
                 <div className="flex items-center gap-3 p-2 border rounded-full shadow-md bg-white w-[40%]">
                     <FaTicketAlt className="text-gray-400 text-xl" />
                     <input

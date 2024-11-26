@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 
 export default function CategoryPage({ params }) {
   const router = useRouter()
-  const { categories } = useContext(AppContext)
+  const { products, categories, getCategoríes } = useContext(AppContext)
   const [isCategoryOpen, setIsCategoryOpen] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [categoryProducts, setCategoryProducts] = useState([])
@@ -17,19 +17,25 @@ export default function CategoryPage({ params }) {
   const slug = use(params).slug
 
   useEffect(() => {
-    const categoryId = slug.split('-').join(' ').toUpperCase()
+    const categoryId = slug.split('-').join(' ').toLowerCase()
     const category = categories.find(ele => ele._id.toLowerCase() === categoryId.toLowerCase())
+    
     if (category) {
-      setCategoryProducts(category.products)
+      const productsArray = Array.isArray(category.products) ? category.products : []
+      setCategoryProducts(productsArray)
+      console.log("cate page 1: " + JSON.stringify(category))
       setActiveCategory(category._id)
+    } else {
+      setCategoryProducts([])
     }
   }, [categories, slug])
 
   const indexOfLastProduct = currentPage * PRODUCTS_PER_PAGE
   const indexOfFirstProduct = indexOfLastProduct - PRODUCTS_PER_PAGE
-  const currentProducts = categoryProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+  const currentProducts = categoryProducts.length > 0 ? categoryProducts.slice(indexOfFirstProduct, indexOfLastProduct) : []
   const totalPages = Math.ceil(categoryProducts.length / PRODUCTS_PER_PAGE)
-
+  console.log("cate page: " + JSON.stringify(currentProducts))
+  
   const handleCategoryChange = (category) => {
     const categoryPath = category._id.toLowerCase().replace(/\s+/g, '-')
     setActiveCategory(category._id);
@@ -62,9 +68,7 @@ export default function CategoryPage({ params }) {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 rounded ${
-                currentPage === i + 1 ? 'bg-[#A0522D] text-white' : 'bg-gray-200 hover:bg-gray-300'
-              }`}
+              className={`px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-[#A0522D] text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
             >
               {i + 1}
             </button>
@@ -79,15 +83,11 @@ export default function CategoryPage({ params }) {
             onClick={() => setIsCategoryOpen(!isCategoryOpen)}
           >
             <span className="text-xl font-bold">Category</span>
-            <span className={`text-2xl flex items-center transform transition-transform duration-300 ${
-              isCategoryOpen ? "rotate-180" : "rotate-0"
-            }`}>
+            <span className={`text-2xl flex items-center transform transition-transform duration-300 ${isCategoryOpen ? "rotate-180" : "rotate-0"}`}>
               <IoIosArrowUp />
             </span>
           </div>
-          <ul className={`transition-all duration-500 ease-in-out overflow-hidden ${
-            isCategoryOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-          } space-y-3`}>
+          <ul className={`transition-all duration-500 ease-in-out overflow-hidden ${isCategoryOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"} space-y-3`}>
             {isCategoryOpen && categories.map((category, index) => (
               <li
                 key={index}
