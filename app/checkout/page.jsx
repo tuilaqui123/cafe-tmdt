@@ -132,7 +132,6 @@ const CheckOut = () => {
                     voucher: vouchers,
                     userId: localStorage.user ? JSON.parse(localStorage.user)._id : '',
                     method: "momo",
-                    from: "cc",
                     name: name,
                     phone: phone,
                     address: address + " " + ward + " " + district + " " + province,
@@ -196,9 +195,19 @@ const CheckOut = () => {
                             theme: "light",
                         })
 
-                        setTimeout(() => {
-                            router.push("/cart");
-                        }, 700);
+                        fetch(`http://localhost:8081/v1/api/user/carts/clearCartByUserId/${JSON.parse(localStorage.user)._id}`, {
+                            method: "DELETE"
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                setTimeout(() => {
+                                    router.push("/menu");
+                                }, 700);
+                            })
+                            .catch((e) => {
+                                console.log(e)
+                            })
+
                     })
                     .catch((e) => {
                         console.log(e)
@@ -247,10 +256,20 @@ const CheckOut = () => {
                             draggable: true,
                             progress: undefined,
                             theme: "light",
-                            onClose: () => {
-                                router.push('/menu')
-                            }
                         })
+
+                        fetch(`http://localhost:8081/v1/api/user/carts/clearCartById/${localStorage.cartId}`, {
+                            method: "DELETE"
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                setTimeout(() => {
+                                    router.push("/menu");
+                                }, 700);
+                            })
+                            .catch((e) => {
+                                console.log(e)
+                            })
                     })
                     .catch((e) => {
                         console.log(e)
@@ -388,7 +407,19 @@ const CheckOut = () => {
                                     progress: undefined,
                                     theme: "light",
                                 })
-                                router.push('/menu')
+
+                                fetch(`http://localhost:8081/v1/api/user/carts/clearCartByUserId/${JSON.parse(localStorage.user)._id}`, {
+                                    method: "DELETE"
+                                })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        setTimeout(() => {
+                                            router.push("/menu");
+                                        }, 700);
+                                    })
+                                    .catch((e) => {
+                                        console.log(e)
+                                    })
                             })
                             .catch((e) => {
                                 console.log(e)
@@ -437,10 +468,20 @@ const CheckOut = () => {
                                     draggable: true,
                                     progress: undefined,
                                     theme: "light",
-                                    onClose: () => {
-                                        router.push('/menu')
-                                    }
                                 })
+
+                                fetch(`http://localhost:8081/v1/api/user/carts/clearCartById/${localStorage.cartId}`, {
+                                    method: "DELETE"
+                                })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        setTimeout(() => {
+                                            router.push("/menu");
+                                        }, 700);
+                                    })
+                                    .catch((e) => {
+                                        console.log(e)
+                                    })
                             })
                             .catch((e) => {
                                 console.log(e)
@@ -544,7 +585,7 @@ const CheckOut = () => {
                         </div>
                     )}
 
-                    <div className='flex mt-5 items-center hover:cursor-pointer' onClick={() => router.push('/menu')}>
+                    <div className='flex mt-5 items-center hover:cursor-pointer' onClick={() => router.push('/cart')}>
                         <AiOutlineArrowLeft />
                         <p className=' text-[15px] text-black ml-2'>Back to cart</p>
                     </div>
