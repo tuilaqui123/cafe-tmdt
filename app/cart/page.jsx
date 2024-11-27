@@ -8,12 +8,18 @@ import { FaTrashAlt, FaTicketAlt, FaShoppingCart } from "react-icons/fa";
 import Link from 'next/link';
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from 'next/navigation';
 
 const Cart = () => {
-    const {cart, cartNoLog, getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog, vouchers, setVouchers, checkVoucher, getIdByName} = useContext(AppContext)
+    const {totalCart, totalCartNoLog, cart, cartNoLog, getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog, vouchers, setVouchers, checkVoucher, getIdByName, getTotalUsedVouchers} = useContext(AppContext)
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [itemToDelete, setItemToDelete] = useState(null)
+    const [coupons, setCoupons] = useState([])
+    const [totalSavings, setTotalSavings] = useState(0)
+    const [finalTotal, setFinalTotal] = useState(totalCart)
     const [currentCoupon, setCurrentCoupon] = useState('')
+
+    const router = useRouter()
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('de-DE').format(number)
@@ -41,7 +47,7 @@ const Cart = () => {
     const handleDeleteClick = (productId, size) => {
         setItemToDelete({ productId, size })
         setShowConfirmModal(true)
-    };
+    }
 
     const handleConfirmDelete = async () => {
         if (!itemToDelete) return
@@ -88,7 +94,7 @@ const Cart = () => {
 
         const resVoucherId = await getIdByName(currentCoupon)
         if (resVoucherId.success==false) {
-            notifyError(resVoucherId.message)
+            notifyError("Mã voucher không đúng")
             return
         }
         const isValidVoucher = await checkVoucher(resVoucherId)
@@ -99,12 +105,26 @@ const Cart = () => {
 
         if (currentCoupon.trim()) {
             setVouchers([...vouchers, resVoucherId[0]])
+            setCoupons([...coupons, currentCoupon])
             setCurrentCoupon('')
         }
     }
 
     const handleRemoveCoupon = (index) => {
-        setVouchers(vouchers.filter((_, i) => i !== index))
+        const newVouchers = vouchers.filter((_, i) => i !== index)
+        const newCoupons = coupons.filter((_, i) => i !== index)
+        
+        setVouchers(newVouchers)
+        setCoupons(newCoupons)
+    }
+
+    const handleCheckout = () => {
+        if ((finalTotal < 0.5*totalCart) || (finalTotal < 0.5*totalCartNoLog)) {
+            console.log(finalTotal + " " + 0.5*totalCart)
+            notifyError("Không thể áp dụng mã lớn hơn phân nửa giá trị đơn hàng")
+        } else {
+            router.push("/checkout")
+        }
     }
 
     useEffect(() => {
@@ -116,8 +136,26 @@ const Cart = () => {
     }, [cart.items?.length])
 
     useEffect(() => {
-        
-    }, [vouchers])
+        const updateTotalSavings = async () => {
+            if (vouchers.length > 0) {
+                const totalRes = await getTotalUsedVouchers(vouchers, totalCart)
+                setTotalSavings(totalCart - totalRes.total)
+                setFinalTotal(totalRes.total)
+            } else {
+                setTotalSavings(0)
+                setFinalTotal(totalCart || totalCartNoLog)
+            }
+        };
+        updateTotalSavings()
+    }, [vouchers, totalCart, totalCartNoLog])
+
+    useEffect(() => {
+        if (totalSavings > 0) {
+            setFinalTotal((totalCart || totalCartNoLog) - totalSavings)
+        } else {
+            setFinalTotal(totalCart || totalCartNoLog)
+        }
+    }, [totalCart, totalCartNoLog, totalSavings])
 
     return (
         <div className="mx-auto rounded-lg w-[90%]">
@@ -256,11 +294,11 @@ const Cart = () => {
                             </button>
                         </div>
 
-                        {vouchers.length > 0 && (
+                        {coupons.length > 0 && (
                             <div className="bg-white rounded-lg shadow-md p-4">
                                 <h3 className="text-lg font-semibold mb-3 text-gray-800">Checked Coupons</h3>
                                 <div className="space-y-2">
-                                    {vouchers.map((coupon, index) => (
+                                    {coupons.map((coupon, index) => (
                                         <div 
                                             key={index} 
                                             className="flex items-center justify-between bg-gray-50 p-2 rounded-lg"
@@ -282,7 +320,7 @@ const Cart = () => {
                                     <div className="flex justify-between text-sm">
                                         <span className="text-gray-600">Total Savings:</span>
                                         <span className="text-green-600 font-semibold">
-                                            {formatNumber(0)} đ
+                                            {formatNumber(totalSavings)} đ
                                         </span>
                                     </div>
                                 </div>
@@ -298,7 +336,7 @@ const Cart = () => {
                         <div className="space-y-3 mb-4">
                             <div className="flex justify-between text-gray-600">
                                 <span>Subtotal</span>
-                                <span>{formatNumber(cart.total || cartNoLog.total)} đ</span>
+                                <span>{formatNumber(totalCart || totalCartNoLog)} đ</span>
                             </div>
                             <div className="flex justify-between text-gray-600">
                                 <span>Shipping</span>
@@ -306,14 +344,14 @@ const Cart = () => {
                             </div>
                             <div className="flex justify-between text-green-600">
                                 <span>Discount</span>
-                                {/* <span>- {formatNumber(discount)} đ</span> */}
+                                <span>- {formatNumber(totalSavings)} đ</span>
                             </div>
                         </div>
 
                         <div className="border-t border-gray-200 pt-4 mb-6">
                             <div className="flex justify-between font-bold text-lg">
                                 <span>Total</span>
-                                <span className="text-[#A0522D]">{formatNumber(cart.total || cartNoLog.total)} đ</span>
+                                <span className="text-[#A0522D]">{formatNumber(finalTotal)} đ</span>
                             </div>
                         </div>
 
@@ -324,12 +362,12 @@ const Cart = () => {
                             >
                                 Continue Shopping
                             </Link>
-                            <Link
-                                href="/checkout"
+                            <button
+                                onClick={handleCheckout}
                                 className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold hover:bg-[#8B4513] transition-colors"
                             >
                                 Checkout
-                            </Link>
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -180,6 +180,25 @@ export const AppProvider = ({ children }) => {
         }
     }
 
+    // get total used vouchers
+    const getTotalUsedVouchers = async (vouchers, total) => {
+        if (localStorage.user) {
+            const userObj = JSON.parse(localStorage.user)
+            const userId = userObj._id
+
+            const res = await axios.post('http://localhost:8081/v1/api/user/vouchers/getTotalUsedVouchers', {
+                userId: userId,
+                total: total,
+                vouchers: vouchers
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            return res.data
+        }
+    }
+
     // get id voucher by name voucher
     const getIdByName = async (name) => {
         const res = await axios.post('http://localhost:8081/v1/api/user/vouchers/vouchersToId', {
@@ -266,7 +285,7 @@ export const AppProvider = ({ children }) => {
         cartNoLog, setCartNoLog, getCartById, totalCartNoLog, addNewCart,
         deleteItemFromCartNoLog,
         vouchers, setVouchers, checkVoucher, getIdByName,
-        getTotalDiscount
+        getTotalDiscount, getTotalUsedVouchers
     }}>
         {children}
     </AppContext.Provider>
