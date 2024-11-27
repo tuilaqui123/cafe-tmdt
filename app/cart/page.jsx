@@ -11,10 +11,25 @@ import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from 'next/navigation';
 
 const Cart = () => {
-    const {totalCart, totalCartNoLog, cart, cartNoLog, getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog, vouchers, setVouchers, checkVoucher, getIdByName, getTotalUsedVouchers} = useContext(AppContext)
+    const {
+        totalCart, totalCartNoLog, cart, cartNoLog, 
+        getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog, 
+        vouchers, setVouchers, checkVoucher, 
+        getIdByName, getTotalUsedVouchers, getvoucherById} = useContext(AppContext)
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [itemToDelete, setItemToDelete] = useState(null)
-    const [coupons, setCoupons] = useState([])
+    // const [coupons, setCoupons] = useState(() => {
+    //     const getVoucherById = async () => {
+    //         if (vouchers.length===0) {
+    //             return []
+    //         } else {
+    //             const voucher = await getvoucherById
+    //             return ["1","2","3"]
+    //         }
+    //     }
+    //     return getVoucherById()
+    // })
+    const [coupons, setCoupons] = useState([]);
     const [totalSavings, setTotalSavings] = useState(0)
     const [finalTotal, setFinalTotal] = useState(totalCart)
     const [currentCoupon, setCurrentCoupon] = useState('')
@@ -24,6 +39,29 @@ const Cart = () => {
     const formatNumber = (number) => {
         return new Intl.NumberFormat('de-DE').format(number)
     }
+
+    useEffect(() => {
+        const fetchCoupons = async () => {
+          if (vouchers.length === 0) {
+            setCoupons([])
+            return
+          }
+    
+          const couponNames = await Promise.all(
+            vouchers.map(async (voucherId) => {
+              const voucherData = await getvoucherById(voucherId)
+              console.log(voucherData)
+              return voucherData.name
+            })
+          )
+
+          console.log(couponNames)
+    
+          setCoupons(couponNames)
+        }
+    
+        fetchCoupons()
+      }, [vouchers, getvoucherById])
 
     const notifyError = (message) => {
         toast.error(message, {
@@ -37,6 +75,8 @@ const Cart = () => {
             theme: "light",
         })
     }
+
+    console.log(coupons)
 
     const stateOrder = [
         { id: 1, name: "Shopping Cart" },
@@ -120,7 +160,6 @@ const Cart = () => {
 
     const handleCheckout = () => {
         if ((finalTotal < 0.5*totalCart) || (finalTotal < 0.5*totalCartNoLog)) {
-            console.log(finalTotal + " " + 0.5*totalCart)
             notifyError("Không thể áp dụng mã lớn hơn phân nửa giá trị đơn hàng")
         } else {
             router.push("/checkout")
@@ -156,6 +195,10 @@ const Cart = () => {
             setFinalTotal(totalCart || totalCartNoLog)
         }
     }, [totalCart, totalCartNoLog, totalSavings])
+
+    useEffect(() => {
+        console.log()
+    }, [])
 
     return (
         <div className="mx-auto rounded-lg w-[90%]">
