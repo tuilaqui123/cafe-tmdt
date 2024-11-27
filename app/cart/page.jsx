@@ -150,6 +150,10 @@ const Cart = () => {
         }
     }
 
+    const updateQuantity = () => {
+        console.log(123)
+    }
+
     useEffect(() => {
         if (localStorage.user) {
             getCartByUserId()

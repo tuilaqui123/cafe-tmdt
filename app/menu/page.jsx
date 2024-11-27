@@ -40,7 +40,7 @@ export default function Page() {
   const handleImageClick = (imageUrl, index) => {
     setSelectedImage(imageUrl)
     setSelectedImageIndex(index)
-  };
+  }
 
   const handleClosePopup = () => {
     setSelectedImage(null)
@@ -68,7 +68,7 @@ export default function Page() {
       <div className="w-[75%] flex flex-col gap-5 ml-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
           {currentProducts.map((product, index) => (
-            <div key={index} className="relative">
+            <div key={index}>
               <CardItem1 
                 id={product._id}
                 image={product.image} 
@@ -76,11 +76,8 @@ export default function Page() {
                 description={product.description}
                 discount={product.discount}
                 type={product.type}
+                handleImageClick={() => handleImageClick(product.image, index)}
               />
-              {/* <div
-                className="absolute inset-0 cursor-zoom-in"
-                onClick={() => handleImageClick(product.image, index)}
-              /> */}
             </div>
           ))}
         </div>

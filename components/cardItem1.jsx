@@ -5,7 +5,7 @@ import { AppContext } from "@/context/AppContext";
 import { useContext, useState } from "react";
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
-export default function CardItem1({id, image, name, description, discount, type}) {
+export default function CardItem1({id, image, name, description, discount, type, handleImageClick}) {
   const [showOptions, setShowOptions] = useState(false)
   const [selectedSize, setSelectedSize] = useState(null)
   const [quantity, setQuantity] = useState(1)
@@ -67,7 +67,7 @@ export default function CardItem1({id, image, name, description, discount, type}
   return (
     <div className="w-full bg-[#a45c23] rounded-lg shadow-xl">
       <ToastContainer />
-      <div className="bg-[#dcb485] rounded-t-lg">
+      <div className="bg-[#dcb485] rounded-t-lg relative">
         <Link href={`/menu/${id}`}>
           <div className="cursor-pointer">
             <Image
@@ -80,6 +80,14 @@ export default function CardItem1({id, image, name, description, discount, type}
             />
           </div>
         </Link>
+        <div
+          className="absolute inset-0 cursor-zoom-in"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleImageClick(image);
+          }}
+        />
       </div>
       <div className="p-5">
         <div>
