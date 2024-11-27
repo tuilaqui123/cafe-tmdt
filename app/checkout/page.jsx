@@ -3,15 +3,14 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
 import { FaPlus, FaMinus, FaTrashAlt } from "react-icons/fa";
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
+import { AppContext } from '@/context/AppContext';
+import Link from 'next/link';
 
 const CheckOut = () => {
-    let discounts = [
-        // "6744a39d390acb8b17458696",
-        "6744a3c2390acb8b1745869b",
-        // "6744a355390acb8b17458682"
-    ]
+    const { vouchers } = useContext(AppContext)
 
     const router = useRouter()
 
@@ -45,6 +44,7 @@ const CheckOut = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [isLoadingAllPrvince, setisLoadingAllPrvince] = useState(true)
     const [isLoadingCart, setisLoadingCart] = useState(true)
+    const [isLoadingInfoUser, setisLoadingInfoUser] = useState(false)
     const [isLoadingGetTotalCartAfterDiscount, setisLoadingGetTotalCartAfterDiscount] = useState(true)
 
     const [showConfirmModal, setShowConfirmModal] = useState(false)
@@ -83,70 +83,56 @@ const CheckOut = () => {
             }
         }
 
-        console.log(name, phone, address, "hehe", ward, district, province)
-        console.log(ward)
-        console.log(province, 'kk')
+        if (!name) {
+            alert("Vui lòng nhập nhập tên của bạn")
 
-        if (localStorage.user) {
-            fetch(`http://localhost:8081/v1/api/user/orders`, {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    user: JSON.parse(localStorage.user)._id,
-                    items: cart.items,
-                    voucher: discounts,
-                    paymentStatus: "paid",
-                    paymentMethod: "momo",
-                    address: address + " " + ward + " " + + district + " " + province,
-                    note: note
-                })
-            })
-                .then(res => res.json())
-                .then((data) => {
-                    console.log(data)
-                    if (data.success === false) {
-                        toast.error(data.message, {
-                            position: "top-right",
-                            autoClose: 700,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                            theme: "light",
-                        })
-
-                        return
-                    }
-
-                    toast.success("Thêm hóa đơn thành công", {
-                        position: "top-right",
-                        autoClose: 700,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "light",
-                    })
-                    router.push('/cart')
-                })
-                .catch((e) => {
-                    console.log(e)
-                })
+            return
         }
-        else {
-            fetch(`http://localhost:8081/v1/api/user/orders`, {
+
+        if (!phone) {
+            alert("Vui lòng nhập nhập số điện thoại")
+
+            return
+        }
+
+        if (!province) {
+            alert("Vui lòng nhập tỉnh nơi bạn ở")
+
+            return
+        }
+
+        if (!district) {
+            alert("Vui lòng nhập quận/huyện nơi bạn ở")
+
+            return
+        }
+
+        if (!ward) {
+            alert("Vui lòng nhập phường/xã bạn ở")
+
+            return
+        }
+
+        if (!address) {
+            alert("Vui lòng nhập địa chỉ của bạn")
+
+            return
+        }
+
+        if (paymentMethod == 'momo') {
+            fetch(`http://localhost:8081/v1/api/user/orders/payment`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    amount: totalPrice,
+                    orderInfo: "Thanh toán sản phẩm",
                     items: cart.items,
-                    paymentStatus: "paid",
-                    paymentMethod: "momo",
+                    voucher: vouchers,
+                    userId: localStorage.user ? JSON.parse(localStorage.user)._id : '',
+                    method: "momo",
+                    from: "cc",
                     name: name,
                     phone: phone,
                     address: address + " " + ward + " " + district + " " + province,
@@ -155,8 +141,51 @@ const CheckOut = () => {
             })
                 .then(res => res.json())
                 .then((data) => {
-                    if (data.success === false) {
-                        toast.error(data.message, {
+                    window.location.href = data.payUrl;
+                })
+                .catch((e) => {
+                    console.log(e)
+                })
+
+            return
+        }
+        else {
+            if (localStorage.user) {
+                fetch(`http://localhost:8081/v1/api/user/orders`, {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        user: JSON.parse(localStorage.user)._id,
+                        items: cart.items,
+                        voucher: vouchers,
+                        paymentStatus: "unpaid",
+                        paymentMethod: "cod",
+                        name: name,
+                        phone: phone,
+                        address: address + " " + ward + " " + district + " " + province,
+                        note: note
+                    })
+                })
+                    .then(res => res.json())
+                    .then((data) => {
+                        if (data.success === false) {
+                            toast.error(data.message, {
+                                position: "top-right",
+                                autoClose: 700,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "light",
+                            })
+
+                            return
+                        }
+
+                        toast.success("Thêm hóa đơn thành công", {
                             position: "top-right",
                             autoClose: 700,
                             hideProgressBar: false,
@@ -167,26 +196,66 @@ const CheckOut = () => {
                             theme: "light",
                         })
 
-                        return
-                    }
-
-                    toast.success("Thêm hóa đơn thành công", {
-                        position: "top-right",
-                        autoClose: 700,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "light",
-                        onClose: () => {
-                            router.push('/cart')
-                        }
+                        setTimeout(() => {
+                            router.push("/cart");
+                        }, 700);
+                    })
+                    .catch((e) => {
+                        console.log(e)
+                    })
+            }
+            else {
+                fetch(`http://localhost:8081/v1/api/user/orders`, {
+                    method: 'POST',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        items: cart.items,
+                        voucher: [],
+                        paymentStatus: "unpaid",
+                        paymentMethod: "cod",
+                        name: name,
+                        phone: phone,
+                        address: address + " " + ward + " " + district + " " + province,
+                        note: note
                     })
                 })
-                .catch((e) => {
-                    console.log(e)
-                })
+                    .then(res => res.json())
+                    .then((data) => {
+                        if (data.success === false) {
+                            toast.error(data.message, {
+                                position: "top-right",
+                                autoClose: 700,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "light",
+                            })
+
+                            return
+                        }
+
+                        toast.success("Thêm hóa đơn thành công", {
+                            position: "top-right",
+                            autoClose: 700,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "light",
+                            onClose: () => {
+                                router.push('/menu')
+                            }
+                        })
+                    })
+                    .catch((e) => {
+                        console.log(e)
+                    })
+            }
         }
     }
 
@@ -225,7 +294,7 @@ const CheckOut = () => {
             body: JSON.stringify({
                 userId: JSON.parse(localStorage.user)._id,
                 total: cart.items.reduce((total, item) => total + item.price * (1 - item.discount / 100) * item.quantity, 0),
-                vouchers: discounts,
+                vouchers: vouchers,
             })
         })
             .then(res => res.json())
@@ -245,12 +314,149 @@ const CheckOut = () => {
             })
     }
 
+    const getInfoUser = () => {
+        if (localStorage.user) {
+            setisLoadingInfoUser(true)
+            fetch(`http://localhost:8081/v1/api/user/users/${JSON.parse(localStorage.user)._id}`)
+                .then(res => res.json())
+                .then(data => {
+                    setName(data.name)
+                    setPhone(data.phone)
+                })
+                .finally(() => {
+                    setisLoadingInfoUser(false)
+                })
+        }
+    }
+
     const handleDeleteClick = (index) => {
         setItemToDelete(index)
         setShowConfirmModal(true)
     };
 
     useEffect(() => {
+        const verifyPayment = async () => {
+            const params = new URLSearchParams(window.location.search);
+            const extraData = params.get("extraData");
+
+            if (params.get("orderId")) {
+                if (params.get("resultCode") === "0") {
+                    const data = extraData ? JSON.parse(decodeURIComponent(extraData)) : undefined;
+
+                    if (data.userId) {
+                        fetch(`http://localhost:8081/v1/api/user/orders`, {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                user: data.userId,
+                                items: data.items,
+                                voucher: data.voucher,
+                                paymentStatus: "paid",
+                                paymentMethod: "momo",
+                                address: data.address,
+                                note: data.note,
+                                name: data.name,
+                                phone: data.phone,
+                            })
+                        })
+                            .then(res => res.json())
+                            .then((data) => {
+                                if (data.success === false) {
+                                    toast.error(data.message, {
+                                        position: "top-right",
+                                        autoClose: 700,
+                                        hideProgressBar: false,
+                                        closeOnClick: true,
+                                        pauseOnHover: true,
+                                        draggable: true,
+                                        progress: undefined,
+                                        theme: "light",
+                                    })
+
+                                    return
+                                }
+
+                                toast.success("Thêm hóa đơn thành công", {
+                                    position: "top-right",
+                                    autoClose: 700,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                    theme: "light",
+                                })
+                                router.push('/menu')
+                            })
+                            .catch((e) => {
+                                console.log(e)
+                            })
+                    }
+                    else {
+                        fetch(`http://localhost:8081/v1/api/user/orders`, {
+                            method: 'POST',
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                items: data.items,
+                                voucher: [],
+                                paymentStatus: "paid",
+                                paymentMethod: "momo",
+                                address: data.address,
+                                note: data.note,
+                                name: data.name,
+                                phone: data.phone,
+                            })
+                        })
+                            .then(res => res.json())
+                            .then((data) => {
+                                if (data.success === false) {
+                                    toast.error(data.message, {
+                                        position: "top-right",
+                                        autoClose: 700,
+                                        hideProgressBar: false,
+                                        closeOnClick: true,
+                                        pauseOnHover: true,
+                                        draggable: true,
+                                        progress: undefined,
+                                        theme: "light",
+                                    })
+
+                                    return
+                                }
+
+                                toast.success("Thêm hóa đơn thành công", {
+                                    position: "top-right",
+                                    autoClose: 700,
+                                    hideProgressBar: false,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                    progress: undefined,
+                                    theme: "light",
+                                    onClose: () => {
+                                        router.push('/menu')
+                                    }
+                                })
+                            })
+                            .catch((e) => {
+                                console.log(e)
+                            })
+                    }
+                } else {
+                    const cleanUrl = window.location.origin + window.location.pathname;
+                    window.history.replaceState(null, "", cleanUrl);
+                }
+            }
+        };
+
+        verifyPayment()
+
+        getInfoUser()
+
         getAllProvince()
 
         getCart()
@@ -277,7 +483,7 @@ const CheckOut = () => {
 
     useEffect(() => {
         const handleIsLoanding = () => {
-            if (isLoadingAllPrvince || isLoadingCart) {
+            if (isLoadingAllPrvince || isLoadingCart || isLoadingInfoUser) {
                 setIsLoading(true)
             } else {
                 setIsLoading(false)
@@ -285,7 +491,7 @@ const CheckOut = () => {
         }
 
         handleIsLoanding()
-    }, [isLoadingAllPrvince, isLoadingCart])
+    }, [isLoadingAllPrvince, isLoadingCart, isLoadingInfoUser])
 
     // useEffect(() => {
     //     if (!isLoading) {
@@ -338,7 +544,7 @@ const CheckOut = () => {
                         </div>
                     )}
 
-                    <div className='flex mt-5 items-center hover:cursor-pointer' onClick={() => router.push('/cart')}>
+                    <div className='flex mt-5 items-center hover:cursor-pointer' onClick={() => router.push('/menu')}>
                         <AiOutlineArrowLeft />
                         <p className=' text-[15px] text-black ml-2'>Back to cart</p>
                     </div>
@@ -379,12 +585,18 @@ const CheckOut = () => {
                                             return (
                                                 <tr key={index} className="border-b border-black">
                                                     <td className="text-center h-[130px] w-[20%]">
-                                                        <img
-                                                            src={item.product.image}
-                                                            alt={item.name}
-                                                            className="mx-auto h-[80%] bg-[#EEEEEE] hover:cursor-pointer hover:scale-[1.1] transition-all"
-                                                            onClick={() => router.push(`/menu/${item.product._id}`)}
-                                                        />
+                                                        <Link
+                                                            href={`/menu/${item.product._id}`}
+                                                        >
+                                                            <Image
+                                                                src={item.product.image}
+                                                                alt={item.product.name}
+                                                                className="mx-auto h-[80%] bg-[#EEEEEE] hover:cursor-pointer hover:scale-[1.1] transition-all"
+                                                                width={100}
+                                                                height={200}
+                                                                priority
+                                                            />
+                                                        </Link>
                                                     </td>
                                                     <td className="text-center h-[130px]">{item.product.name}</td>
 
@@ -581,14 +793,14 @@ const CheckOut = () => {
                                                             <FaPlus className='text-[20px] text-white font-extrabold' />
                                                         </div>
                                                     </td>
-                                                    <td className="text-center h-[130px] lg:table-cell hidden">{item.price.toLocaleString('vi-VN')} đ</td>
+                                                    <td className="text-center h-[130px] lg:table-cell hidden">{(item.price * (1 - item.discount / 100)).toLocaleString('vi-VN')} đ</td>
 
                                                     <td className="text-center h-[130px]">
                                                         <button
                                                             onClick={() => handleDeleteClick(index)}
                                                             className="text-red-500 hover:text-red-700 transition-colors"
                                                         >
-                                                            <FaTrashAlt />
+                                                            <FaTrashAlt className='size-8 ml-7 lg:size-6' />
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -749,7 +961,7 @@ const CheckOut = () => {
 
                                     <div className='text-[#808080] flex justify-between'>
                                         <p>Discount</p>
-                                        <p>{(subTotal - totalPrice).toLocaleString('vi-VN')} đ</p>
+                                        <p>- {(subTotal - totalPrice).toLocaleString('vi-VN')} đ</p>
                                     </div>
                                 </div>
 
