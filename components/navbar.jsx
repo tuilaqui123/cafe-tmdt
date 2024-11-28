@@ -36,9 +36,10 @@ const CartBadge = ({ count }) => {
 }
 
 const Navbar = () => {
-  const { categories, cart, cartNoLog } = useContext(AppContext)
+  const { categories, cart, cartNoLog, getCartByUserId, getCartById } = useContext(AppContext)
   const [selectNav, setSelectNav] = useState(null)
   const [user, setUser] = useState(null)
+  const [cartCount, setCartCount] = useState(0)
   const dropdownRef = useRef(null)
   const pathname = usePathname()
 
@@ -57,6 +58,34 @@ const Navbar = () => {
       setUser(JSON.parse(localStorage.user))
     }
   }, [pathname])
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      if (cart && cart.items?.length > 0) {
+        const total = cart.items.reduce((sum, item) => sum + item.quantity, 0)
+        setCartCount(total)
+      } else if (cartNoLog && cartNoLog.items?.length > 0) {
+        const total = cartNoLog.items.reduce((sum, item) => sum + item.quantity, 0)
+        setCartCount(total)
+      } else {
+        setCartCount(0)
+      }
+    };
+
+    updateCartCount()
+  }, [cart, cartNoLog])
+
+  useEffect(() => {
+    const loadCartData = async () => {
+      if (localStorage.user) {
+        await getCartByUserId()
+      } else if (localStorage.cartId) {
+        await getCartById(localStorage.cartId)
+      }
+    }
+
+    loadCartData()
+  }, [])
 
   const handleLogout = () => {
     localStorage.removeItem("token")

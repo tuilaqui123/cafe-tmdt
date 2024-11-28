@@ -27,7 +27,6 @@ export default function Page() {
   const handleCategoryChange = (category) => {
     const categoryPath = category.name.toLowerCase().replace(/\s+/g, '-')
     setSelectCategory(category.name)
-    console.log(categoryPath)
 
     router.push(`/menu/category/${categoryPath}`)
   }
