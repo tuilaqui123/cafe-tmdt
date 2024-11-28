@@ -101,7 +101,7 @@ const Cart = () => {
                 onClose: () => {
                     (localStorage.user) ? getCartByUserId() : getCartById(localStorage?.cartId)
                 }
-            });
+            })
         }
         setShowConfirmModal(false)
         setItemToDelete(null)
@@ -118,7 +118,7 @@ const Cart = () => {
                 draggable: true,
                 progress: undefined,
                 theme: "light",
-            });
+            })
             return
         }
 
@@ -197,12 +197,24 @@ const Cart = () => {
                         localStorage.user ? getCartByUserId() : getCartById(localStorage?.cartId)
                         setHasChanges(false)
                     }
-                });
+                })
             } else {
                 toast.error("Có lỗi xảy ra khi cập nhật giỏ hàng")
             }
         }
-    };
+    }
+
+    useEffect(() => {
+        const loadCartData = async () => {
+            if (localStorage.user) {
+                await getCartByUserId()
+            } else if (localStorage.cartId) {
+                await getCartById(localStorage.cartId)
+            }
+        }
+
+        loadCartData()
+    }, [])
 
     useEffect(() => {
         if (cart && cart.items?.length > 0) {
@@ -213,8 +225,11 @@ const Cart = () => {
             const cartQuantities = cartNoLog.items.map(item => item.quantity)
             setQuantities(cartQuantities)
             setInitialQuantities(cartQuantities)
+        } else {
+            setQuantities([])
+            setInitialQuantities([])
         }
-    }, [cart.items, cartNoLog.items])
+    }, [cart, cartNoLog])
 
     useEffect(() => {
         const updateTotalSavings = async () => {
@@ -223,12 +238,12 @@ const Cart = () => {
                 setTotalSavings(totalCart - totalRes.total)
                 setFinalTotal(totalRes.total)
             } else {
-                setTotalSavings(0)
+                setTotalSavings(0);
                 setFinalTotal(totalCart || totalCartNoLog)
             }
         };
         updateTotalSavings()
-    }, [vouchers, totalCart, totalCartNoLog])
+    }, [vouchers, totalCart, totalCartNoLog, cart, cartNoLog])
 
     useEffect(() => {
         if (totalSavings > 0) {
@@ -236,7 +251,7 @@ const Cart = () => {
         } else {
             setFinalTotal(totalCart || totalCartNoLog)
         }
-    }, [totalCart, totalCartNoLog, totalSavings])
+    }, [totalCart, totalCartNoLog, totalSavings, cart, cartNoLog])
 
     const handleCloseNoteModal = () => {
         setShowNoteModal(false)
@@ -314,8 +329,8 @@ const Cart = () => {
                                         <button
                                             className="text-gray-600 hover:text-[#A0522D] transition-colors relative group"
                                             onClick={() => {
-                                                setSelectedNote(item.note);
-                                                setShowNoteModal(true);
+                                                setSelectedNote(item.note)
+                                                setShowNoteModal(true)
                                             }}
                                         >
                                             <FaRegStickyNote className="text-xl" />

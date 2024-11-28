@@ -102,6 +102,7 @@ export const AppProvider = ({ children }) => {
                 'Content-Type': 'application/json'
             }
         })
+        console.log(res.data)
         return res.data
     }
 
@@ -267,7 +268,6 @@ export const AppProvider = ({ children }) => {
     const fetchProduct = () => {
         axios.get('http://localhost:8081/v1/api/user/products')
             .then((res) => {
-                console.log(res.data)
                 setProducts(res.data)
             })
             .catch((error) => {
