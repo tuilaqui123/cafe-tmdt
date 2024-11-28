@@ -25,8 +25,10 @@ export default function Page() {
   const totalPages = Math.ceil((selectCategoryProducts.length === 0 ? products.length : selectCategoryProducts.length) / PRODUCT_PER_PAGE)
   
   const handleCategoryChange = (category) => {
-    const categoryPath = category._id.toLowerCase().replace(/\s+/g, '-')
-    setSelectCategory(category._id)
+    const categoryPath = category.name.toLowerCase().replace(/\s+/g, '-')
+    setSelectCategory(category.name)
+    console.log(categoryPath)
+
     router.push(`/menu/category/${categoryPath}`)
   }
 
@@ -165,7 +167,7 @@ export default function Page() {
                 className={`cursor-pointer px-3 py-2 shadow rounded-md transition ${selectCategory===category._id ? "bg-[#8B4513] text-white hover:bg-[#A0522D]" : "bg-white hover:bg-gray-200 "}`}
                 onClick={() => handleCategoryChange(category)}
               >
-                <p>{category._id}</p>
+                <p>{category.name}</p>
               </li>
             ))}
           </ul>

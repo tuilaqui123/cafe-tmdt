@@ -15,13 +15,15 @@ const Cart = () => {
         totalCart, totalCartNoLog, cart, cartNoLog, 
         getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog, 
         vouchers, setVouchers, checkVoucher, 
-        getIdByName, getTotalUsedVouchers, getvoucherById} = useContext(AppContext)
+        getIdByName, getTotalUsedVouchers, getvoucherById, updateQuantities} = useContext(AppContext)
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [itemToDelete, setItemToDelete] = useState(null)
     const [coupons, setCoupons] = useState([])
     const [totalSavings, setTotalSavings] = useState(0)
     const [finalTotal, setFinalTotal] = useState(totalCart)
     const [currentCoupon, setCurrentCoupon] = useState('')
+    const [quantities, setQuantities] = useState([])
+    const [isChange, setIsChange] = useState(false)
 
     const router = useRouter()
 
@@ -151,16 +153,23 @@ const Cart = () => {
     }
 
     const updateQuantity = () => {
-        console.log(123)
+        console.log()
     }
 
     useEffect(() => {
         if (localStorage.user) {
             getCartByUserId()
+            setQuantities(cart.items)
         } else {
             getCartById(localStorage?.cartId)
         }
     }, [cart.items?.length])
+
+    // useEffect(() => {
+    //     cart.items.map(ele => {
+    //         console.log(ele)
+    //     })
+    // }, [cart.item?.length])
 
     useEffect(() => {
         const updateTotalSavings = async () => {
@@ -184,10 +193,12 @@ const Cart = () => {
         }
     }, [totalCart, totalCartNoLog, totalSavings])
 
+    console.log(cart.items?.length)
+
     return (
         <div className="mx-auto rounded-lg w-[90%]">
             <ToastContainer />
-            {(cart.items?.length!==0 && cartNoLog.items?.length!==0) ? (
+            {((cart.items?.length!==undefined || cartNoLog.items?.length!==undefined) && (cart.items?.length!==0 || cartNoLog.items?.length!==undefined)) ? (
                 <div>
                     <div className='flex gap-3 justify-center cursor-pointer mb-8'>
                         {stateOrder.map((ele, index) => {
@@ -243,7 +254,7 @@ const Cart = () => {
                                     <td className="p-2">
                                         <input
                                             type="number"
-                                            value={item.quantity}
+                                            value={isChange ? 1 : item.quantity }
                                             min="1"
                                             className="w-16 border border-gray-300 p-1 rounded"
                                             onChange={(e) => updateQuantity(item.id, e.target.value)}
@@ -300,8 +311,18 @@ const Cart = () => {
                 </div>
             )}
 
+            {((cart.items?.length!==undefined || cartNoLog.items?.length!==undefined) && (cart.items?.length!==0 || cartNoLog.items?.length!==undefined)) && (
+                <button
+                    // className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold hover:bg-[#8B4513] transition-colors"
+                    className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold transition-colors"
+                    disabled={true}
+                >
+                    Update Cart
+                </button>
+            )}
+
             <div className={`flex ${(localStorage.user) ? "items-center justify-between" : "justify-end"}`}>   
-                {(cart.items?.length!==0 && localStorage.user ) && (
+                {((cart.items?.length!==undefined && cart.items?.length!==0) && localStorage.user ) && (
                     <div className="w-[40%]">
                         <div className="flex items-center gap-3 p-2 border rounded-full shadow-md bg-white mb-4">
                             <FaTicketAlt className="text-gray-400 text-xl" />
@@ -356,48 +377,50 @@ const Cart = () => {
                     </div>
                 )}
 
-                <div className="w-1/2">
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Cart Summary</h2>
+                {((cart.items?.length!==undefined || cartNoLog.items?.length!==undefined) && (cart.items?.length!==0 || cartNoLog.items?.length!==undefined)) && (
+                    <div className="w-1/2">
+                        <div className="bg-white rounded-lg shadow-md p-6">
+                            <h2 className="text-xl font-bold mb-4 text-gray-800">Cart Summary</h2>
 
-                        <div className="space-y-3 mb-4">
-                            <div className="flex justify-between text-gray-600">
-                                <span>Subtotal</span>
-                                <span>{formatNumber(totalCart || totalCartNoLog)} đ</span>
+                            <div className="space-y-3 mb-4">
+                                <div className="flex justify-between text-gray-600">
+                                    <span>Subtotal</span>
+                                    <span>{formatNumber(totalCart || totalCartNoLog)} đ</span>
+                                </div>
+                                <div className="flex justify-between text-gray-600">
+                                    <span>Shipping</span>
+                                    <span>Free</span>
+                                </div>
+                                <div className="flex justify-between text-green-600">
+                                    <span>Discount</span>
+                                    <span>- {formatNumber(totalSavings)} đ</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between text-gray-600">
-                                <span>Shipping</span>
-                                <span>Free</span>
-                            </div>
-                            <div className="flex justify-between text-green-600">
-                                <span>Discount</span>
-                                <span>- {formatNumber(totalSavings)} đ</span>
-                            </div>
-                        </div>
 
-                        <div className="border-t border-gray-200 pt-4 mb-6">
-                            <div className="flex justify-between font-bold text-lg">
-                                <span>Total</span>
-                                <span className="text-[#A0522D]">{formatNumber(finalTotal)} đ</span>
+                            <div className="border-t border-gray-200 pt-4 mb-6">
+                                <div className="flex justify-between font-bold text-lg">
+                                    <span>Total</span>
+                                    <span className="text-[#A0522D]">{formatNumber(finalTotal)} đ</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="flex gap-4">
-                            <Link
-                                href="/menu"
-                                className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 text-center rounded-lg font-bold hover:bg-gray-300 transition-colors"
-                            >
-                                Continue Shopping
-                            </Link>
-                            <button
-                                onClick={handleCheckout}
-                                className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold hover:bg-[#8B4513] transition-colors"
-                            >
-                                Checkout
-                            </button>
+                            <div className="flex gap-4">
+                                <Link
+                                    href="/menu"
+                                    className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 text-center rounded-lg font-bold hover:bg-gray-300 transition-colors"
+                                >
+                                    Continue Shopping
+                                </Link>
+                                <button
+                                    onClick={handleCheckout}
+                                    className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold hover:bg-[#8B4513] transition-colors"
+                                >
+                                    Checkout
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     )

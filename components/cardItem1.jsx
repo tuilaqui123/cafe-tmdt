@@ -9,6 +9,7 @@ export default function CardItem1({id, image, name, description, discount, type,
   const [showOptions, setShowOptions] = useState(false)
   const [selectedSize, setSelectedSize] = useState(null)
   const [quantity, setQuantity] = useState(1)
+  const [note, setNote] = useState('')
   const {addNewCart, addItemToCart, addItemToCartNoLog} = useContext(AppContext)
 
   const notifySuccess = (message) => {
@@ -27,19 +28,19 @@ export default function CardItem1({id, image, name, description, discount, type,
     })
   }
 
-  const handleAddItem = async (id, size, quantity) => {
+  const handleAddItem = async (id, size, note, quantity) => {
     if (localStorage.user) {
-      await addItemToCart(id, size, quantity)
+      await addItemToCart(id, size, note, quantity)
       notifySuccess("Thêm vào giỏ hàng thành công")
     } else {
       if (localStorage.cartId) {
-        await addItemToCartNoLog(localStorage.cartId, id, size, quantity)
+        await addItemToCartNoLog(localStorage.cartId, id, size, note, quantity)
         notifySuccess("Thêm vào giỏ hàng thành công")
       } else {
         const cartId = await addNewCart()
         localStorage.setItem('cartId', cartId)
 
-        await addItemToCartNoLog(localStorage.cartId, id, size, quantity)
+        await addItemToCartNoLog(localStorage.cartId, id, size, note, quantity)
         notifySuccess("Thêm vào giỏ hàng thành công")
       }
     }
@@ -163,9 +164,20 @@ export default function CardItem1({id, image, name, description, discount, type,
                 </div>
               </div>
 
+              <div className="mt-4">
+                <label className="text-sm font-semibold">Ghi chú:</label>
+                <textarea
+                  className="w-full mt-1 p-2 border border-gray-300 rounded-md resize-none"
+                  rows="2"
+                  placeholder="Thêm ghi chú cho món này..."
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                />
+              </div>
+
               <button
                 className="mt-6 w-full bg-[#4c2113] hover:bg-[#A0522D] text-white font-bold py-2 rounded-md transition-all duration-400 ease-in-out"
-                onClick={() => selectedSize && handleAddItem(id, selectedSize.size, quantity)}
+                onClick={() => selectedSize && handleAddItem(id, selectedSize.size, note, quantity)}
                 disabled={!selectedSize}
               >
                 Thêm vào giỏ hàng

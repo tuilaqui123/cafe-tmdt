@@ -89,11 +89,11 @@ const Navbar = () => {
                       {categories.map((category) => (
                         <Link 
                           key={category._id} 
-                          href={`/menu/category/${category._id.toLowerCase().replace(/\s+/g, '-')}`}
+                          href={`/menu/category/${category.name.toLowerCase().replace(/\s+/g, '-')}`}
                           onClick={() => setSelectNav(value.id)}
                         >
                           <p className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
-                            {category._id}
+                            {category.name}
                           </p>
                         </Link>
                       ))}
