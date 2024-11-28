@@ -5,7 +5,7 @@ import { AppContext } from "@/context/AppContext";
 import { useContext, useState } from "react";
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
-export default function CardItem1({id, image, name, description, discount, type}) {
+export default function CardItem1({id, image, name, description, discount, type, handleImageClick}) {
   const [showOptions, setShowOptions] = useState(false)
   const [selectedSize, setSelectedSize] = useState(null)
   const [quantity, setQuantity] = useState(1)
@@ -67,28 +67,34 @@ export default function CardItem1({id, image, name, description, discount, type}
   return (
     <div className="w-full bg-[#a45c23] rounded-lg shadow-xl">
       <ToastContainer />
-      <div className="bg-[#dcb485] rounded-t-lg">
-        <Image
-          src={image}
-          alt="Item Image"
-          className="w-full aspect-square"
-          width={300}
-          height={300}
-          priority={true}
+      <div className="bg-[#dcb485] rounded-t-lg relative">
+        <Link href={`/menu/${id}`}>
+          <div className="cursor-pointer">
+            <Image
+              src={image}
+              alt="Item Image"
+              className="w-full aspect-square hover:opacity-90 transition-opacity"
+              width={300}
+              height={300}
+              priority={true}
+            />
+          </div>
+        </Link>
+        <div
+          className="absolute inset-0 cursor-zoom-in"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleImageClick(image);
+          }}
         />
       </div>
       <div className="p-5">
         <div>
           <Link href={`/menu/${id}`}>
-            <div className="group relative">
-              <p className="text-xl font-bold hover:text-gray-200 transition-colors min-h-[56px]">
-                <span>{formatNameProduct(name)}</span>
-              </p>
-              <div className="invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-all duration-300 absolute z-10 p-2 bg-gray-800 text-white text-sm rounded-md shadow-lg -top-1 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap">
-                <span>{formatNameProduct(name)}</span>
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-              </div>
-            </div>
+            <h3 className="text-xl font-bold text-white hover:text-gray-200 transition-colors min-h-[56px] cursor-pointer">
+              {formatNameProduct(name)}
+            </h3>
           </Link>
           <p className="text-sm text-gray-200 py-2 truncate">{description}</p>
         </div>
