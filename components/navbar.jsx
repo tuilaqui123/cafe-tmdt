@@ -25,8 +25,18 @@ const navList = [
   },
 ];
 
+const CartBadge = ({ count }) => {
+  if (count <= 0) return null;
+  
+  return (
+    <span className="absolute -top-3 -right-3 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full transition-all duration-300 transform scale-100 hover:scale-110 px-1">
+      {count > 99 ? '99+' : count}
+    </span>
+  )
+}
+
 const Navbar = () => {
-  const { categories } = useContext(AppContext)
+  const { categories, cart, cartNoLog } = useContext(AppContext)
   const [selectNav, setSelectNav] = useState(null)
   const [user, setUser] = useState(null)
   const dropdownRef = useRef(null)
@@ -57,6 +67,15 @@ const Navbar = () => {
   const isActive = (path) => {
     const currentPath = pathname.split('/')[1]
     return path.includes(currentPath)
+  }
+
+  const getTotalItems = () => {
+    if (cart && cart.items?.length > 0) {
+      return cart.items.reduce((total, item) => total + item.quantity, 0)
+    } else if (cartNoLog && cartNoLog.items?.length > 0) {
+      return cartNoLog.items.reduce((total, item) => total + item.quantity, 0)
+    }
+    return 0
   }
 
   return (
@@ -121,10 +140,14 @@ const Navbar = () => {
             <div className="cursor-pointer"
                 onClick={handleLogout}
             >
-              <MdLogout />
+              <MdLogout className="text-2xl" />
             </div>
-            <Link href="/cart">
-              <FaCartShopping onClick={() => setSelectNav(3)}/> 
+            <Link href="/cart" className="relative">
+              <FaCartShopping 
+                className="text-2xl hover:text-gray-200 transition-colors" 
+                onClick={() => setSelectNav(3)}
+              /> 
+              <CartBadge count={getTotalItems()} />
             </Link>
           </div>
         ) : (
@@ -134,14 +157,18 @@ const Navbar = () => {
                 <span className="relative z-10">Login</span>
               </Link>
             </button>
-            <Link href="/cart">
-              <FaCartShopping className="text-black" onClick={() => setSelectNav(navList.length)}/> 
+            <Link href="/cart" className="relative">
+              <FaCartShopping 
+                className="text-2xl text-black hover:text-[#A0522D] transition-colors" 
+                onClick={() => setSelectNav(navList.length)}
+              /> 
+              <CartBadge count={getTotalItems()} />
             </Link>
           </div>
         )}
       </nav>
     </header>
-  );
-};
+  )
+}
 
 export default Navbar;
