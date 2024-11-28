@@ -4,11 +4,12 @@ import Image from 'next/image'
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useContext } from 'react';
 import { AppContext } from '@/context/AppContext';
-import { FaTrashAlt, FaTicketAlt, FaShoppingCart } from "react-icons/fa";
+import { FaTrashAlt, FaTicketAlt, FaShoppingCart, FaRegStickyNote } from "react-icons/fa";
 import Link from 'next/link';
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from 'next/navigation';
+import NoteModal from '@/components/noteModel';
 
 const Cart = () => {
     const {
@@ -23,7 +24,10 @@ const Cart = () => {
     const [finalTotal, setFinalTotal] = useState(totalCart)
     const [currentCoupon, setCurrentCoupon] = useState('')
     const [quantities, setQuantities] = useState([])
-    const [isChange, setIsChange] = useState(false)
+    const [hasChanges, setHasChanges] = useState(false)
+    const [initialQuantities, setInitialQuantities] = useState([])
+    const [showNoteModal, setShowNoteModal] = useState(false)
+    const [selectedNote, setSelectedNote] = useState(null)
 
     const router = useRouter()
 
@@ -148,28 +152,69 @@ const Cart = () => {
         if ((finalTotal < 0.5*totalCart) || (finalTotal < 0.5*totalCartNoLog)) {
             notifyError("Không thể áp dụng mã lớn hơn phân nửa giá trị đơn hàng")
         } else {
-            router.push("/checkout")
+            if (hasChanges) {
+                notifyError("Cần nhấn cập nhật trước khi thanh toán")
+            } else {
+                router.push("/checkout")
+            }
         }
     }
 
-    const updateQuantity = () => {
-        console.log()
+    const handleQuantityChange = (index, newQuantity) => {
+        const newQuantities = [...quantities]
+        newQuantities[index] = parseInt(newQuantity)
+        setQuantities(newQuantities)
+
+        const hasAnyChanges = newQuantities.some((quantity, idx) => quantity !== initialQuantities[idx])
+        setHasChanges(hasAnyChanges)
     }
+
+    const handleUpdateCart = async () => {
+        const currentItems = cart.items || cartNoLog.items || []
+        const productIds = []
+        const updatedQuantities = []
+
+        quantities.forEach((quantity, index) => {
+            if (quantity !== initialQuantities[index]) {
+                productIds.push(currentItems[index].product._id)
+                updatedQuantities.push(quantity)
+            }
+        })
+
+        if (productIds.length > 0) {
+            const res = await updateQuantities(productIds, updatedQuantities)
+            if (res.success) {
+                toast.success("Cập nhật giỏ hàng thành công", {
+                    position: "top-right",
+                    autoClose: 700,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    onClose: () => {
+                        localStorage.user ? getCartByUserId() : getCartById(localStorage?.cartId)
+                        setHasChanges(false)
+                    }
+                });
+            } else {
+                toast.error("Có lỗi xảy ra khi cập nhật giỏ hàng")
+            }
+        }
+    };
 
     useEffect(() => {
-        if (localStorage.user) {
-            getCartByUserId()
-            setQuantities(cart.items)
-        } else {
-            getCartById(localStorage?.cartId)
+        if (cart && cart.items?.length > 0) {
+            const cartQuantities = cart.items.map(item => item.quantity)
+            setQuantities(cartQuantities)
+            setInitialQuantities(cartQuantities)
+        } else if (cartNoLog && cartNoLog.items?.length > 0) {
+            const cartQuantities = cartNoLog.items.map(item => item.quantity)
+            setQuantities(cartQuantities)
+            setInitialQuantities(cartQuantities)
         }
-    }, [cart.items?.length])
-
-    // useEffect(() => {
-    //     cart.items.map(ele => {
-    //         console.log(ele)
-    //     })
-    // }, [cart.item?.length])
+    }, [cart.items, cartNoLog.items])
 
     useEffect(() => {
         const updateTotalSavings = async () => {
@@ -193,7 +238,10 @@ const Cart = () => {
         }
     }, [totalCart, totalCartNoLog, totalSavings])
 
-    console.log(cart.items?.length)
+    const handleCloseNoteModal = () => {
+        setShowNoteModal(false)
+        setSelectedNote(null)
+    }
 
     return (
         <div className="mx-auto rounded-lg w-[90%]">
@@ -224,6 +272,7 @@ const Cart = () => {
                                 <th className="p-2">Price</th>
                                 <th className="p-2">Quantity</th>
                                 <th className="p-2">Subtotal</th>
+                                <th className="p-2">Note</th>
                                 <th className="p-2"></th>
                             </tr>
                         </thead>
@@ -254,13 +303,30 @@ const Cart = () => {
                                     <td className="p-2">
                                         <input
                                             type="number"
-                                            value={isChange ? 1 : item.quantity }
+                                            value={quantities[index] || item.quantity}
                                             min="1"
                                             className="w-16 border border-gray-300 p-1 rounded"
-                                            onChange={(e) => updateQuantity(item.id, e.target.value)}
+                                            onChange={(e) => handleQuantityChange(index, e.target.value)}
                                         />
                                     </td>
-                                    <td className="p-2">{formatNumber((item.price - (item.price*item.discount)/100) * item.quantity)} đ</td>
+                                    <td className="p-2">{formatNumber((item.price - (item.price*item.discount)/100) * quantities[index] || item.quantity)} đ</td>
+                                    <td className="p-2">
+                                        <button
+                                            className="text-gray-600 hover:text-[#A0522D] transition-colors relative group"
+                                            onClick={() => {
+                                                setSelectedNote(item.note);
+                                                setShowNoteModal(true);
+                                            }}
+                                        >
+                                            <FaRegStickyNote className="text-xl" />
+                                            {item.note && (
+                                                <span className="absolute -top-2 -right-2 w-2 h-2 bg-[#A0522D] rounded-full"></span>
+                                            )}
+                                            <span className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded whitespace-nowrap">
+                                                {item.note ? 'Xem ghi chú' : 'Không có ghi chú'}
+                                            </span>
+                                        </button>
+                                    </td>
                                     <td className="p-2">
                                         <button
                                             className="text-red-500 hover:text-red-700"
@@ -270,7 +336,7 @@ const Cart = () => {
                                         </button>
                                     </td>
                                 </tr>
-                            ));
+                            ))
                         })()}
                         </tbody>
                     </table>
@@ -311,11 +377,12 @@ const Cart = () => {
                 </div>
             )}
 
-            {((cart.items?.length!==undefined || cartNoLog.items?.length!==undefined) && (cart.items?.length!==0 || cartNoLog.items?.length!==undefined)) && (
+            {((cart.items?.length!==undefined || cartNoLog.items?.length!==undefined) && 
+              (cart.items?.length!==0 || cartNoLog.items?.length!==undefined)) && (
                 <button
-                    // className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold hover:bg-[#8B4513] transition-colors"
-                    className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold transition-colors"
-                    disabled={true}
+                    className={`flex-1 px-6 py-3 text-white text-center rounded-lg font-bold transition-colors ${hasChanges ? 'bg-[#A0522D] hover:bg-[#8B4513] cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`}
+                    onClick={handleUpdateCart}
+                    disabled={!hasChanges}
                 >
                     Update Cart
                 </button>
@@ -422,6 +489,11 @@ const Cart = () => {
                     </div>
                 )}
             </div>
+            <NoteModal 
+                showModal={showNoteModal}
+                note={selectedNote}
+                onClose={handleCloseNoteModal}
+            />
         </div>
     )
 }

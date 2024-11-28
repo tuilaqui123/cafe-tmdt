@@ -122,7 +122,7 @@ const Home = () => {
                                 transition={{ delay: index * 0.1 }}
                                 className="bg-white rounded-lg shadow-lg p-6 text-center cursor-pointer hover:shadow-xl transition-shadow"
                             >
-                                <h3 className="text-xl font-semibold mb-2">{category._id}</h3>
+                                <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
                                 <p className="text-gray-600">{category.products.length} products</p>
                             </motion.div> 
                         ))}
