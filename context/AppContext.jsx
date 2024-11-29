@@ -143,7 +143,24 @@ export const AppProvider = ({ children }) => {
                     'Content-Type': 'application/json'
                 }
             })
-            console.log(res.data)
+            return res.data
+        }
+    }
+
+    // update quantity cart (no login)
+    const updateQuantitiesNoLog = async (productIds, quantities) => {
+        if (localStorage.cartId) {
+            const cartId = localStorage.cartId
+
+            const res = await axios.put('http://localhost:8081/v1/api/user/carts/updateQuantityNoLog', {
+                cartId: cartId,
+                productIds: productIds,
+                quantities: quantities
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
             return res.data
         }
     }
@@ -326,7 +343,7 @@ export const AppProvider = ({ children }) => {
         deleteItemFromCartNoLog,
         vouchers, setVouchers, checkVoucher, getIdByName,
         getTotalDiscount, getTotalUsedVouchers, getvoucherById,
-        updateQuantities
+        updateQuantities, updateQuantitiesNoLog
     }}>
         {children}
     </AppContext.Provider>

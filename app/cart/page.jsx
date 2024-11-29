@@ -16,7 +16,8 @@ const Cart = () => {
         totalCart, totalCartNoLog, cart, cartNoLog, 
         getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog, 
         vouchers, setVouchers, checkVoucher, 
-        getIdByName, getTotalUsedVouchers, getvoucherById, updateQuantities} = useContext(AppContext)
+        getIdByName, getTotalUsedVouchers, getvoucherById, 
+        updateQuantities, updateQuantitiesNoLog} = useContext(AppContext)
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [itemToDelete, setItemToDelete] = useState(null)
     const [coupons, setCoupons] = useState([])
@@ -33,6 +34,19 @@ const Cart = () => {
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('de-DE').format(number)
+    }
+
+    const notifyError = (message) => {
+        toast.error(message, {
+            position: "top-right",
+            autoClose: 700,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        })
     }
 
     useEffect(() => {
@@ -53,20 +67,7 @@ const Cart = () => {
         }
     
         fetchCoupons()
-      }, [vouchers, getvoucherById])
-
-    const notifyError = (message) => {
-        toast.error(message, {
-            position: "top-right",
-            autoClose: 700,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        })
-    }
+    }, [vouchers, getvoucherById])
 
     const stateOrder = [
         { id: 1, name: "Shopping Cart" },
@@ -161,6 +162,10 @@ const Cart = () => {
     }
 
     const handleQuantityChange = (index, newQuantity) => {
+        if (newQuantity <= 0) {
+            notifyError("Không thể chỉnh sửa giá trị này")
+            return
+        }
         const newQuantities = [...quantities]
         newQuantities[index] = parseInt(newQuantity)
         setQuantities(newQuantities)
@@ -182,7 +187,12 @@ const Cart = () => {
         })
 
         if (productIds.length > 0) {
-            const res = await updateQuantities(productIds, updatedQuantities)
+            let res = {}
+            if (localStorage.user) {
+                res = await updateQuantities(productIds, updatedQuantities)
+            } else {
+                res = await updateQuantitiesNoLog(productIds, updatedQuantities)
+            }
             if (res.success) {
                 toast.success("Cập nhật giỏ hàng thành công", {
                     position: "top-right",
