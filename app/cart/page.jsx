@@ -181,6 +181,7 @@ const Cart = () => {
 
         quantities.forEach((quantity, index) => {
             if (quantity !== initialQuantities[index]) {
+                console.log(currentItems[index])
                 productIds.push(currentItems[index].product._id)
                 updatedQuantities.push(quantity)
             }
