@@ -271,7 +271,7 @@ const Cart = () => {
     return (
         <div className="mx-auto rounded-lg w-[90%]">
             <ToastContainer />
-            {((cart.items?.length!==undefined || cartNoLog.items?.length!==undefined) && (cart.items?.length!==0 || cartNoLog.items?.length!==undefined)) ? (
+            {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) ? (
                 <div>
                     <div className='flex gap-3 justify-center cursor-pointer mb-8'>
                         {stateOrder.map((ele, index) => {
@@ -402,8 +402,7 @@ const Cart = () => {
                 </div>
             )}
 
-            {((cart.items?.length!==undefined || cartNoLog.items?.length!==undefined) && 
-              (cart.items?.length!==0 || cartNoLog.items?.length!==undefined)) && (
+            {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) && (
                 <button
                     className={`flex-1 px-6 py-3 text-white text-center rounded-lg font-bold transition-colors ${hasChanges ? 'bg-[#A0522D] hover:bg-[#8B4513] cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`}
                     onClick={handleUpdateCart}
@@ -414,7 +413,7 @@ const Cart = () => {
             )}
 
             <div className={`flex ${(localStorage.user) ? "items-center justify-between" : "justify-end"}`}>   
-                {((cart.items?.length!==undefined && cart.items?.length!==0) && localStorage.user ) && (
+                {((cart.items?.length!=undefined && cart.items?.length!=0) || localStorage.user ) && (
                     <div className="w-[40%]">
                         <div className="flex items-center gap-3 p-2 border rounded-full shadow-md bg-white mb-4">
                             <FaTicketAlt className="text-gray-400 text-xl" />
@@ -469,7 +468,7 @@ const Cart = () => {
                     </div>
                 )}
 
-                {((cart.items?.length!==undefined || cartNoLog.items?.length!==undefined) && (cart.items?.length!==0 || cartNoLog.items?.length!==undefined)) && (
+                {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) && (
                     <div className="w-1/2">
                         <div className="bg-white rounded-lg shadow-md p-6">
                             <h2 className="text-xl font-bold mb-4 text-gray-800">Cart Summary</h2>
