@@ -1,16 +1,17 @@
 "use client"
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from "react-icons/ai";
-import { FaPlus, FaMinus, FaTrashAlt } from "react-icons/fa";
+import { FaPlus, FaMinus, FaTrashAlt, FaRegStickyNote } from "react-icons/fa";
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
 import { AppContext } from '@/context/AppContext';
 import Link from 'next/link';
+import NoteModal from '@/components/noteModel';
 
 const CheckOut = () => {
-    const { vouchers } = useContext(AppContext)
+    const { vouchers, getCartById, getCartByUserId } = useContext(AppContext)
 
     const router = useRouter()
 
@@ -47,6 +48,10 @@ const CheckOut = () => {
     const [isLoadingInfoUser, setisLoadingInfoUser] = useState(false)
     const [isLoadingGetTotalCartAfterDiscount, setisLoadingGetTotalCartAfterDiscount] = useState(true)
 
+    const [selectedNoteIndex, setSelectedNoteIndex] = useState(null)
+    const [noteInModal, setnoteInModal] = useState('')
+
+    const [showNoteModal, setShowNoteModal] = useState(false)
     const [showConfirmModal, setShowConfirmModal] = useState(false)
 
     const getAllProvince = () => {
@@ -201,6 +206,7 @@ const CheckOut = () => {
                             .then(res => res.json())
                             .then(data => {
                                 setTimeout(() => {
+                                    getCartByUserId(JSON.parse(localStorage.user)?._id)
                                     router.push("/menu");
                                 }, 700);
                             })
@@ -264,6 +270,7 @@ const CheckOut = () => {
                             .then(res => res.json())
                             .then(data => {
                                 setTimeout(() => {
+                                    getCartById(localStorage.cartId)
                                     router.push("/menu");
                                 }, 700);
                             })
@@ -318,7 +325,6 @@ const CheckOut = () => {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data)
                 setTotalPrice(data.total)
             })
             .finally(() => {
@@ -414,6 +420,7 @@ const CheckOut = () => {
                                     .then(res => res.json())
                                     .then(data => {
                                         setTimeout(() => {
+                                            getCartByUserId(JSON.parse(localStorage.user)?._id)
                                             router.push("/menu");
                                         }, 700);
                                     })
@@ -476,6 +483,7 @@ const CheckOut = () => {
                                     .then(res => res.json())
                                     .then(data => {
                                         setTimeout(() => {
+                                            getCartById(localStorage?.cartId)
                                             router.push("/menu");
                                         }, 700);
                                     })
@@ -554,7 +562,7 @@ const CheckOut = () => {
         <>
             {
                 !isLoading ? <div className='lg:mx-20 mx-4 select-none'>
-                    <ToastContainer />
+                    <ToastContainer limit={1} />
 
                     {showConfirmModal && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -585,6 +593,44 @@ const CheckOut = () => {
                         </div>
                     )}
 
+                    {showNoteModal && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                            <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
+                                <h3 className="text-lg font-semibold mb-4">Chỉnh sửa ghi chú</h3>
+                                <textarea
+                                    className="w-full p-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#A0522D]"
+                                    rows="4"
+                                    value={noteInModal}
+                                    onChange={(e) => setnoteInModal(e.target.value)}
+                                    placeholder="Nhập ghi chú..."
+                                    maxLength={200}
+                                />
+                                <div className="flex justify-end gap-2 mt-4">
+                                    <button
+                                        className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+                                        onClick={() => {
+                                            setnoteInModal('')
+                                            setShowNoteModal(false)
+                                        }}
+                                    >
+                                        Hủy
+                                    </button>
+                                    <button
+                                        className="px-4 py-2 bg-[#A0522D] text-white rounded hover:bg-[#8B4513]"
+                                        onClick={() => {
+                                            cart.items[selectedNoteIndex].note = noteInModal
+                                            setnoteInModal('')
+                                            setSelectedNoteIndex('')
+                                            setShowNoteModal(false)
+                                        }}
+                                    >
+                                        Lưu
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <div className='flex mt-5 items-center hover:cursor-pointer' onClick={() => router.push('/cart')}>
                         <AiOutlineArrowLeft />
                         <p className=' text-[15px] text-black ml-2'>Back to cart</p>
@@ -608,7 +654,7 @@ const CheckOut = () => {
 
                             >
                                 <thead>
-                                    <tr className="border-b border-black">
+                                    <tr className="border-b border-gray-200 bg-[#A0522D] rounded-tl-[5px] rounded-bl-[5px] text-white">
                                         <th className="p-4 text-center w-[20%]"></th>
                                         <th className="p-4 text-center">Name</th>
 
@@ -629,13 +675,10 @@ const CheckOut = () => {
                                                         <Link
                                                             href={`/menu/${item.product._id}`}
                                                         >
-                                                            <Image
+                                                            <img
                                                                 src={item.product.image}
                                                                 alt={item.product.name}
-                                                                className="mx-auto h-[80%] bg-[#EEEEEE] hover:cursor-pointer hover:scale-[1.1] transition-all"
-                                                                width={100}
-                                                                height={200}
-                                                                priority
+                                                                className="mx-auto lg:w-[100px] lg:h-[100px] w-[80px] h-[80px] bg-[#EEEEEE] hover:cursor-pointer hover:scale-[1.1] transition-all"
                                                             />
                                                         </Link>
                                                     </td>
@@ -649,7 +692,7 @@ const CheckOut = () => {
 
                                                         <div className='flex'>
                                                             <div
-                                                                className='flex justify-center items-center bg-[black] w-12 h-10 text-center leading-[30px] rounded-[5px] hover:cursor-pointer hover:opacity-70'
+                                                                className='flex justify-center items-center bg-[#A0522D] hover:bg-[#8B4513] w-12 h-10 text-center leading-[30px] rounded-[5px] hover:cursor-pointer'
                                                                 onClick={() => {
                                                                     if (item.quantity !== '') {
                                                                         if (item.quantity > 1) {
@@ -718,7 +761,7 @@ const CheckOut = () => {
                                                             />
 
                                                             <div
-                                                                className='flex justify-center items-center bg-[black] w-12 h-10 text-center leading-[30px] rounded-[5px] hover:cursor-pointer hover:opacity-70'
+                                                                className='flex justify-center items-center bg-[#A0522D] hover:bg-[#8B4513] w-12 h-10 text-center leading-[30px] rounded-[5px] hover:cursor-pointer'
                                                                 onClick={() => {
                                                                     if (item.quantity !== '') {
                                                                         const updatedData = {
@@ -743,7 +786,7 @@ const CheckOut = () => {
                                                     <td className="text-center h-[130px] lg:table-cell hidden">{item.size}</td>
                                                     <td className="h-[130px] lg:flex items-center justify-center hidden">
                                                         <div
-                                                            className='flex justify-center items-center bg-[black] w-8 h-8 text-center leading-[30px] rounded-[5px] hover:cursor-pointer hover:opacity-70'
+                                                            className='flex justify-center items-center bg-[#A0522D] hover:bg-[#8B4513] w-8 h-8 text-center leading-[30px] rounded-[5px] hover:cursor-pointer'
                                                             onClick={() => {
                                                                 if (item.quantity !== '') {
                                                                     if (item.quantity > 1) {
@@ -814,7 +857,7 @@ const CheckOut = () => {
                                                         />
 
                                                         <div
-                                                            className='flex justify-center items-center bg-[black] w-8 h-8 text-center leading-[30px] rounded-[5px] hover:cursor-pointer hover:opacity-70'
+                                                            className='flex justify-center items-center bg-[#A0522D] hover:bg-[#8B4513] w-8 h-8 text-center leading-[30px] rounded-[5px] hover:cursor-pointer'
                                                             onClick={() => {
                                                                 if (item.quantity !== '') {
                                                                     const updatedData = {
@@ -837,12 +880,31 @@ const CheckOut = () => {
                                                     <td className="text-center h-[130px] lg:table-cell hidden">{(item.price * (1 - item.discount / 100)).toLocaleString('vi-VN')} đ</td>
 
                                                     <td className="text-center h-[130px]">
-                                                        <button
-                                                            onClick={() => handleDeleteClick(index)}
-                                                            className="text-red-500 hover:text-red-700 transition-colors"
-                                                        >
-                                                            <FaTrashAlt className='size-8 ml-7 lg:size-6' />
-                                                        </button>
+                                                        <div className='flex flex-col justify-between items-center'>
+                                                            <button
+                                                                onClick={() => handleDeleteClick(index)}
+                                                                className="text-red-500 hover:text-red-700 transition-colors"
+                                                            >
+                                                                <FaTrashAlt className='size-8 mb-8 lg:size-6' />
+                                                            </button>
+
+                                                            <button
+                                                                className="text-gray-600 hover:text-[#A0522D] transition-colors relative group"
+                                                                onClick={() => {
+                                                                    setnoteInModal(item.note)
+                                                                    setSelectedNoteIndex(index)
+                                                                    setShowNoteModal(true)
+                                                                }}
+                                                            >
+                                                                <FaRegStickyNote className="size-8 lg:size-6" />
+                                                                {item.note && (
+                                                                    <span className="absolute -top-2 -right-2 w-2 h-2 bg-[#A0522D] rounded-full"></span>
+                                                                )}
+                                                                <span className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded whitespace-nowrap">
+                                                                    {item.note ? 'Xem ghi chú' : 'Không có ghi chú'}
+                                                                </span>
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             )
@@ -1033,9 +1095,9 @@ const CheckOut = () => {
                                 </div>
                             </div>
 
-                            <div className='hidden lg:block w-full bg-[#222222] py-3 rounded-[10px] mt-14 cursor-pointer hover:opacity-90'>
+                            <div className='hidden lg:block w-full bg-[#A0522D] py-3 rounded-[10px] hover:bg-[#8B4513] mt-14 cursor-pointer'>
                                 <div
-                                    className='flex justify-center items-center text-white '
+                                    className='flex justify-center items-center text-white  '
                                     onClick={() => { addOrder() }}
                                 >
                                     <p className='mr-3'>Payment</p>
@@ -1046,9 +1108,9 @@ const CheckOut = () => {
 
                     </div>
 
-                    <div className='lg:hidden my-5 w-full bg-[#222222] py-4 rounded-[10px] mt-1 cursor-pointer hover:opacity-90'>
+                    <div className='lg:hidden my-5 w-full bg-[#A0522D] py-4 rounded-[10px] hover:bg-[#8B4513] mt-1 cursor-pointer'>
                         <div
-                            className='flex justify-center items-center text-white '
+                            className='flex justify-center items-center text-white  '
                             onClick={() => { addOrder() }}
                         >
                             <p className='mr-3'>Payment</p>
