@@ -5,12 +5,13 @@ import { AppContext } from "@/context/AppContext";
 import { useContext, useState } from "react";
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
+
 export default function CardItem1({id, image, name, description, discount, type, handleImageClick}) {
   const [showOptions, setShowOptions] = useState(false)
   const [selectedSize, setSelectedSize] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [note, setNote] = useState('')
-  const {addNewCart, addItemToCart, addItemToCartNoLog} = useContext(AppContext)
+  const {addNewCart, addItemToCart, addItemToCartNoLog, getCartByUserId, getCartById} = useContext(AppContext)
 
   const notifySuccess = (message) => {
     toast.success(message, {
@@ -23,6 +24,7 @@ export default function CardItem1({id, image, name, description, discount, type,
       progress: undefined,
       theme: "light",
       onClose: () => {
+        (localStorage.user) ? getCartByUserId() : getCartById(localStorage?.cartId)
         setShowOptions(false)
       }
     })
@@ -84,9 +86,9 @@ export default function CardItem1({id, image, name, description, discount, type,
         <div
           className="absolute inset-0 cursor-zoom-in"
           onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            handleImageClick(image);
+            e.preventDefault()
+            e.stopPropagation()
+            handleImageClick(image)
           }}
         />
       </div>

@@ -45,10 +45,12 @@ export default function CategoryPage({ params }) {
     handleGetCategoryByName(slug)
   }, [categories, slug])
 
+  const availableCategoryProducts = categoryProducts.filter(product => product.isStock)
+
   const indexOfLastProduct = currentPage * PRODUCTS_PER_PAGE
   const indexOfFirstProduct = indexOfLastProduct - PRODUCTS_PER_PAGE
-  const currentProducts = categoryProducts.length > 0 ? categoryProducts.slice(indexOfFirstProduct, indexOfLastProduct) : []
-  const totalPages = Math.ceil(categoryProducts.length / PRODUCTS_PER_PAGE)
+  const currentProducts = availableCategoryProducts.length > 0 ? availableCategoryProducts.slice(indexOfFirstProduct, indexOfLastProduct) : []
+  const totalPages = Math.ceil(availableCategoryProducts.length / PRODUCTS_PER_PAGE)
   
   const handleCategoryChange = (category) => {
     const categoryPath = category.name.toLowerCase().replace(/\s+/g, '-')
@@ -119,17 +121,13 @@ export default function CategoryPage({ params }) {
           </div>
         )}
 
-        {!isLoading && categoryProducts.length > 0 && (
+        {!isLoading && availableCategoryProducts.length > 0 && (
           <div className="flex justify-center gap-2 mt-4">
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 rounded ${
-                  currentPage === i + 1 
-                    ? 'bg-[#A0522D] text-white' 
-                    : 'bg-gray-200 hover:bg-gray-300'
-                }`}
+                className={`px-3 py-1 rounded ${currentPage === i + 1 ? 'bg-[#A0522D] text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
               >
                 {i + 1}
               </button>
@@ -156,7 +154,7 @@ export default function CategoryPage({ params }) {
                 className={`cursor-pointer px-3 py-2 shadow rounded-md transition ${activeCategory === category._id ? "bg-[#8B4513] text-white hover:bg-[#A0522D]" : "bg-white hover:bg-gray-200"}`}
                 onClick={() => handleCategoryChange(category)}
               >
-                <p>{category.name}</p>
+                <p>{category.name.charAt(0).toUpperCase() + category.name.slice(1)}</p>
               </li>
             ))}
           </ul>

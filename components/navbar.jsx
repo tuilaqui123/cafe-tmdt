@@ -70,7 +70,7 @@ const Navbar = () => {
       } else {
         setCartCount(0)
       }
-    };
+    }
 
     updateCartCount()
   }, [cart, cartNoLog])
@@ -83,7 +83,6 @@ const Navbar = () => {
         await getCartById(localStorage.cartId)
       }
     }
-
     loadCartData()
   }, [])
 
