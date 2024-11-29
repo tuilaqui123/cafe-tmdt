@@ -25,10 +25,14 @@ const Cart = () => {
     const [finalTotal, setFinalTotal] = useState(totalCart)
     const [currentCoupon, setCurrentCoupon] = useState('')
     const [quantities, setQuantities] = useState([])
+    const [notes, setNotes] = useState([])
     const [hasChanges, setHasChanges] = useState(false)
+    const [hasNoteChanges, setHasNoteChanges] = useState(false)
     const [initialQuantities, setInitialQuantities] = useState([])
     const [showNoteModal, setShowNoteModal] = useState(false)
     const [selectedNote, setSelectedNote] = useState(null)
+    const [selectedNoteIndex, setSelectedNoteIndex] = useState(null)
+    const [initialNotes, setInitialNotes] = useState([])
 
     const router = useRouter()
 
@@ -161,6 +165,16 @@ const Cart = () => {
         }
     }
 
+    const handleNoteChange = (index, newNote) => {
+        const newNotes = [...notes]
+        newNotes[index] = newNote
+        setNotes(newNotes)
+
+        const hasQuantityChanges = quantities.some((quantity, idx) => quantity !== initialQuantities[idx])
+        const hasNoteChanges = newNotes.some((note, idx) => note !== initialNotes[idx])
+        setHasChanges(hasQuantityChanges || hasNoteChanges)
+    }
+
     const handleQuantityChange = (index, newQuantity) => {
         if (newQuantity <= 0) {
             notifyError("Không thể chỉnh sửa giá trị này")
@@ -178,21 +192,30 @@ const Cart = () => {
         const currentItems = cart.items || cartNoLog.items || []
         const productIds = []
         const updatedQuantities = []
+        const updatedNotes = []
 
         quantities.forEach((quantity, index) => {
             if (quantity !== initialQuantities[index]) {
-                console.log(currentItems[index])
                 productIds.push(currentItems[index].product._id)
                 updatedQuantities.push(quantity)
+            }
+        })
+
+        notes.forEach((note, index) => {
+            if (note !== initialNotes[index]) {
+                if (!productIds.includes(currentItems[index].product._id)) {
+                    productIds.push(currentItems[index].product._id)
+                }
+                updatedNotes.push(note)
             }
         })
 
         if (productIds.length > 0) {
             let res = {}
             if (localStorage.user) {
-                res = await updateQuantities(productIds, updatedQuantities)
+                res = await updateQuantities(productIds, updatedQuantities, updatedNotes)
             } else {
-                res = await updateQuantitiesNoLog(productIds, updatedQuantities)
+                res = await updateQuantitiesNoLog(productIds, updatedQuantities, updatedNotes)
             }
             if (res.success) {
                 toast.success("Cập nhật giỏ hàng thành công", {
@@ -207,10 +230,11 @@ const Cart = () => {
                     onClose: () => {
                         localStorage.user ? getCartByUserId() : getCartById(localStorage?.cartId)
                         setHasChanges(false)
+                        setHasNoteChanges(false)
                     }
                 })
             } else {
-                toast.error("Có lỗi xảy ra khi cập nhật giỏ hàng")
+                notifyError("Có lỗi xảy ra khi cập nhật giỏ hàng")
             }
         }
     }
@@ -341,6 +365,7 @@ const Cart = () => {
                                             className="text-gray-600 hover:text-[#A0522D] transition-colors relative group"
                                             onClick={() => {
                                                 setSelectedNote(item.note)
+                                                setSelectedNoteIndex(index)
                                                 setShowNoteModal(true)
                                             }}
                                         >
@@ -407,14 +432,14 @@ const Cart = () => {
                 <button
                     className={`flex-1 px-6 py-3 text-white text-center rounded-lg font-bold transition-colors ${hasChanges ? 'bg-[#A0522D] hover:bg-[#8B4513] cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`}
                     onClick={handleUpdateCart}
-                    disabled={!hasChanges}
+                    disabled={!hasChanges && !hasNoteChanges}
                 >
                     Update Cart
                 </button>
             )}
 
             <div className={`flex ${(localStorage.user) ? "items-center justify-between" : "justify-end"}`}>   
-                {((cart.items?.length!=undefined && cart.items?.length!=0) || localStorage.user ) && (
+                {((cart.items?.length!=undefined && cart.items?.length!=0) && localStorage.user ) && (
                     <div className="w-[40%]">
                         <div className="flex items-center gap-3 p-2 border rounded-full shadow-md bg-white mb-4">
                             <FaTicketAlt className="text-gray-400 text-xl" />
@@ -517,7 +542,9 @@ const Cart = () => {
             <NoteModal 
                 showModal={showNoteModal}
                 note={selectedNote}
+                index={selectedNoteIndex}
                 onClose={handleCloseNoteModal}
+                handleNoteChange={handleNoteChange}
             />
         </div>
     )

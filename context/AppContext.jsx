@@ -129,7 +129,7 @@ export const AppProvider = ({ children }) => {
     }
 
     // update quantity cart
-    const updateQuantities = async (productIds, quantities) => {
+    const updateQuantities = async (productIds, quantities, notes) => {
         if (localStorage.user) {
             const userObj = JSON.parse(localStorage.user)
             const userId = userObj._id
@@ -137,25 +137,28 @@ export const AppProvider = ({ children }) => {
             const res = await axios.put('http://localhost:8081/v1/api/user/carts/updateQuantity', {
                 userId: userId,
                 productIds: productIds,
-                quantities: quantities
+                quantities: quantities,
+                notes: notes
             }, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             })
+            console.log(res.data)
             return res.data
         }
     }
 
     // update quantity cart (no login)
-    const updateQuantitiesNoLog = async (productIds, quantities) => {
+    const updateQuantitiesNoLog = async (productIds, quantities, notes) => {
         if (localStorage.cartId) {
             const cartId = localStorage.cartId
 
             const res = await axios.put('http://localhost:8081/v1/api/user/carts/updateQuantityNoLog', {
                 cartId: cartId,
                 productIds: productIds,
-                quantities: quantities
+                quantities: quantities,
+                notes: notes
             }, {
                 headers: {
                     'Content-Type': 'application/json'
