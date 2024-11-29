@@ -193,26 +193,20 @@ const Cart = () => {
         const productIds = []
         const updatedQuantities = []
         const updatedNotes = []
-        const quantityMap = new Map()
+        const processedProducts = new Set()
 
-        quantities.forEach((quantity, index) => {
-            if (quantity !== initialQuantities[index]) {
-                productIds.push(currentItems[index].product._id)
-                updatedQuantities.push(quantity)
-                quantityMap.set(currentItems[index].product._id, quantity)
-            }
-        })
+        currentItems.forEach((item, index) => {
+            const productId = item.product._id
+            const hasQuantityChange = quantities[index] !== initialQuantities[index]
+            const hasNoteChange = notes[index] !== initialNotes[index]
 
-        notes.forEach((note, index) => {
-            if (note !== initialNotes[index]) {
-                const productId = currentItems[index].product._id
-                if (!productIds.includes(productId)) {
+            if (hasQuantityChange || hasNoteChange) {
+                if (!processedProducts.has(productId)) {
                     productIds.push(productId)
-
-                    const currentQuantity = quantities[index] || currentItems[index].quantity
-                    updatedQuantities.push(currentQuantity)
+                    updatedQuantities.push(quantities[index] || item.quantity)
+                    updatedNotes.push(notes[index] || item.note || '')
+                    processedProducts.add(productId)
                 }
-                updatedNotes.push(note)
             }
         })
 
