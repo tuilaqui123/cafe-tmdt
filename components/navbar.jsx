@@ -26,10 +26,10 @@ const navList = [
 ];
 
 const CartBadge = ({ count }) => {
-  if (count <= 0) return null;
+  if (count <= 0) return null
   
   return (
-    <span className="absolute -top-3 -right-3 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full transition-all duration-300 transform scale-100 hover:scale-110 px-1">
+    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full transition-all duration-300 transform scale-100 hover:scale-110 px-1">
       {count > 99 ? '99+' : count}
     </span>
   )
