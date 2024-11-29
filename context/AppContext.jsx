@@ -123,7 +123,6 @@ export const AppProvider = ({ children }) => {
                     'Content-Type': 'application/json'
                 }
             })
-            console.log(res.data)
             return res.data
         }
     }
@@ -144,7 +143,6 @@ export const AppProvider = ({ children }) => {
                     'Content-Type': 'application/json'
                 }
             })
-            console.log(res.data)
             return res.data
         }
     }

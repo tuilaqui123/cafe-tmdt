@@ -193,18 +193,24 @@ const Cart = () => {
         const productIds = []
         const updatedQuantities = []
         const updatedNotes = []
+        const quantityMap = new Map()
 
         quantities.forEach((quantity, index) => {
             if (quantity !== initialQuantities[index]) {
                 productIds.push(currentItems[index].product._id)
                 updatedQuantities.push(quantity)
+                quantityMap.set(currentItems[index].product._id, quantity)
             }
         })
 
         notes.forEach((note, index) => {
             if (note !== initialNotes[index]) {
-                if (!productIds.includes(currentItems[index].product._id)) {
-                    productIds.push(currentItems[index].product._id)
+                const productId = currentItems[index].product._id
+                if (!productIds.includes(productId)) {
+                    productIds.push(productId)
+
+                    const currentQuantity = quantities[index] || currentItems[index].quantity
+                    updatedQuantities.push(currentQuantity)
                 }
                 updatedNotes.push(note)
             }
