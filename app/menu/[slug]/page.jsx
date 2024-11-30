@@ -87,6 +87,20 @@ export default function ItemView() {
     }
   }
 
+  const handleOrder = () => {
+    const price = product.type.find(p => p.size === size).price
+    setObjCartForOne({
+      productId: product._id,
+      name: product.name,
+      quantity: quantity,
+      size: size,
+      price: price,
+      discount: product.discount,
+      image: product.image
+    })
+    router.push('/checkout')
+  }
+
   const handleMouseMove = (e) => {
     if (!isZoomed) return
     

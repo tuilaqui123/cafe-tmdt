@@ -11,7 +11,7 @@ import Link from 'next/link';
 import NoteModal from '@/components/noteModel';
 
 const CheckOut = () => {
-    const { vouchers, getCartById, getCartByUserId } = useContext(AppContext)
+    const { vouchers, getCartById, getCartByUserId, objCartForOne, setObjCartForOne } = useContext(AppContext)
 
     const router = useRouter()
 
@@ -69,7 +69,7 @@ const CheckOut = () => {
     const [showNoteModal, setShowNoteModal] = useState(false)
     const [showConfirmModal, setShowConfirmModal] = useState(false)
 
-    
+
 
     const getAllProvince = () => {
         fetch("https://provinces.open-api.vn/api/p/")
@@ -168,7 +168,7 @@ const CheckOut = () => {
                     method: "momo",
                     name: name,
                     phone: phone,
-                    address: [address, ward, district,province].join(", "),
+                    address: [address, ward, district, province].join(", "),
                     note: note
                 })
             })
@@ -197,7 +197,7 @@ const CheckOut = () => {
                         paymentMethod: "cod",
                         name: name,
                         phone: phone,
-                        address: [address, ward, district,province].join(", "),
+                        address: [address, ward, district, province].join(", "),
                         note: note
                     })
                 })
@@ -229,20 +229,29 @@ const CheckOut = () => {
                             theme: "light",
                         })
 
-                        fetch(`http://localhost:8081/v1/api/user/carts/clearCartByUserId/${JSON.parse(localStorage.user)._id}`, {
-                            method: "DELETE"
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                setTimeout(() => {
-                                    getCartByUserId(JSON.parse(localStorage.user)?._id)
-                                    router.push("/menu");
-                                }, 700);
-                            })
-                            .catch((e) => {
-                                console.log(e)
-                            })
+                        if (objCartForOne) {
+                            setObjCartForOne('')
 
+                            setTimeout(() => {
+                                getCartByUserId(JSON.parse(localStorage.user)?._id)
+                                router.push("/menu");
+                            }, 700);
+                        }
+                        else {
+                            fetch(`http://localhost:8081/v1/api/user/carts/clearCartByUserId/${JSON.parse(localStorage.user)._id}`, {
+                                method: "DELETE"
+                            })
+                                .then(res => res.json())
+                                .then(data => {
+                                    setTimeout(() => {
+                                        getCartByUserId(JSON.parse(localStorage.user)?._id)
+                                        router.push("/menu");
+                                    }, 700);
+                                })
+                                .catch((e) => {
+                                    console.log(e)
+                                })
+                        }
                     })
                     .catch((e) => {
                         console.log(e)
@@ -261,7 +270,7 @@ const CheckOut = () => {
                         paymentMethod: "cod",
                         name: name,
                         phone: phone,
-                        address: [address, ward, district,province].join(", "),
+                        address: [address, ward, district, province].join(", "),
                         note: note
                     })
                 })
@@ -293,19 +302,29 @@ const CheckOut = () => {
                             theme: "light",
                         })
 
-                        fetch(`http://localhost:8081/v1/api/user/carts/clearCartById/${localStorage.cartId}`, {
-                            method: "DELETE"
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                setTimeout(() => {
-                                    getCartById(localStorage.cartId)
-                                    router.push("/menu");
-                                }, 700);
+                        if (objCartForOne) {
+                            setObjCartForOne('')
+
+                            setTimeout(() => {
+                                getCartByUserId(JSON.parse(localStorage.user)?._id)
+                                router.push("/menu");
+                            }, 700);
+                        }
+                        else {
+                            fetch(`http://localhost:8081/v1/api/user/carts/clearCartById/${localStorage.cartId}`, {
+                                method: "DELETE"
                             })
-                            .catch((e) => {
-                                console.log(e)
-                            })
+                                .then(res => res.json())
+                                .then(data => {
+                                    setTimeout(() => {
+                                        getCartById(localStorage.cartId)
+                                        router.push("/menu");
+                                    }, 700);
+                                })
+                                .catch((e) => {
+                                    console.log(e)
+                                })
+                        }
                     })
                     .catch((e) => {
                         console.log(e)
@@ -316,6 +335,29 @@ const CheckOut = () => {
 
     const getCart = () => {
         setisLoadingCart(true)
+
+        if (objCartForOne) {
+            setCart({
+                items: [
+                    {
+                        product: {
+                            _id: objCartForOne.productId,
+                            image: objCartForOne.image,
+                            name: objCartForOne.name
+                        },
+                        size: objCartForOne.size,
+                        quantity: objCartForOne.quantity,
+                        discount: objCartForOne.discount,
+                        price: objCartForOne.price,
+                    }
+                ]
+            })
+            setisLoadingCart(false)
+
+            return
+        }
+
+
         if (localStorage.user) {
             fetch(`http://localhost:8081/v1/api/user/carts/getCartByUserId/${JSON.parse(localStorage.user)._id}`)
                 .then(res => res.json())
@@ -418,13 +460,13 @@ const CheckOut = () => {
     }
 
     useEffect(() => {
-        if(!isLoading){
+        if (!isLoading) {
             updateSelect(provinceCode, districtCode, wardCode)
         }
-    },[isLoading])
+    }, [isLoading])
 
     useEffect(() => {
-        if (allProvince.length!=0 && districts.length!=0 && wards.length!=0) {
+        if (allProvince.length != 0 && districts.length != 0 && wards.length != 0) {
             getInfoUser()
         }
 
@@ -485,19 +527,29 @@ const CheckOut = () => {
                                     theme: "light",
                                 })
 
-                                fetch(`http://localhost:8081/v1/api/user/carts/clearCartByUserId/${JSON.parse(localStorage.user)._id}`, {
-                                    method: "DELETE"
-                                })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        setTimeout(() => {
-                                            getCartByUserId(JSON.parse(localStorage.user)?._id)
-                                            router.push("/menu");
-                                        }, 700);
+                                if (objCartForOne) {
+                                    setObjCartForOne('')
+
+                                    setTimeout(() => {
+                                        getCartByUserId(JSON.parse(localStorage.user)?._id)
+                                        router.push("/menu");
+                                    }, 700);
+                                }
+                                else {
+                                    fetch(`http://localhost:8081/v1/api/user/carts/clearCartByUserId/${JSON.parse(localStorage.user)._id}`, {
+                                        method: "DELETE"
                                     })
-                                    .catch((e) => {
-                                        console.log(e)
-                                    })
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            setTimeout(() => {
+                                                getCartByUserId(JSON.parse(localStorage.user)?._id)
+                                                router.push("/menu");
+                                            }, 700);
+                                        })
+                                        .catch((e) => {
+                                            console.log(e)
+                                        })
+                                }
                             })
                             .catch((e) => {
                                 console.log(e)
@@ -548,19 +600,29 @@ const CheckOut = () => {
                                     theme: "light",
                                 })
 
-                                fetch(`http://localhost:8081/v1/api/user/carts/clearCartById/${localStorage.cartId}`, {
-                                    method: "DELETE"
-                                })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        setTimeout(() => {
-                                            getCartById(localStorage?.cartId)
-                                            router.push("/menu");
-                                        }, 700);
+                                if (objCartForOne) {
+                                    setObjCartForOne('')
+
+                                    setTimeout(() => {
+                                        getCartByUserId(JSON.parse(localStorage.user)?._id)
+                                        router.push("/menu");
+                                    }, 700);
+                                }
+                                else {
+                                    fetch(`http://localhost:8081/v1/api/user/carts/clearCartById/${localStorage.cartId}`, {
+                                        method: "DELETE"
                                     })
-                                    .catch((e) => {
-                                        console.log(e)
-                                    })
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            setTimeout(() => {
+                                                getCartById(localStorage?.cartId)
+                                                router.push("/menu");
+                                            }, 700);
+                                        })
+                                        .catch((e) => {
+                                            console.log(e)
+                                        })
+                                }
                             })
                             .catch((e) => {
                                 console.log(e)
@@ -605,7 +667,7 @@ const CheckOut = () => {
 
     useEffect(() => {
         const handleIsLoanding = () => {
-            if (isLoadingAllPrvince || isLoadingCart || isLoadingInfoUser|| isLoadingAllDistrict || isLoadingAllWard) {
+            if (isLoadingAllPrvince || isLoadingCart || isLoadingInfoUser || isLoadingAllDistrict || isLoadingAllWard) {
                 setIsLoading(true)
             } else {
                 setIsLoading(false)
