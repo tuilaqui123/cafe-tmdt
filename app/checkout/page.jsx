@@ -15,6 +15,10 @@ const CheckOut = () => {
 
     const router = useRouter()
 
+    const provinceSelect = useRef(null)
+    const districtSelect = useRef(null)
+    const wardSelect = useRef(null)
+
     const [paymentMethod, setPaymentMethod] = useState('momo')
 
     const itemTableElement = useRef(null)
@@ -42,8 +46,19 @@ const CheckOut = () => {
     const [allDistrict, setAllDistrict] = useState([])
     const [allWard, setAllWard] = useState([])
 
+    const [provinceCode, setProvinceCode] = useState('')
+    const [districtCode, setDistrictCode] = useState('')
+    const [wardCode, setWardCode] = useState('')
+
+    //district voi ward toan vn
+    const [districts, setDistricts] = useState([])
+    const [wards, setWards] = useState([])
+    //
+
     const [isLoading, setIsLoading] = useState(true)
     const [isLoadingAllPrvince, setisLoadingAllPrvince] = useState(true)
+    const [isLoadingAllDistrict, setisLoadingAllDistrict] = useState(true)
+    const [isLoadingAllWard, setisLoadingAllWard] = useState(true)
     const [isLoadingCart, setisLoadingCart] = useState(true)
     const [isLoadingInfoUser, setisLoadingInfoUser] = useState(false)
     const [isLoadingGetTotalCartAfterDiscount, setisLoadingGetTotalCartAfterDiscount] = useState(true)
@@ -54,6 +69,8 @@ const CheckOut = () => {
     const [showNoteModal, setShowNoteModal] = useState(false)
     const [showConfirmModal, setShowConfirmModal] = useState(false)
 
+    
+
     const getAllProvince = () => {
         fetch("https://provinces.open-api.vn/api/p/")
             .then(res => res.json())
@@ -61,22 +78,34 @@ const CheckOut = () => {
             .finally(() => { setisLoadingAllPrvince(false) })
     }
 
-    const getAllDistrictProvince = (code) => {
+    const getAllDistrictProvince = async (code) => {
         if (code != '') {
-            fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`)
-                .then(res => res.json())
-                .then(data => {
-                    setAllDistrict(data.districts)
-                })
+            const response = await fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`);
+            const data = await response.json();
+            setAllDistrict(data.districts);
         }
     }
 
-    const getAllWardDistrict = (code) => {
+    const getAllWardDistrict = async (code) => {
         if (code != '') {
-            fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`)
-                .then(res => res.json())
-                .then(data => { setAllWard(data.wards) })
+            const response = await fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`);
+            const data = await response.json();
+            setAllWard(data.wards);
         }
+    }
+
+    const getAllDistricts = () => {
+        fetch("https://provinces.open-api.vn/api/d/")
+            .then(res => res.json())
+            .then(data => { setDistricts(data) })
+            .finally(() => { setisLoadingAllDistrict(false) })
+    }
+
+    const getAllWards = () => {
+        fetch("https://provinces.open-api.vn/api/w/")
+            .then(res => res.json())
+            .then(data => { setWards(data) })
+            .finally(() => { setisLoadingAllWard(false) })
     }
 
     const addOrder = () => {
@@ -139,7 +168,7 @@ const CheckOut = () => {
                     method: "momo",
                     name: name,
                     phone: phone,
-                    address: address + " " + ward + " " + district + " " + province,
+                    address: [address, ward, district,province].join(", "),
                     note: note
                 })
             })
@@ -168,7 +197,7 @@ const CheckOut = () => {
                         paymentMethod: "cod",
                         name: name,
                         phone: phone,
-                        address: address + " " + ward + " " + district + " " + province,
+                        address: [address, ward, district,province].join(", "),
                         note: note
                     })
                 })
@@ -232,7 +261,7 @@ const CheckOut = () => {
                         paymentMethod: "cod",
                         name: name,
                         phone: phone,
-                        address: address + " " + ward + " " + district + " " + province,
+                        address: [address, ward, district,province].join(", "),
                         note: note
                     })
                 })
@@ -339,18 +368,41 @@ const CheckOut = () => {
             })
     }
 
-    const getInfoUser = () => {
+    const getInfoUser = async () => {
         if (localStorage.user) {
-            setisLoadingInfoUser(true)
-            fetch(`http://localhost:8081/v1/api/user/users/${JSON.parse(localStorage.user)._id}`)
-                .then(res => res.json())
-                .then(data => {
-                    setName(data.name)
-                    setPhone(data.phone)
-                })
-                .finally(() => {
-                    setisLoadingInfoUser(false)
-                })
+            setisLoadingInfoUser(true);
+            try {
+                const response = await fetch(
+                    `http://localhost:8081/v1/api/user/users/${JSON.parse(localStorage.user)._id}`
+                );
+                const data = await response.json();
+
+                setName(data.name);
+                setPhone(data.phone);
+
+                const [addressData, wardData, districtData, provinceData] = data.address.split(", ");
+                setProvince(provinceData);
+                setDistrict(districtData);
+                setWard(wardData);
+                setAddress(addressData);
+
+                const province = allProvince.find(pr => pr.name === provinceData);
+                await getAllDistrictProvince(province.code);
+
+                const district = districts.find(pr => pr.name === districtData);
+                await getAllWardDistrict(district.code);
+
+                const ward = wards.find(pr => pr.name === wardData);
+
+                setProvinceCode(province.code)
+                setDistrictCode(district.code)
+                setWardCode(ward.code)
+            } catch (error) {
+                console.log(error);
+            }
+            finally {
+                setisLoadingInfoUser(false);
+            }
         }
     }
 
@@ -358,6 +410,25 @@ const CheckOut = () => {
         setItemToDelete(index)
         setShowConfirmModal(true)
     };
+
+    const updateSelect = (provinceCode, districtCode, wardCode) => {
+        provinceSelect.current.value = provinceCode
+        districtSelect.current.value = districtCode
+        wardSelect.current.value = wardCode
+    }
+
+    useEffect(() => {
+        if(!isLoading){
+            updateSelect(provinceCode, districtCode, wardCode)
+        }
+    },[isLoading])
+
+    useEffect(() => {
+        if (allProvince.length!=0 && districts.length!=0 && wards.length!=0) {
+            getInfoUser()
+        }
+
+    }, [allProvince, districts, wards])
 
     useEffect(() => {
         const verifyPayment = async () => {
@@ -504,11 +575,13 @@ const CheckOut = () => {
 
         verifyPayment()
 
-        getInfoUser()
-
         getAllProvince()
 
         getCart()
+
+        getAllDistricts()
+
+        getAllWards()
     }, [])
 
     useEffect(() => {
@@ -532,7 +605,7 @@ const CheckOut = () => {
 
     useEffect(() => {
         const handleIsLoanding = () => {
-            if (isLoadingAllPrvince || isLoadingCart || isLoadingInfoUser) {
+            if (isLoadingAllPrvince || isLoadingCart || isLoadingInfoUser|| isLoadingAllDistrict || isLoadingAllWard) {
                 setIsLoading(true)
             } else {
                 setIsLoading(false)
@@ -540,7 +613,7 @@ const CheckOut = () => {
         }
 
         handleIsLoanding()
-    }, [isLoadingAllPrvince, isLoadingCart, isLoadingInfoUser])
+    }, [isLoadingAllPrvince, isLoadingCart, isLoadingInfoUser, isLoadingAllDistrict, isLoadingAllWard])
 
     // useEffect(() => {
     //     if (!isLoading) {
@@ -943,6 +1016,7 @@ const CheckOut = () => {
                             </div>
 
                             <select
+                                ref={provinceSelect}
                                 defaultValue=""
                                 className="my-5 border-2 bg-[#f1debc] border-[black] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 max-h-[50px] focus:bg-white"
                                 onChange={(e) => {
@@ -974,6 +1048,7 @@ const CheckOut = () => {
                             </select>
 
                             <select
+                                ref={districtSelect}
                                 defaultValue=""
                                 className="my-5 border-2 bg-[#f1debc] border-[black] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 max-h-[50px] focus:bg-white"
                                 onChange={(e) => {
@@ -1003,6 +1078,7 @@ const CheckOut = () => {
                             </select>
 
                             <select
+                                ref={wardSelect}
                                 defaultValue=""
                                 className="my-5 border-2 bg-[#f1debc] border-[black] text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 max-h-[50px] focus:bg-white"
                                 onChange={(e) => {

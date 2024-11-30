@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { usePathname } from "next/navigation";
 import { MdLogout } from "react-icons/md";
 import { FaCartShopping } from "react-icons/fa6";
+import { FaUser } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { AppContext } from "@/context/AppContext";
 
@@ -24,6 +25,16 @@ const navList = [
     id: 2,
   },
 ];
+
+const CartBadge = ({ count }) => {
+  if (count <= 0) return null
+
+  return (
+    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full transition-all duration-300 transform scale-100 hover:scale-110 px-1">
+      {count > 99 ? '99+' : count}
+    </span>
+  )
+}
 
 const Navbar = () => {
   const { categories } = useContext(AppContext)
@@ -73,7 +84,7 @@ const Navbar = () => {
               {value.name === "Menu" ? (
                 <div className="relative group" ref={dropdownRef}>
                   <button
-                    className={`flex items-center hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav === value.id || isActive(value.href))? "bg-[#A0522D] text-white" : ""}`}
+                    className={`flex items-center hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav === value.id || isActive(value.href)) ? "bg-[#A0522D] text-white" : ""}`}
                   >
                     {value.name}
                     <IoIosArrowDown className="ml-1 transform transition-transform duration-300 group-hover:rotate-180" />
@@ -87,9 +98,9 @@ const Navbar = () => {
                         </p>
                       </Link>
                       {categories.map((category) => (
-                        <Link 
-                          key={category._id} 
-                          href={`/menu/category/${category._id.toLowerCase().replace(/\s+/g, '-')}`}
+                        <Link
+                          key={category._id}
+                          href={`/menu/category/${category.name.toLowerCase().replace(/\s+/g, '-')}`}
                           onClick={() => setSelectNav(value.id)}
                         >
                           <p className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
@@ -115,16 +126,27 @@ const Navbar = () => {
         </ul>
         {user ? (
           <div className="flex items-center gap-4 px-4 py-2 bg-[#A0522D] text-white rounded-md shadow-lg">
-            <span className="text-base font-medium cursor-pointer">
-              {JSON.parse(localStorage.user).name}
-            </span>
+            <Link className="flex items-center hover:cursor-pointer"
+              href="/user"
+            >
+              <FaUser />
+
+              <span className="text-base font-medium ml-2">
+                {JSON.parse(localStorage.user).name}
+              </span>
+            </Link>
+
             <div className="cursor-pointer"
-                onClick={handleLogout}
+              onClick={handleLogout}
             >
               <MdLogout />
             </div>
-            <Link href="/cart">
-              <FaCartShopping onClick={() => setSelectNav(3)}/> 
+            <Link href="/cart" className="relative">
+              <FaCartShopping
+                className="text-2xl hover:text-gray-200 transition-colors"
+                onClick={() => setSelectNav(3)}
+              />
+              <CartBadge count={getTotalItems()} />
             </Link>
           </div>
         ) : (
@@ -134,8 +156,12 @@ const Navbar = () => {
                 <span className="relative z-10">Login</span>
               </Link>
             </button>
-            <Link href="/cart">
-              <FaCartShopping className="text-black" onClick={() => setSelectNav(navList.length)}/> 
+            <Link href="/cart" className="relative">
+              <FaCartShopping
+                className="text-2xl text-black hover:text-[#A0522D] transition-colors"
+                onClick={() => setSelectNav(navList.length)}
+              />
+              <CartBadge count={getTotalItems()} />
             </Link>
           </div>
         )}
