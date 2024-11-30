@@ -105,9 +105,9 @@ export default function CardItem1({id, image, name, description, discount, type,
           <button className="text-[#4c2113] w-[80%] hover:before:bg-red relative rounded-md overflow-hidden bg-white shadow-2xl transition-all before:absolute before:bottom-0 before:left-0 before:top-0 before:z-0 before:h-full before:w-0 before:bg-[#4c2113] before:transition-all before:duration-500 hover:text-white hover:shadow-[#4c2113] hover:before:left-0 hover:before:w-full">
             <div className="flex items-center justify-center space-x-2">
               <span className="relative z-10 font-bold">
-                {(discount > 0) ? formatNumber(type[0].price - (type[0].price*discount)/100) : formatNumber(type[0].price)}đ
+                {(discount > 0) ? formatNumber(type[type.length - 1].price - (type[type.length - 1].price*discount)/100) : formatNumber(type[type.length - 1].price)}đ
               </span>
-              {(discount > 0) ? <span className="relative z-10 font-bold line-through text-gray-500">{formatNumber(type[0].price)}đ</span> : null}
+              {(discount > 0) ? <span className="relative z-10 font-bold line-through text-gray-500">{formatNumber(type[type.length - 1].price)}đ</span> : null}
             </div>
           </button>
           <button className="rounded-md w-[18%] aspect-square text-center bg-[#4c2113] flex items-center justify-center font-bold">
