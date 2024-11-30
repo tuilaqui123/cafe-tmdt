@@ -28,7 +28,6 @@ const navList = [
 
 const CartBadge = ({ count }) => {
   if (count <= 0) return null
-
   return (
     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full transition-all duration-300 transform scale-100 hover:scale-110 px-1">
       {count > 99 ? '99+' : count}
@@ -37,9 +36,10 @@ const CartBadge = ({ count }) => {
 }
 
 const Navbar = () => {
-  const { categories } = useContext(AppContext)
+  const { categories, cart, cartNoLog, getCartByUserId, getCartById } = useContext(AppContext)
   const [selectNav, setSelectNav] = useState(null)
   const [user, setUser] = useState(null)
+  const [cartCount, setCartCount] = useState(0)
   const dropdownRef = useRef(null)
   const pathname = usePathname()
 
@@ -59,6 +59,33 @@ const Navbar = () => {
     }
   }, [pathname])
 
+  useEffect(() => {
+    const updateCartCount = () => {
+      if (cart && cart.items?.length > 0) {
+        const total = cart.items.reduce((sum, item) => sum + item.quantity, 0)
+        setCartCount(total)
+      } else if (cartNoLog && cartNoLog.items?.length > 0) {
+        const total = cartNoLog.items.reduce((sum, item) => sum + item.quantity, 0)
+        setCartCount(total)
+      } else {
+        setCartCount(0)
+      }
+    }
+
+    updateCartCount()
+  }, [cart, cartNoLog])
+
+  useEffect(() => {
+    const loadCartData = async () => {
+      if (localStorage.user) {
+        await getCartByUserId()
+      } else if (localStorage.cartId) {
+        await getCartById(localStorage.cartId)
+      }
+    }
+    loadCartData()
+  }, [])
+
   const handleLogout = () => {
     localStorage.removeItem("token")
     localStorage.removeItem("user")
@@ -68,6 +95,15 @@ const Navbar = () => {
   const isActive = (path) => {
     const currentPath = pathname.split('/')[1]
     return path.includes(currentPath)
+  }
+
+  const getTotalItems = () => {
+    if (cart && cart.items?.length > 0) {
+      return cart.items.reduce((total, item) => total + item.quantity, 0)
+    } else if (cartNoLog && cartNoLog.items?.length > 0) {
+      return cartNoLog.items.reduce((total, item) => total + item.quantity, 0)
+    }
+    return 0
   }
 
   return (
@@ -98,13 +134,13 @@ const Navbar = () => {
                         </p>
                       </Link>
                       {categories.map((category) => (
-                        <Link
-                          key={category._id}
+                        <Link 
+                          key={category._id} 
                           href={`/menu/category/${category.name.toLowerCase().replace(/\s+/g, '-')}`}
                           onClick={() => setSelectNav(value.id)}
                         >
                           <p className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
-                            {category._id}
+                            {category.name}
                           </p>
                         </Link>
                       ))}
@@ -139,13 +175,13 @@ const Navbar = () => {
             <div className="cursor-pointer"
               onClick={handleLogout}
             >
-              <MdLogout />
+              <MdLogout className="text-2xl" />
             </div>
             <Link href="/cart" className="relative">
-              <FaCartShopping
-                className="text-2xl hover:text-gray-200 transition-colors"
+              <FaCartShopping 
+                className="text-2xl hover:text-gray-200 transition-colors" 
                 onClick={() => setSelectNav(3)}
-              />
+              /> 
               <CartBadge count={getTotalItems()} />
             </Link>
           </div>
@@ -157,17 +193,17 @@ const Navbar = () => {
               </Link>
             </button>
             <Link href="/cart" className="relative">
-              <FaCartShopping
-                className="text-2xl text-black hover:text-[#A0522D] transition-colors"
+              <FaCartShopping 
+                className="text-2xl text-black hover:text-[#A0522D] transition-colors" 
                 onClick={() => setSelectNav(navList.length)}
-              />
+              /> 
               <CartBadge count={getTotalItems()} />
             </Link>
           </div>
         )}
       </nav>
     </header>
-  );
-};
+  )
+}
 
 export default Navbar;

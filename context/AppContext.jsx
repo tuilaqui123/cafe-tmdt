@@ -90,22 +90,24 @@ export const AppProvider = ({ children }) => {
     }
 
     // add item to cart (no login)
-    const addItemToCartNoLog = async (cartId, productId, size, quantity) => {
+    const addItemToCartNoLog = async (cartId, productId, size, note, quantity) => {
         const res = await axios.post('http://localhost:8081/v1/api/user/carts/addItemCartNoLogin', {
             cartId: cartId,
             productId: productId,
             size: size,
+            note: note,
             quantity: quantity
         }, {
             headers: {
                 'Content-Type': 'application/json'
             }
         })
+        console.log(res.data)
         return res.data
     }
 
     // add item to cart
-    const addItemToCart = async (productId, size, quantity) => {
+    const addItemToCart = async (productId, size, note, quantity) => {
         if (localStorage.user) {
             const userObj = JSON.parse(localStorage.user)
             const userId = userObj._id
@@ -114,7 +116,48 @@ export const AppProvider = ({ children }) => {
                 userId: userId,
                 productId: productId,
                 size: size,
+                note: note,
                 quantity: quantity
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            console.log(res.data)
+            return res.data
+        }
+    }
+
+    // update quantity cart
+    const updateQuantities = async (productIds, quantities, notes) => {
+        if (localStorage.user) {
+            const userObj = JSON.parse(localStorage.user)
+            const userId = userObj._id
+
+            const res = await axios.put('http://localhost:8081/v1/api/user/carts/updateQuantity', {
+                userId: userId,
+                productIds: productIds,
+                quantities: quantities,
+                notes: notes
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            return res.data
+        }
+    }
+
+    // update quantity cart (no login)
+    const updateQuantitiesNoLog = async (productIds, quantities, notes) => {
+        if (localStorage.cartId) {
+            const cartId = localStorage.cartId
+
+            const res = await axios.put('http://localhost:8081/v1/api/user/carts/updateQuantityNoLog', {
+                cartId: cartId,
+                productIds: productIds,
+                quantities: quantities,
+                notes: notes
             }, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -235,7 +278,6 @@ export const AppProvider = ({ children }) => {
                     'Content-Type': 'application/json'
                 }
             })
-            console.log(res.data)
             return res.data
         }
     }
@@ -273,6 +315,13 @@ export const AppProvider = ({ children }) => {
             })
     }
 
+    // get category by name
+    const getCategoryByName = async (categoryName) => {
+        const res = await axios.get(`http://localhost:8081/v1/api/user/categories/name/${categoryName}`)
+
+        return res.data
+    }
+
     useEffect(() => {
         fetchProduct()
         getCategoríes()
@@ -287,14 +336,15 @@ export const AppProvider = ({ children }) => {
     return <AppContext.Provider value={{
         products, setProducts, fetchProduct,
         product, setProduct, getProductById,
-        categories, setCategories, getCategoríes,
+        categories, setCategories, getCategoríes, getCategoryByName,
         user, signup, errorSignup, setErrorSignup, signin,
         cart, setCart, getCartByUserId, totalCart,
         addItemToCart, deleteItemFromCart, addItemToCartNoLog,
         cartNoLog, setCartNoLog, getCartById, totalCartNoLog, addNewCart,
         deleteItemFromCartNoLog,
         vouchers, setVouchers, checkVoucher, getIdByName,
-        getTotalDiscount, getTotalUsedVouchers, getvoucherById
+        getTotalDiscount, getTotalUsedVouchers, getvoucherById,
+        updateQuantities, updateQuantitiesNoLog
     }}>
         {children}
     </AppContext.Provider>

@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/context/AppContext";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 import { TiDelete } from "react-icons/ti";
-import { FaArrowLeft, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -19,14 +19,18 @@ export default function Page() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null)
   const PRODUCT_PER_PAGE = 12
   
+  const availableProducts = products.filter(product => product.isStock)
+  const availableCategoryProducts = selectCategoryProducts.filter(product => product.isStock)
+
   const indexOfLastProduct = currentPage * PRODUCT_PER_PAGE
   const indexOfFirstProduct = indexOfLastProduct - PRODUCT_PER_PAGE
-  const currentProducts = selectCategoryProducts.length === 0 ? products.slice(indexOfFirstProduct, indexOfLastProduct) : selectCategoryProducts.slice(indexOfFirstProduct, indexOfLastProduct)
-  const totalPages = Math.ceil((selectCategoryProducts.length === 0 ? products.length : selectCategoryProducts.length) / PRODUCT_PER_PAGE)
+  const currentProducts = selectCategoryProducts.length === 0 ? availableProducts.slice(indexOfFirstProduct, indexOfLastProduct) : availableCategoryProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+  const totalPages = Math.ceil((selectCategoryProducts.length === 0 ? availableProducts.length : availableCategoryProducts.length) / PRODUCT_PER_PAGE)
   
   const handleCategoryChange = (category) => {
-    const categoryPath = category._id.toLowerCase().replace(/\s+/g, '-')
-    setSelectCategory(category._id)
+    const categoryPath = category.name.toLowerCase().replace(/\s+/g, '-')
+    setSelectCategory(category.name)
+
     router.push(`/menu/category/${categoryPath}`)
   }
 
@@ -165,7 +169,7 @@ export default function Page() {
                 className={`cursor-pointer px-3 py-2 shadow rounded-md transition ${selectCategory===category._id ? "bg-[#8B4513] text-white hover:bg-[#A0522D]" : "bg-white hover:bg-gray-200 "}`}
                 onClick={() => handleCategoryChange(category)}
               >
-                <p>{category._id}</p>
+                <p>{category.name.charAt(0).toUpperCase() + category.name.slice(1)}</p>
               </li>
             ))}
           </ul>

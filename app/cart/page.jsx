@@ -4,29 +4,53 @@ import Image from 'next/image'
 import { FaArrowRightLong } from "react-icons/fa6";
 import { useContext } from 'react';
 import { AppContext } from '@/context/AppContext';
-import { FaTrashAlt, FaTicketAlt, FaShoppingCart } from "react-icons/fa";
+import { FaTrashAlt, FaTicketAlt, FaShoppingCart, FaRegStickyNote } from "react-icons/fa";
 import Link from 'next/link';
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from 'next/navigation';
+import NoteModal from '@/components/noteModel';
 
 const Cart = () => {
     const {
         totalCart, totalCartNoLog, cart, cartNoLog, 
         getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog, 
         vouchers, setVouchers, checkVoucher, 
-        getIdByName, getTotalUsedVouchers, getvoucherById} = useContext(AppContext)
+        getIdByName, getTotalUsedVouchers, getvoucherById, 
+        updateQuantities, updateQuantitiesNoLog} = useContext(AppContext)
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [itemToDelete, setItemToDelete] = useState(null)
     const [coupons, setCoupons] = useState([])
     const [totalSavings, setTotalSavings] = useState(0)
     const [finalTotal, setFinalTotal] = useState(totalCart)
     const [currentCoupon, setCurrentCoupon] = useState('')
+    const [quantities, setQuantities] = useState([])
+    const [notes, setNotes] = useState([])
+    const [hasChanges, setHasChanges] = useState(false)
+    const [hasNoteChanges, setHasNoteChanges] = useState(false)
+    const [initialQuantities, setInitialQuantities] = useState([])
+    const [showNoteModal, setShowNoteModal] = useState(false)
+    const [selectedNote, setSelectedNote] = useState(null)
+    const [selectedNoteIndex, setSelectedNoteIndex] = useState(null)
+    const [initialNotes, setInitialNotes] = useState([])
 
     const router = useRouter()
 
     const formatNumber = (number) => {
         return new Intl.NumberFormat('de-DE').format(number)
+    }
+
+    const notifyError = (message) => {
+        toast.error(message, {
+            position: "top-right",
+            autoClose: 700,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+        })
     }
 
     useEffect(() => {
@@ -47,20 +71,7 @@ const Cart = () => {
         }
     
         fetchCoupons()
-      }, [vouchers, getvoucherById])
-
-    const notifyError = (message) => {
-        toast.error(message, {
-            position: "top-right",
-            autoClose: 700,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-        })
-    }
+    }, [vouchers, getvoucherById])
 
     const stateOrder = [
         { id: 1, name: "Shopping Cart" },
@@ -95,7 +106,7 @@ const Cart = () => {
                 onClose: () => {
                     (localStorage.user) ? getCartByUserId() : getCartById(localStorage?.cartId)
                 }
-            });
+            })
         }
         setShowConfirmModal(false)
         setItemToDelete(null)
@@ -112,7 +123,7 @@ const Cart = () => {
                 draggable: true,
                 progress: undefined,
                 theme: "light",
-            });
+            })
             return
         }
 
@@ -146,21 +157,114 @@ const Cart = () => {
         if ((finalTotal < 0.5*totalCart) || (finalTotal < 0.5*totalCartNoLog)) {
             notifyError("Không thể áp dụng mã lớn hơn phân nửa giá trị đơn hàng")
         } else {
-            router.push("/checkout")
+            if (hasChanges) {
+                notifyError("Cần nhấn cập nhật trước khi thanh toán")
+            } else {
+                router.push("/checkout")
+            }
         }
     }
 
-    const updateQuantity = () => {
-        console.log(123)
+    const handleNoteChange = (index, newNote) => {
+        const newNotes = [...notes]
+        newNotes[index] = newNote
+        setNotes(newNotes)
+
+        const hasQuantityChanges = quantities.some((quantity, idx) => quantity !== initialQuantities[idx])
+        const hasNoteChanges = newNotes.some((note, idx) => note !== initialNotes[idx])
+        setHasChanges(hasQuantityChanges || hasNoteChanges)
+    }
+
+    const handleQuantityChange = (index, newQuantity) => {
+        if (newQuantity <= 0) {
+            notifyError("Không thể chỉnh sửa giá trị này")
+            return
+        }
+        const newQuantities = [...quantities]
+        newQuantities[index] = parseInt(newQuantity)
+        setQuantities(newQuantities)
+
+        const hasAnyChanges = newQuantities.some((quantity, idx) => quantity !== initialQuantities[idx])
+        setHasChanges(hasAnyChanges)
+    }
+
+    const handleUpdateCart = async () => {
+        const currentItems = cart.items || cartNoLog.items || []
+        const productIds = []
+        const updatedQuantities = []
+        const updatedNotes = []
+        const processedProducts = new Set()
+
+        currentItems.forEach((item, index) => {
+            const productId = item.product._id
+            const hasQuantityChange = quantities[index] !== initialQuantities[index]
+            const hasNoteChange = notes[index] !== initialNotes[index]
+
+            if (hasQuantityChange || hasNoteChange) {
+                if (!processedProducts.has(productId)) {
+                    productIds.push(productId)
+                    updatedQuantities.push(quantities[index] || item.quantity)
+                    updatedNotes.push(notes[index] || item.note || '')
+                    processedProducts.add(productId)
+                }
+            }
+        })
+
+        if (productIds.length > 0) {
+            let res = {}
+            if (localStorage.user) {
+                res = await updateQuantities(productIds, updatedQuantities, updatedNotes)
+            } else {
+                res = await updateQuantitiesNoLog(productIds, updatedQuantities, updatedNotes)
+            }
+            if (res.success) {
+                toast.success("Cập nhật giỏ hàng thành công", {
+                    position: "top-right",
+                    autoClose: 700,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    onClose: () => {
+                        localStorage.user ? getCartByUserId() : getCartById(localStorage?.cartId)
+                        setHasChanges(false)
+                        setHasNoteChanges(false)
+                    }
+                })
+            } else {
+                notifyError("Có lỗi xảy ra khi cập nhật giỏ hàng")
+            }
+        }
     }
 
     useEffect(() => {
-        if (localStorage.user) {
-            getCartByUserId()
-        } else {
-            getCartById(localStorage?.cartId)
+        const loadCartData = async () => {
+            if (localStorage.user) {
+                await getCartByUserId()
+            } else if (localStorage.cartId) {
+                await getCartById(localStorage.cartId)
+            }
         }
-    }, [cart.items?.length])
+
+        loadCartData()
+    }, [])
+
+    useEffect(() => {
+        if (cart && cart.items?.length > 0) {
+            const cartQuantities = cart.items.map(item => item.quantity)
+            setQuantities(cartQuantities)
+            setInitialQuantities(cartQuantities)
+        } else if (cartNoLog && cartNoLog.items?.length > 0) {
+            const cartQuantities = cartNoLog.items.map(item => item.quantity)
+            setQuantities(cartQuantities)
+            setInitialQuantities(cartQuantities)
+        } else {
+            setQuantities([])
+            setInitialQuantities([])
+        }
+    }, [cart, cartNoLog])
 
     useEffect(() => {
         const updateTotalSavings = async () => {
@@ -169,12 +273,12 @@ const Cart = () => {
                 setTotalSavings(totalCart - totalRes.total)
                 setFinalTotal(totalRes.total)
             } else {
-                setTotalSavings(0)
+                setTotalSavings(0);
                 setFinalTotal(totalCart || totalCartNoLog)
             }
         };
         updateTotalSavings()
-    }, [vouchers, totalCart, totalCartNoLog])
+    }, [vouchers, totalCart, totalCartNoLog, cart, cartNoLog])
 
     useEffect(() => {
         if (totalSavings > 0) {
@@ -182,12 +286,17 @@ const Cart = () => {
         } else {
             setFinalTotal(totalCart || totalCartNoLog)
         }
-    }, [totalCart, totalCartNoLog, totalSavings])
+    }, [totalCart, totalCartNoLog, totalSavings, cart, cartNoLog])
+
+    const handleCloseNoteModal = () => {
+        setShowNoteModal(false)
+        setSelectedNote(null)
+    }
 
     return (
         <div className="mx-auto rounded-lg w-[90%]">
             <ToastContainer />
-            {(cart.items?.length!==0 && cartNoLog.items?.length!==0) ? (
+            {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) ? (
                 <div>
                     <div className='flex gap-3 justify-center cursor-pointer mb-8'>
                         {stateOrder.map((ele, index) => {
@@ -213,6 +322,7 @@ const Cart = () => {
                                 <th className="p-2">Price</th>
                                 <th className="p-2">Quantity</th>
                                 <th className="p-2">Subtotal</th>
+                                <th className="p-2">Note</th>
                                 <th className="p-2"></th>
                             </tr>
                         </thead>
@@ -243,13 +353,31 @@ const Cart = () => {
                                     <td className="p-2">
                                         <input
                                             type="number"
-                                            value={item.quantity}
+                                            value={quantities[index] || item.quantity}
                                             min="1"
                                             className="w-16 border border-gray-300 p-1 rounded"
-                                            onChange={(e) => updateQuantity(item.id, e.target.value)}
+                                            onChange={(e) => handleQuantityChange(index, e.target.value)}
                                         />
                                     </td>
-                                    <td className="p-2">{formatNumber((item.price - (item.price*item.discount)/100) * item.quantity)} đ</td>
+                                    <td className="p-2">{formatNumber((item.price - (item.price*item.discount)/100) * quantities[index] || item.quantity)} đ</td>
+                                    <td className="p-2">
+                                        <button
+                                            className="text-gray-600 hover:text-[#A0522D] transition-colors relative group"
+                                            onClick={() => {
+                                                setSelectedNote(item.note)
+                                                setSelectedNoteIndex(index)
+                                                setShowNoteModal(true)
+                                            }}
+                                        >
+                                            <FaRegStickyNote className="text-xl" />
+                                            {item.note && (
+                                                <span className="absolute -top-2 -right-2 w-2 h-2 bg-[#A0522D] rounded-full"></span>
+                                            )}
+                                            <span className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded whitespace-nowrap">
+                                                {item.note ? 'Xem ghi chú' : 'Không có ghi chú'}
+                                            </span>
+                                        </button>
+                                    </td>
                                     <td className="p-2">
                                         <button
                                             className="text-red-500 hover:text-red-700"
@@ -259,7 +387,7 @@ const Cart = () => {
                                         </button>
                                     </td>
                                 </tr>
-                            ));
+                            ))
                         })()}
                         </tbody>
                     </table>
@@ -300,8 +428,18 @@ const Cart = () => {
                 </div>
             )}
 
+            {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) && (
+                <button
+                    className={`flex-1 px-6 py-3 text-white text-center rounded-lg font-bold transition-colors ${hasChanges ? 'bg-[#A0522D] hover:bg-[#8B4513] cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`}
+                    onClick={handleUpdateCart}
+                    disabled={!hasChanges && !hasNoteChanges}
+                >
+                    Update Cart
+                </button>
+            )}
+
             <div className={`flex ${(localStorage.user) ? "items-center justify-between" : "justify-end"}`}>   
-                {(cart.items?.length!==0 && localStorage.user ) && (
+                {((cart.items?.length!=undefined && cart.items?.length!=0) && localStorage.user ) && (
                     <div className="w-[40%]">
                         <div className="flex items-center gap-3 p-2 border rounded-full shadow-md bg-white mb-4">
                             <FaTicketAlt className="text-gray-400 text-xl" />
@@ -356,49 +494,58 @@ const Cart = () => {
                     </div>
                 )}
 
-                <div className="w-1/2">
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h2 className="text-xl font-bold mb-4 text-gray-800">Cart Summary</h2>
+                {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) && (
+                    <div className="w-1/2">
+                        <div className="bg-white rounded-lg shadow-md p-6">
+                            <h2 className="text-xl font-bold mb-4 text-gray-800">Cart Summary</h2>
 
-                        <div className="space-y-3 mb-4">
-                            <div className="flex justify-between text-gray-600">
-                                <span>Subtotal</span>
-                                <span>{formatNumber(totalCart || totalCartNoLog)} đ</span>
+                            <div className="space-y-3 mb-4">
+                                <div className="flex justify-between text-gray-600">
+                                    <span>Subtotal</span>
+                                    <span>{formatNumber(totalCart || totalCartNoLog)} đ</span>
+                                </div>
+                                <div className="flex justify-between text-gray-600">
+                                    <span>Shipping</span>
+                                    <span>Free</span>
+                                </div>
+                                <div className="flex justify-between text-green-600">
+                                    <span>Discount</span>
+                                    <span>- {formatNumber(totalSavings)} đ</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between text-gray-600">
-                                <span>Shipping</span>
-                                <span>Free</span>
-                            </div>
-                            <div className="flex justify-between text-green-600">
-                                <span>Discount</span>
-                                <span>- {formatNumber(totalSavings)} đ</span>
-                            </div>
-                        </div>
 
-                        <div className="border-t border-gray-200 pt-4 mb-6">
-                            <div className="flex justify-between font-bold text-lg">
-                                <span>Total</span>
-                                <span className="text-[#A0522D]">{formatNumber(finalTotal)} đ</span>
+                            <div className="border-t border-gray-200 pt-4 mb-6">
+                                <div className="flex justify-between font-bold text-lg">
+                                    <span>Total</span>
+                                    <span className="text-[#A0522D]">{formatNumber(finalTotal)} đ</span>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="flex gap-4">
-                            <Link
-                                href="/menu"
-                                className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 text-center rounded-lg font-bold hover:bg-gray-300 transition-colors"
-                            >
-                                Continue Shopping
-                            </Link>
-                            <button
-                                onClick={handleCheckout}
-                                className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold hover:bg-[#8B4513] transition-colors"
-                            >
-                                Checkout
-                            </button>
+                            <div className="flex gap-4">
+                                <Link
+                                    href="/menu"
+                                    className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 text-center rounded-lg font-bold hover:bg-gray-300 transition-colors"
+                                >
+                                    Continue Shopping
+                                </Link>
+                                <button
+                                    onClick={handleCheckout}
+                                    className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold hover:bg-[#8B4513] transition-colors"
+                                >
+                                    Checkout
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
+            <NoteModal 
+                showModal={showNoteModal}
+                note={selectedNote}
+                index={selectedNoteIndex}
+                onClose={handleCloseNoteModal}
+                handleNoteChange={handleNoteChange}
+            />
         </div>
     )
 }
