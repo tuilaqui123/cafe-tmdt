@@ -2,7 +2,7 @@
 import CardItem1 from "@/components/cardItem1";
 import { useContext, useEffect, useState } from "react";
 import { AppContext } from "@/context/AppContext";
-import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { IoIosArrowDown } from "react-icons/io";
 import { TiDelete } from "react-icons/ti";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useRouter } from 'next/navigation';

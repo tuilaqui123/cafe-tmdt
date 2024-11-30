@@ -94,7 +94,7 @@ export default function CardItem1({id, image, name, description, discount, type,
       </div>
       <div className="p-5">
         <div>
-          <Link href={`/menu/${id}`}>
+          <Link href={`/menu/${encodeURIComponent(name.split(" ").join("-"))}`}>
             <h3 className="text-xl font-bold text-white hover:text-gray-200 transition-colors min-h-[56px] cursor-pointer">
               {formatNameProduct(name)}
             </h3>

@@ -304,6 +304,18 @@ export const AppProvider = ({ children }) => {
             })
     }
 
+    // get productId by name
+    const getIdProductByName = async (name) => {
+        const res = await axios.post(`http://localhost:8081/v1/api/user/getIdProductByName`, {
+            name: name,
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        return res.data
+    }
+
     // get category
     const getCategoríes = () => {
         axios.get(`http://localhost:8081/v1/api/user/products/categories`)
@@ -345,7 +357,8 @@ export const AppProvider = ({ children }) => {
         vouchers, setVouchers, checkVoucher, getIdByName,
         getTotalDiscount, getTotalUsedVouchers, getvoucherById,
         updateQuantities, updateQuantitiesNoLog,
-        objCartForOne, setObjCartForOne
+        objCartForOne, setObjCartForOne,
+        getIdProductByName
     }}>
         {children}
     </AppContext.Provider>

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from "motion/react"
 import { FaCoffee, FaLeaf, FaMugHot } from 'react-icons/fa'
+import ScrollToTop from '@/components/scrollToTop'
 
 const Home = () => {
     const { products, categories } = useContext(AppContext)
@@ -97,7 +98,7 @@ const Home = () => {
                                         <span className="text-[#A0522D] font-bold">
                                             {formatNumber(product.type[0].price)}đ
                                         </span>
-                                        <Link href={`/menu/${product._id}`}>
+                                        <Link href={`/menu/${encodeURIComponent(product.name.split(" ").join("-"))}`}>
                                             <button className="bg-[#A0522D] text-white px-4 py-2 rounded hover:bg-[#8B4513] transition-colors">
                                                 View Details
                                             </button>
@@ -133,6 +134,8 @@ const Home = () => {
                     </div>
                 </div>
             </div>
+
+            <ScrollToTop />
         </div>
     )
 }

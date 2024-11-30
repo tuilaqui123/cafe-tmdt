@@ -11,7 +11,7 @@ const RelatedProductCard = ({ product }) => {
 
     return (
         <div 
-            onClick={() => router.push(`/menu/${product._id}`)}
+            onClick={() => router.push(`/menu/${encodeURIComponent(product.name.split(" ").join("-"))}`)}
             className="group flex items-center space-x-4 bg-white/50 backdrop-blur-sm p-3 rounded-xl cursor-pointer hover:bg-white/80 transition-all duration-300"
         >
             <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">

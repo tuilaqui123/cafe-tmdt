@@ -12,13 +12,14 @@ import { FaPlus, FaMinus } from "react-icons/fa";
 export default function ItemView() {
   const params = useParams()
   const router = useRouter()
-  const {product, getProductById, products, addItemToCart, addItemToCartNoLog, getCartByUserId, getCartById, objCartForOne, setObjCartForOne} = useContext(AppContext)
+  const {product, getProductById, products, addItemToCart, addItemToCartNoLog, getCartByUserId, getCartById, setObjCartForOne, getIdProductByName} = useContext(AppContext)
   const [size, setSize] = useState("S")
   const [isClickIndex, setIsClickIndex] = useState(0)
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [relatedProducts, setRelatedProducts] = useState([])
   const [quantity, setQuantity] = useState(1)
+  const decodedSlug = decodeURIComponent(params.slug)
 
   const notifySuccess = (message) => {
     toast.success(message, {
@@ -99,13 +100,12 @@ export default function ItemView() {
   const handleOrder = () => {
     const price = product.type.find(p => p.size === size).price
     setObjCartForOne({
+      userId: JSON.parse(localStorage.user)?._id,
       productId: product._id,
-      name: product.name,
       quantity: quantity,
       size: size,
       price: price,
-      discount: product.discount,
-      image: product.image
+      discount: product.discount
     })
     router.push('/checkout')
   }
@@ -121,8 +121,15 @@ export default function ItemView() {
   }
 
   useEffect(() => {
-    getProductById(params.slug)
-  }, [])
+    const getProductId = async () => {
+      if (decodedSlug) {
+        const formattedName = decodedSlug.split("-").join(" ")
+        const productId = await getIdProductByName(formattedName)
+        getProductById(productId)
+      }
+    }
+    getProductId()
+  }, [decodedSlug])  
 
   useEffect(() => {
     if (product && product.type && product.type.length > 0) {
@@ -237,7 +244,7 @@ export default function ItemView() {
               <div className="mb-4 w-[70%]">
                 <p className="font-bold text-xl mb-2">Mô tả sản phẩm</p>
                 <p className="text-gray-600 break-words">
-                  {product.description} 
+                  {product.description}
                 </p>
               </div>
               <div className="flex gap-4 w-[70%]">
@@ -262,7 +269,7 @@ export default function ItemView() {
                 Các sản phẩm liên quan
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {relatedProducts.map((relatedProduct, index) => (
+                {relatedProducts.map((relatedProduct) => (
                   <RelatedProductCard
                     key={relatedProduct._id}
                     product={relatedProduct}

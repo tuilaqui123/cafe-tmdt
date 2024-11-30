@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import Aos from "aos";
 import "aos/dist/aos.css";
+import ScrollToTop from "@/components/scrollToTop";
 
 export default function Page() {
     useEffect(() => {
@@ -132,6 +133,8 @@ export default function Page() {
                     </div>
                 </div>
             </div>
+
+            <ScrollToTop />
         </div>
     );
 }
