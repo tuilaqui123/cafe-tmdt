@@ -17,7 +17,7 @@ const Cart = () => {
         getCartByUserId, getCartById, deleteItemFromCart, deleteItemFromCartNoLog, 
         vouchers, setVouchers, checkVoucher, 
         getIdByName, getTotalUsedVouchers, getvoucherById, 
-        updateQuantities, updateQuantitiesNoLog} = useContext(AppContext)
+        updateQuantities, updateQuantitiesNoLog, setObjCartForOne} = useContext(AppContext)
     const [showConfirmModal, setShowConfirmModal] = useState(false)
     const [itemToDelete, setItemToDelete] = useState(null)
     const [coupons, setCoupons] = useState([])
@@ -160,6 +160,7 @@ const Cart = () => {
             if (hasChanges) {
                 notifyError("Cần nhấn cập nhật trước khi thanh toán")
             } else {
+                setObjCartForOne('')
                 router.push("/checkout")
             }
         }

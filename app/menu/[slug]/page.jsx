@@ -99,12 +99,13 @@ export default function ItemView() {
   const handleOrder = () => {
     const price = product.type.find(p => p.size === size).price
     setObjCartForOne({
-      userId: JSON.parse(localStorage.user)?._id,
       productId: product._id,
+      name: product.name,
       quantity: quantity,
       size: size,
       price: price,
-      discount: product.discount
+      discount: product.discount,
+      image: product.image
     })
     router.push('/checkout')
   }
