@@ -9,7 +9,6 @@ const AccountInfo = ({ position, select }) => {
     const wardSelect = useRef(null)
 
     const [email, setEmail] = useState("")
-    const [userId, setUserId] = useState("")
     const [name, setName] = useState("")
     const [phone, setPhone] = useState("")
     const [address, setAddress] = useState('')
@@ -22,8 +21,19 @@ const AccountInfo = ({ position, select }) => {
     const [allDistrict, setAllDistrict] = useState([])
     const [allWard, setAllWard] = useState([])
 
+    const [provinceCode, setProvinceCode] = useState('')
+    const [districtCode, setDistrictCode] = useState('')
+    const [wardCode, setWardCode] = useState('')
+
+    //district voi ward toan vn
+    const [districts, setDistricts] = useState([])
+    const [wards, setWards] = useState([])
+    //
+
     const [isLoading, setIsLoading] = useState(true)
     const [isLoadingAllPrvince, setisLoadingAllPrvince] = useState(true)
+    const [isLoadingAllDistrict, setisLoadingAllDistrict] = useState(true)
+    const [isLoadingAllWard, setisLoadingAllWard] = useState(true)
     const [isLoadingInfoUser, setisLoadingInfoUser] = useState(false)
 
     const getAllProvince = () => {
@@ -33,56 +43,105 @@ const AccountInfo = ({ position, select }) => {
             .finally(() => { setisLoadingAllPrvince(false) })
     }
 
-    const getAllDistrictProvince = (code) => {
+    const getAllDistrictProvince = async (code) => {
         if (code != '') {
-            fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`)
-                .then(res => res.json())
-                .then(data => {
-                    setAllDistrict(data.districts)
-                })
+            const response = await fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`);
+            const data = await response.json();
+            setAllDistrict(data.districts);
         }
     }
 
-    const getAllWardDistrict = (code) => {
+    const getAllWardDistrict = async (code) => {
         if (code != '') {
-            fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`)
-                .then(res => res.json())
-                .then(data => { setAllWard(data.wards) })
+            const response = await fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`);
+            const data = await response.json();
+            setAllWard(data.wards);
         }
     }
 
-    const getInfoUser = () => {
+    const getAllDistricts = () => {
+        fetch("https://provinces.open-api.vn/api/d/")
+            .then(res => res.json())
+            .then(data => { setDistricts(data) })
+            .finally(() => { setisLoadingAllDistrict(false) })
+    }
+
+    const getAllWards = () => {
+        fetch("https://provinces.open-api.vn/api/w/")
+            .then(res => res.json())
+            .then(data => { setWards(data) })
+            .finally(() => { setisLoadingAllWard(false) })
+    }
+
+    const getInfoUser = async () => {
         if (localStorage.user) {
-            setisLoadingInfoUser(true)
-            fetch(`http://localhost:8081/v1/api/user/users/${JSON.parse(localStorage.user)._id}`)
-                .then(res => res.json())
-                .then(data => {
-                    setName(data.name)
-                    setPhone(data.phone)
-                    setEmail(data.email)
+            setisLoadingInfoUser(true);
+            try {
+                const response = await fetch(
+                    `http://localhost:8081/v1/api/user/users/${JSON.parse(localStorage.user)._id}`
+                );
+                const data = await response.json();
 
-                    setProvince(provinceData)
-                    setDistrict(districtData)
-                    setWard(wardData)
-                    setAddress(addressData)
+                setName(data.name);
+                setPhone(data.phone);
+                setEmail(data.email);
 
-                    allProvince.find(pr => pr.name == provinceData)
-                })
-                .finally(() => {
-                    setisLoadingInfoUser(false)
-                })
+                const [addressData, wardData, districtData, provinceData] = data.address.split(", ");
+                setProvince(provinceData);
+                setDistrict(districtData);
+                setWard(wardData);
+                setAddress(addressData);
+
+                const province = allProvince.find(pr => pr.name === provinceData);
+                await getAllDistrictProvince(province.code);
+
+                const district = districts.find(pr => pr.name === districtData);
+                await getAllWardDistrict(district.code);
+
+                const ward = wards.find(pr => pr.name === wardData);
+
+                setProvinceCode(province.code)
+                setDistrictCode(district.code)
+                setWardCode(ward.code)
+            } catch (error) {
+                console.log(error);
+            }
+            finally {
+                setisLoadingInfoUser(false);
+            }
         }
     }
+
+    const updateSelect = (provinceCode, districtCode, wardCode) => {
+        provinceSelect.current.value = provinceCode
+        districtSelect.current.value = districtCode
+        wardSelect.current.value = wardCode
+    }
+
+    useEffect(() => {
+        if(!isLoading){
+            updateSelect(provinceCode, districtCode, wardCode)
+        }
+    },[isLoading])
 
     useEffect(() => {
         getAllProvince()
 
-        getInfoUser()
+        getAllDistricts()
+
+        getAllWards()
     }, [])
 
     useEffect(() => {
+        if (allProvince.length!=0 && districts.length!=0 && wards.length!=0) {
+            getInfoUser()
+        }
+
+    }, [allProvince, districts, wards])
+
+    useEffect(() => {
         const handleIsLoanding = () => {
-            if (isLoadingAllPrvince || isLoadingInfoUser) {
+            if (isLoadingAllPrvince || isLoadingInfoUser || isLoadingAllDistrict || isLoadingAllWard) {
                 setIsLoading(true)
             } else {
                 setIsLoading(false)
@@ -90,13 +149,13 @@ const AccountInfo = ({ position, select }) => {
         }
 
         handleIsLoanding()
-    }, [isLoadingAllPrvince, isLoadingInfoUser])
+    }, [isLoadingAllPrvince, isLoadingInfoUser, isLoadingAllDistrict, isLoadingAllWard])
 
     const UpdateUser = () => {
         if (email) {
             const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!regexEmail.test(email)) {
-                notifyError("Nhập sai định dạng email")
+                alert("Nhập sai định dạng email")
                 return
             }
         }
@@ -104,7 +163,14 @@ const AccountInfo = ({ position, select }) => {
         if (phone) {
             const regexPhone = /^(\+?\d{1,4}[\s-]?)?(\(?\d{3}\)?[\s-]?)?\d{3}[\s-]?\d{4}$/;
             if (!regexPhone.test(phone)) {
-                notifyError("Nhập sai định dạng số điện thoại")
+                alert("Nhập sai định dạng số điện thoại")
+                return
+            }
+        }
+
+        if (province || district || ward) {
+            if (province == '' || district == '' || ward == '') {
+                alert("Vui lòng nhập địa chỉ")
                 return
             }
         }
@@ -154,152 +220,160 @@ const AccountInfo = ({ position, select }) => {
             })
     }
     return (
-        <div className="mx-12">
-            <ToastContainer />
+        <>
+            {!isLoading ?
+                <div className="mx-12">
+                    <ToastContainer />
 
-            <p className="text-4xl font-bold">Thông tin tài khoản</p>
-            <div className="w-full lg:w-10/12 flex flex-col gap-5 mt-10">
-                <div className="flex flex-row items-center">
-                    <p className="w-1/3 sm:w-1/4 font-bold ">Name</p>
+                    <p className="text-4xl font-bold">Thông tin tài khoản</p>
+                    <div className="w-full lg:w-10/12 flex flex-col gap-5 mt-10">
+                        <div className="flex flex-row items-center">
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Name</p>
 
-                    <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000]"
-                    />
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
+                            />
+                        </div>
+                        <div className="flex flex-row items-center">
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Phone</p>
+                            <input
+                                type="text"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
+                            />
+                        </div>
+                        <div className="flex flex-row items-center">
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Email</p>
+                            <input
+                                type="text"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
+                            />
+                        </div>
+
+                        <div className="flex flex-row items-center">
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Province</p>
+                            <select
+                                ref={provinceSelect}
+                                defaultValue=""
+                                className="pl-3 w-3/4 border-2 bg-[#FFFFFF] border-gray-300 text-gray-900 rounded-lg focus:ring-black focus:border-black block p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-black dark:focus:border-black max-h-[50px] focus:bg-white"
+                                onChange={(e) => {
+                                    const selectedProvince = allProvince.find(p => p.code == e.target.value)
+
+                                    if (selectedProvince) {
+                                        setProvince(selectedProvince.name);
+                                    }
+
+                                    getAllDistrictProvince(e.target.value);
+                                    setAllDistrict([]);
+                                    setAllWard([]);
+                                    setDistrict('');
+                                    setWard('');
+                                }}
+                            >
+                                <option value="">
+
+                                </option>
+                                {
+                                    allProvince.map((p, index) => {
+                                        return (
+                                            <option key={index} value={p.code}>
+                                                {p.name}
+                                            </option>
+                                        )
+                                    })
+                                }
+                            </select>
+                        </div>
+
+                        <div className="flex flex-row items-center">
+                            <p className="w-1/3 sm:w-1/4 font-bold ">District</p>
+                            <select
+                                ref={districtSelect}
+                                defaultValue=""
+                                className="pl-3 w-3/4 border-2 bg-[#FFFFFF] border-gray-300 text-gray-900 rounded-lg focus:ring-black focus:border-black block p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-black dark:focus:border-black max-h-[50px] focus:bg-white"
+                                onChange={(e) => {
+                                    const selectedDistrict = allDistrict.find(p => p.code == e.target.value)
+
+                                    if (selectedDistrict) {
+                                        setDistrict(selectedDistrict.name);
+                                    }
+
+                                    getAllWardDistrict(e.target.value)
+                                    setAllWard([])
+                                    setWard('')
+                                }}
+                            >
+                                <option value="">
+
+                                </option>
+                                {
+                                    allDistrict.map((p, index) => {
+                                        return (
+                                            <option key={index} value={p.code}>
+                                                {p.name}
+                                            </option>
+                                        )
+                                    })
+                                }
+                            </select>
+                        </div>
+
+                        <div className="flex flex-row items-center">
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Ward</p>
+                            <select
+                                ref={wardSelect}
+                                defaultValue=""
+                                className="pl-3 w-3/4 border-2 bg-[#FFFFFF] border-gray-300 text-gray-900 rounded-lg focus:ring-black focus:border-black block p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-black dark:focus:border-black max-h-[50px] focus:bg-white"
+                                onChange={(e) => {
+                                    const selectedWard = allWard.find(p => p.code == e.target.value)
+
+                                    if (selectedWard) {
+                                        setWard(selectedWard.name);
+                                    }
+                                }}
+                            >
+                                <option value="">
+
+                                </option>
+                                {
+                                    allWard.map((p, index) => {
+                                        return (
+                                            <option key={index} value={p.code} onClick={() => {
+                                                setWard(p.name)
+                                            }}>
+                                                {p.name}
+                                            </option>
+                                        )
+                                    })
+                                }
+                            </select>
+                        </div>
+
+                        <div className="flex flex-row items-center">
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Address</p>
+                            <input
+                                type="text"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                                className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
+                            />
+                        </div>
+
+                        <button onClick={UpdateUser} className="w-[40%] mx-auto bg-[#A0522D] py-3 rounded-[10px] hover:bg-[#8B4513] mt-14 cursor-pointer">
+                            <p className="text-lg text-center w-full text-white font-bold">Cập nhật thông tin</p>
+                        </button>
+                    </div>
                 </div>
-                <div className="flex flex-row items-center">
-                    <p className="w-1/3 sm:w-1/4 font-bold ">Phone</p>
-                    <input
-                        type="text"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000]"
-                    />
-                </div>
-                <div className="flex flex-row items-center">
-                    <p className="w-1/3 sm:w-1/4 font-bold ">Email</p>
-                    <input
-                        type="text"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000]"
-                    />
-                </div>
-
-                <div className="flex flex-row items-center">
-                    <p className="w-1/3 sm:w-1/4 font-bold ">Province</p>
-                    <select
-                        defaultValue=""
-                        className="pl-3 w-3/4 border-2 bg-[#FFFFFF] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-black dark:focus:border-black max-h-[50px] focus:bg-white"
-                        onChange={(e) => {
-                            const selectedProvince = allProvince.find(p => p.code == e.target.value)
-
-                            if (selectedProvince) {
-                                setProvince(selectedProvince.name);
-                            }
-
-                            getAllDistrictProvince(e.target.value);
-                            setAllDistrict([]);
-                            setAllWard([]);
-                            setDistrict('');
-                            setWard('');
-                        }}
-                    >
-                        <option value="">
-
-                        </option>
-                        {
-                            allProvince.map((p, index) => {
-                                return (
-                                    <option key={index} value={p.code}>
-                                        {p.name}
-                                    </option>
-                                )
-                            })
-                        }
-                    </select>
-                </div>
-
-                <div className="flex flex-row items-center">
-                    <p className="w-1/3 sm:w-1/4 font-bold ">District</p>
-                    <select
-                        defaultValue=""
-                        className="pl-3 w-3/4 border-2 bg-[#FFFFFF] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-black dark:focus:border-black max-h-[50px] focus:bg-white"
-                        onChange={(e) => {
-                            const selectedDistrict = allDistrict.find(p => p.code == e.target.value)
-
-                            if (selectedDistrict) {
-                                setDistrict(selectedDistrict.name);
-                            }
-
-                            getAllWardDistrict(e.target.value)
-                            setAllWard([])
-                            setWard('')
-                        }}
-                    >
-                        <option value="">
-
-                        </option>
-                        {
-                            allDistrict.map((p, index) => {
-                                return (
-                                    <option key={index} value={p.code}>
-                                        {p.name}
-                                    </option>
-                                )
-                            })
-                        }
-                    </select>
-                </div>
-
-                <div className="flex flex-row items-center">
-                    <p className="w-1/3 sm:w-1/4 font-bold ">Ward</p>
-                    <select
-                        defaultValue=""
-                        className="pl-3 w-3/4 border-2 bg-[#FFFFFF] border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-black focus:border-black block p-3 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-black dark:focus:border-black max-h-[50px] focus:bg-white"
-                        onChange={(e) => {
-                            const selectedWard = allWard.find(p => p.code == e.target.value)
-
-                            if (selectedWard) {
-                                setWard(selectedWard.name);
-                            }
-                        }}
-                    >
-                        <option value="">
-
-                        </option>
-                        {
-                            allWard.map((p, index) => {
-                                return (
-                                    <option key={index} value={p.code} onClick={() => {
-                                        setWard(p.name)
-                                    }}>
-                                        {p.name}
-                                    </option>
-                                )
-                            })
-                        }
-                    </select>
-                </div>
-
-                <div className="flex flex-row items-center">
-                    <p className="w-1/3 sm:w-1/4 font-bold ">Address</p>
-                    <input
-                        type="text"
-                        value={email}
-                        onChange={(e) => setAddress(e.target.value)}
-                        className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000]"
-                    />
-                </div>
-
-                <button onClick={UpdateUser} className="w-[40%] mx-auto bg-[#A0522D] py-3 rounded-[10px] hover:bg-[#8B4513] mt-14 cursor-pointer">
-                    <p className="text-lg text-center w-full text-white font-bold">Cập nhật thông tin</p>
-                </button>
-            </div>
-        </div>
-
+                :
+                <></>
+            }
+        </>
     );
 }
 

@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { usePathname } from "next/navigation";
 import { MdLogout } from "react-icons/md";
 import { FaCartShopping } from "react-icons/fa6";
+import { FaUser } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { AppContext } from "@/context/AppContext";
 
@@ -27,7 +28,6 @@ const navList = [
 
 const CartBadge = ({ count }) => {
   if (count <= 0) return null
-  
   return (
     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs min-w-[20px] h-5 flex items-center justify-center rounded-full transition-all duration-300 transform scale-100 hover:scale-110 px-1">
       {count > 99 ? '99+' : count}
@@ -120,7 +120,7 @@ const Navbar = () => {
               {value.name === "Menu" ? (
                 <div className="relative group" ref={dropdownRef}>
                   <button
-                    className={`flex items-center hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav === value.id || isActive(value.href))? "bg-[#A0522D] text-white" : ""}`}
+                    className={`flex items-center hover:text-white hover:bg-[#A0522D] transition-all duration-300 ease-in-out px-3 py-2 rounded-md ${(selectNav === value.id || isActive(value.href)) ? "bg-[#A0522D] text-white" : ""}`}
                   >
                     {value.name}
                     <IoIosArrowDown className="ml-1 transform transition-transform duration-300 group-hover:rotate-180" />
@@ -162,11 +162,18 @@ const Navbar = () => {
         </ul>
         {user ? (
           <div className="flex items-center gap-4 px-4 py-2 bg-[#A0522D] text-white rounded-md shadow-lg">
-            <span className="text-base font-medium cursor-pointer">
-              {JSON.parse(localStorage.user).name}
-            </span>
+            <Link className="flex items-center hover:cursor-pointer"
+              href="/user"
+            >
+              <FaUser />
+
+              <span className="text-base font-medium ml-2">
+                {JSON.parse(localStorage.user).name}
+              </span>
+            </Link>
+
             <div className="cursor-pointer"
-                onClick={handleLogout}
+              onClick={handleLogout}
             >
               <MdLogout className="text-2xl" />
             </div>
