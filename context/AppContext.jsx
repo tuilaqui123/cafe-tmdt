@@ -16,10 +16,8 @@ export const AppProvider = ({ children }) => {
     const [totalCartNoLog, setTotalCartNoLog] = useState(null)
     const [vouchers, setVouchers] = useState([])
     const [errorSignup, setErrorSignup] = useState(null)
-<<<<<<< Updated upstream
-=======
     const [objCartForOne, setObjCartForOne] = useState('')
->>>>>>> Stashed changes
+
 
     // sign up
     const signup = async (name, email, address, phone, password) => {
@@ -348,7 +346,8 @@ export const AppProvider = ({ children }) => {
         deleteItemFromCartNoLog,
         vouchers, setVouchers, checkVoucher, getIdByName,
         getTotalDiscount, getTotalUsedVouchers, getvoucherById,
-        updateQuantities, updateQuantitiesNoLog
+        updateQuantities, updateQuantitiesNoLog,
+        objCartForOne, setObjCartForOne
     }}>
         {children}
     </AppContext.Provider>

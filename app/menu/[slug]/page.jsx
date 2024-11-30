@@ -7,16 +7,18 @@ import { FcCancel } from "react-icons/fc";
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
 import RelatedProductCard from "@/components/relatedProductCard";
+import { FaPlus, FaMinus } from "react-icons/fa";
 
 export default function ItemView() {
   const params = useParams()
-  const router = useRouter();
-  const {product, getProductById, products, addItemToCart, addItemToCartNoLog, getCartByUserId, getCartById} = useContext(AppContext)
+  const router = useRouter()
+  const {product, getProductById, products, addItemToCart, addItemToCartNoLog, getCartByUserId, getCartById, objCartForOne, setObjCartForOne} = useContext(AppContext)
   const [size, setSize] = useState("S")
   const [isClickIndex, setIsClickIndex] = useState(0)
   const [isZoomed, setIsZoomed] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [relatedProducts, setRelatedProducts] = useState([])
+  const [quantity, setQuantity] = useState(1)
 
   const notifySuccess = (message) => {
     toast.success(message, {
@@ -68,20 +70,27 @@ export default function ItemView() {
     return 0
   }
 
-  const handleAddItem = async (id, size) => {
-    console.log(12345)
+  const handleQuantityChange = (type) => {
+    if (type === 'decrease') {
+      if (quantity > 1) setQuantity(quantity - 1)
+    } else {
+      setQuantity(quantity + 1)
+    }
+  }
+
+  const handleAddItem = async (id) => {
     if (localStorage.user) {
-      await addItemToCart(id, size, "", 1)
+      await addItemToCart(id, size, "", quantity)
       notifySuccess("Thêm vào giỏ hàng thành công")
     } else {
       if (localStorage.cartId) {
-        await addItemToCartNoLog(localStorage.cartId, id, size, "", 1)
+        await addItemToCartNoLog(localStorage.cartId, id, size, "", quantity)
         notifySuccess("Thêm vào giỏ hàng thành công")
       } else {
         const cartId = await addNewCart()
         localStorage.setItem('cartId', cartId)
 
-        await addItemToCartNoLog(localStorage.cartId, id, size, "", 1)
+        await addItemToCartNoLog(localStorage.cartId, id, size, "", quantity)
         notifySuccess("Thêm vào giỏ hàng thành công")
       }
     }
@@ -197,6 +206,28 @@ export default function ItemView() {
                     )
                   })}
               </div>
+              <div className="mb-5 flex items-center gap-4">
+                <span className="font-medium text-gray-700">Số lượng: </span>
+                <div className="flex items-center border-2 border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+                  <button 
+                    onClick={() => handleQuantityChange('decrease')}
+                    className="px-4 py-2 border-r border-gray-200 hover:text-[#ae4f2f] transition-colors duration-300 text-gray-600"
+                    aria-label="Giảm số lượng"
+                  >
+                    <FaMinus size={14} />
+                  </button>
+                  <span className="px-6 py-2 font-medium text-gray-700 min-w-[50px] text-center">
+                    {quantity}
+                  </span>
+                  <button 
+                    onClick={() => handleQuantityChange('increase')}
+                    className="px-4 py-2 border-l border-gray-200 hover:text-[#ae4f2f] transition-colors duration-300 text-gray-600"
+                    aria-label="Tăng số lượng"
+                  >
+                    <FaPlus size={14} />
+                  </button>
+                </div>
+              </div>
               <div className="mb-4 w-[70%]">
                 <p className="font-bold text-xl mb-2">Mô tả sản phẩm</p>
                 <p className="text-gray-600 break-words">
@@ -205,12 +236,14 @@ export default function ItemView() {
               </div>
               <div className="flex gap-4 w-[70%]">
                 <button className="flex-1 flex items-center justify-center relative rounded-md overflow-hidden bg-white border-2 border-[#4c2113] text-[#4c2113] font-semibold px-6 py-3 shadow-md hover:bg-[#4c2113] hover:text-white transition-all duration-300"
-                      onClick={() => handleAddItem(product._id, size)}
+                      onClick={() => handleAddItem(product._id)}
                 >
                   <span className="relative z-10">Thêm vào giỏ</span>
                 </button>
 
-                <button className="flex-1 flex items-center justify-center relative rounded-md overflow-hidden gap-2 bg-[#4c2113] text-white font-semibold px-6 py-3 shadow-md transition-all before:absolute before:bottom-0 before:left-0 before:top-0 before:z-0 before:h-full before:w-0 before:bg-[#ae4f2f] hover:text-black before:transition-all before:duration-500 hover:shadow-[#4c2113] hover:before:w-full">
+                <button className="flex-1 flex items-center justify-center relative rounded-md overflow-hidden gap-2 bg-[#4c2113] text-white font-semibold px-6 py-3 shadow-md transition-all before:absolute before:bottom-0 before:left-0 before:top-0 before:z-0 before:h-full before:w-0 before:bg-[#ae4f2f] hover:text-black before:transition-all before:duration-500 hover:shadow-[#4c2113] hover:before:w-full"
+                        onClick={handleOrder}
+                >
                   <span className="relative z-10">Đặt hàng</span>
                 </button>
               </div>

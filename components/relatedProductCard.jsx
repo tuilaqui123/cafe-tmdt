@@ -32,27 +32,23 @@ const RelatedProductCard = ({ product }) => {
                 <h3 className="text-gray-800 font-medium line-clamp-1 group-hover:text-[#4c2113] transition-colors">
                     {formatNameProduct(product.name)}
                 </h3>
-            
+                
                 <div className="mt-1 space-y-1">
                     <div className="flex items-baseline gap-2">
-                        <span className="text-[#4c2113] font-bold">
-                            {formatNumber(product.type[0].price - (product.type[0].price * product.discount / 100))}đ
-                        </span>
-                        {product.discount > 0 && (
-                            <span className="text-xs text-gray-500">
-                                {formatNumber(product.type[0].price)}đ
+                        {product.discount > 0 ? (
+                            <>
+                                <span className="text-[#4c2113] font-bold">
+                                    {formatNumber(product.type[product.type.length - 1].price - (product.type[product.type.length - 1].price * product.discount / 100))}đ
+                                </span>
+                                <span className="text-xs text-gray-500 line-through">
+                                    {formatNumber(product.type[product.type.length - 1].price)}đ
+                                </span>
+                            </>
+                        ) : (
+                            <span className="text-[#4c2113] font-bold">
+                                {formatNumber(product.type[product.type.length - 1].price)}đ
                             </span>
                         )}
-                    </div>
-                    <div className="flex items-baseline gap-2">
-                        {/* <span className="text-gray-500">
-                            {formatNumber(product.type[0])}đ
-                        </span> */}
-                        {/* {product.discount > 0 && (
-                            <span className="text-xs text-gray-500">
-                                {formatNumber(caculatePrice(product.type[0]))}đ
-                            </span>
-                        )} */}
                     </div>
                 </div>
             </div>
