@@ -124,6 +124,13 @@ export default function ItemView() {
   }, [])
 
   useEffect(() => {
+    if (product && product.type && product.type.length > 0) {
+      setSize(product.type[0].size)
+      setIsClickIndex(0)
+    }
+  }, [product])
+
+  useEffect(() => {
     const getRelatedProducts = () => {
       if (product && product.categoryId) {
         const related = products.filter(p => (p.categoryId === product.categoryId || p.categoryId?._id === product.categoryId?._id) && p._id !== product._id && p.isStock).slice(0, 4)
@@ -136,7 +143,6 @@ export default function ItemView() {
       getRelatedProducts()
     }
   }, [product, products])
-
 
   return (
     <div className="w-full h-auto px-4 py-8 m-0">
