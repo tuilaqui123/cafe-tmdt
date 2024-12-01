@@ -45,8 +45,8 @@ const Navbar = () => {
   const pathname = usePathname()
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   useEffect(() => {
     const currentPath = pathname.split('/')[1]
@@ -112,21 +112,21 @@ const Navbar = () => {
   }
 
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
+    setSearchTerm(e.target.value)
+  }
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      router.push(`/menu/search?keyword=${encodeURIComponent(searchTerm.trim())}`);
+      router.push(`/menu/search?keyword=${encodeURIComponent(searchTerm.trim())}`)
     }
-  };
+  }
 
   return (
     <header className="backdrop-blur-lg border border-white/10 shadow-lg fixed top-0 left-0 w-full z-50">
       <nav className="max-w-7xl mx-auto px-4 py-3">
-        <div className="flex items-center justify-between">
-          <div className="text-xl font-bold text-[#4c2113]">
+        <div className="flex items-center justify-between md:gap-8">
+          <div className="flex-shrink-0">
             <Link href="/">
               <img
                 src="/logo_shop.svg"
@@ -139,14 +139,13 @@ const Navbar = () => {
           </div>
 
           <button
-            className="lg:hidden text-[#4c2113] p-2"
+            className="lg:hidden text-[#4c2113] p-2 ml-auto"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <RxHamburgerMenu className="text-2xl" />
           </button>
 
-          {/* Desktop Menu */}
-          <div className="hidden lg:flex items-center justify-between flex-1 ml-10">
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-8">
             <ul className="flex items-center space-x-6 text-[#4c2113] font-extralight">
               {navList.map((value) => (
                 <li key={value.id}>
@@ -216,9 +215,9 @@ const Navbar = () => {
             </ul>
 
             {user ? (
-              <div className="flex items-center gap-4 px-4 py-2 bg-[#A0522D] text-white rounded-md shadow-lg">
+              <div className="flex items-center gap-4 px-4 py-2 bg-[#A0522D] text-white rounded-md shadow-lg ml-40">
                 <Link className="flex items-center hover:cursor-pointer"
-                  href="/home"
+                  href="/user"
                 >
                   <FaUser />
 
@@ -284,24 +283,27 @@ const Navbar = () => {
                 <li key={value.id}>
                   {value.name === "Menu" ? (
                     <div className="relative">
-                      <button
-                        onClick={() => setIsMenuOpen(false)}
-                        className={`w-full text-left px-3 py-2 rounded-md ${
-                          selectNav === value.id ? "bg-[#A0522D] text-white" : "hover:bg-gray-100"
-                        }`}
-                      >
-                        {value.name}
-                      </button>
+                      <Link href="/menu">
+                        <p
+                          className={`block w-full px-3 py-2 rounded-md transition-colors duration-200
+                              ${selectNav === value.id ? "bg-[#A0522D] text-white" : "text-[#4c2113] hover:bg-[#A0522D] hover:text-white"}`}
+                          onClick={() => {
+                            setSelectNav(value.id);
+                            setIsMenuOpen(false);
+                          }}
+                        >
+                          {value.name}
+                        </p>
+                      </Link>
                     </div>
                   ) : (
                     <Link href={value.href}>
                       <p
-                        className={`block px-3 py-2 rounded-md ${
-                          selectNav === value.id ? "bg-[#A0522D] text-white" : "hover:bg-gray-100"
-                        }`}
+                        className={`block w-full px-3 py-2 rounded-md transition-colors duration-200
+                          ${selectNav === value.id ? "bg-[#A0522D] text-white" : "text-[#4c2113] hover:bg-[#A0522D] hover:text-white"}`}
                         onClick={() => {
-                          setSelectNav(value.id);
-                          setIsMenuOpen(false);
+                          setSelectNav(value.id)
+                          setIsMenuOpen(false)
                         }}
                       >
                         {value.name}
@@ -315,16 +317,20 @@ const Navbar = () => {
             <div className="pt-4 border-t border-gray-200">
               {user ? (
                 <div className="flex flex-col space-y-2">
-                  <Link href="/home" className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100">
+                  <Link 
+                    href="/user" 
+                    className="flex items-center px-3 py-2 rounded-md hover:bg-[#A0522D] hover:text-white transition-colors duration-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
                     <FaUser className="mr-2" />
                     <span>{JSON.parse(localStorage.user).name}</span>
                   </Link>
                   <button
                     onClick={() => {
-                      handleLogout();
-                      setIsMenuOpen(false);
+                      handleLogout()
+                      setIsMenuOpen(false)
                     }}
-                    className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100"
+                    className="flex items-center px-3 py-2 rounded-md hover:bg-[#A0522D] hover:text-white transition-colors duration-200"
                   >
                     <MdLogout className="mr-2" />
                     <span>Logout</span>
@@ -333,7 +339,7 @@ const Navbar = () => {
               ) : (
                 <Link
                   href="/login"
-                  className="block px-3 py-2 text-center rounded-md bg-[#A0522D] text-white"
+                  className="block px-3 py-2 text-center rounded-md bg-[#A0522D] text-white hover:bg-[#8B4513] transition-colors duration-200"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Login
@@ -341,12 +347,14 @@ const Navbar = () => {
               )}
               <Link
                 href="/cart"
-                className="flex items-center justify-center mt-2 px-3 py-2 rounded-md hover:bg-gray-100"
+                className="flex items-center mt-2 px-3 py-2 rounded-md hover:bg-[#A0522D] hover:text-white transition-colors duration-200"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <FaCartShopping className="mr-2" />
-                <span>Cart</span>
-                <CartBadge count={getTotalItems()} />
+                <div className="relative">
+                  <FaCartShopping className="text-xl" />
+                  <CartBadge count={getTotalItems()} />
+                </div>
+                <span className="ml-3">Cart</span>
               </Link>
             </div>
           </div>
