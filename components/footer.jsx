@@ -42,11 +42,11 @@ const Footer = () => {
                                     About Us
                                 </Link>
                             </li>
-                            <li>
+                            {/* <li>
                                 <Link href="/contact" className="text-gray-300 hover:text-white transition-colors">
                                     Contact
                                 </Link>
-                            </li>
+                            </li> */}
                         </ul>
                     </div>
 
@@ -59,7 +59,7 @@ const Footer = () => {
                             </li>
                             <li className="flex items-center space-x-2">
                                 <FaEnvelope className="text-gray-300" />
-                                <span className="text-gray-300">2152xxxx@gm.uit.edu.vn</span>
+                                <span className="text-gray-300"><a href='mailto:21520419@gm.uit.edu.vn'>21520419@gm.uit.edu.vn</a></span>
                             </li>
                             <li className="flex items-center space-x-2">
                                 <FaMapMarkerAlt className="text-gray-300" />
