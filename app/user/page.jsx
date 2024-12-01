@@ -8,9 +8,14 @@ const AccountInfo = ({ position, select }) => {
     const districtSelect = useRef(null)
     const wardSelect = useRef(null)
 
+    const [oldPassword, setOldPassword] = useState("")
+    const [newPassword, setNewPassword] = useState("")
+    const [confirmNewPassword, setConfirmNewPassword] = useState("")
+
     const [email, setEmail] = useState("")
     const [name, setName] = useState("")
     const [phone, setPhone] = useState("")
+
     const [address, setAddress] = useState('')
 
     const [province, setProvince] = useState('')
@@ -119,10 +124,10 @@ const AccountInfo = ({ position, select }) => {
     }
 
     useEffect(() => {
-        if(!isLoading){
+        if (!isLoading) {
             updateSelect(provinceCode, districtCode, wardCode)
         }
-    },[isLoading])
+    }, [isLoading])
 
     useEffect(() => {
         getAllProvince()
@@ -133,7 +138,7 @@ const AccountInfo = ({ position, select }) => {
     }, [])
 
     useEffect(() => {
-        if (allProvince.length!=0 && districts.length!=0 && wards.length!=0) {
+        if (allProvince.length != 0 && districts.length != 0 && wards.length != 0) {
             getInfoUser()
         }
 
@@ -152,6 +157,28 @@ const AccountInfo = ({ position, select }) => {
     }, [isLoadingAllPrvince, isLoadingInfoUser, isLoadingAllDistrict, isLoadingAllWard])
 
     const UpdateUser = () => {
+        if(oldPassword||newPassword||confirmNewPassword){
+            if(!oldPassword){
+                alert("Vui lòng nhập mật khấu cũ")
+                return
+            }
+
+            if(!newPassword){
+                alert("Vui lòng nhập mật khấu mới")
+                return
+            }
+
+            if(!confirmNewPassword){
+                alert("Vui lòng xác nhận mật khấu mới")
+                return
+            }
+
+            if(newPassword != confirmNewPassword){
+                alert("Mật khẩu mới và xác nhận mật khẩu mới không khớp")
+                return
+            }
+        }
+
         if (email) {
             const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!regexEmail.test(email)) {
@@ -184,7 +211,9 @@ const AccountInfo = ({ position, select }) => {
                 name: name,
                 phone: phone,
                 email: email,
-                address: [address, ward, district, province].join(", ")
+                address: [address, ward, district, province].join(", "),
+                oldPassword: oldPassword,
+                newPassword: newPassword
             })
         })
             .then(res => res.json())
@@ -222,15 +251,16 @@ const AccountInfo = ({ position, select }) => {
     return (
         <>
             {!isLoading ?
-                <div className="mx-12">
+                <div className="mx-12 mt-8">
                     <ToastContainer />
 
-                    <p className="text-4xl font-bold">Thông tin tài khoản</p>
+                    <p className="text-4xl font-bold">Account information</p>
                     <div className="w-full lg:w-10/12 flex flex-col gap-5 mt-10">
                         <div className="flex flex-row items-center">
                             <p className="w-1/3 sm:w-1/4 font-bold ">Name</p>
 
                             <input
+                                placeholder="Enter your name"
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -241,6 +271,7 @@ const AccountInfo = ({ position, select }) => {
                             <p className="w-1/3 sm:w-1/4 font-bold ">Phone</p>
                             <input
                                 type="text"
+                                placeholder="Enter your phone"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
                                 className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
@@ -250,8 +281,42 @@ const AccountInfo = ({ position, select }) => {
                             <p className="w-1/3 sm:w-1/4 font-bold ">Email</p>
                             <input
                                 type="text"
+                                placeholder="Enter your email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
+                                className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
+                            />
+                        </div>
+
+                        <div className="flex flex-row items-center">
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Old password</p>
+                            <input
+                                type="password"
+                                placeholder="Enter your password"
+                                value={oldPassword}
+                                onChange={(e) => setOldPassword(e.target.value)}
+                                className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
+                            />
+                        </div>
+
+                        <div className="flex flex-row items-center">
+                            <p className="w-1/3 sm:w-1/4 font-bold ">New password</p>
+                            <input
+                                type="password"
+                                placeholder="Enter new password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
+                            />
+                        </div>
+
+                        <div className="flex flex-row items-center">
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Confirm new password</p>
+                            <input
+                                type="password"
+                                placeholder="Enter confirm password"
+                                value={confirmNewPassword}
+                                onChange={(e) => setConfirmNewPassword(e.target.value)}
                                 className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
                             />
                         </div>
@@ -359,6 +424,7 @@ const AccountInfo = ({ position, select }) => {
                             <p className="w-1/3 sm:w-1/4 font-bold ">Address</p>
                             <input
                                 type="text"
+                                placeholder="Enter your address"
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
                                 className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
