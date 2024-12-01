@@ -217,7 +217,7 @@ const Navbar = () => {
             </ul>
 
             {user ? (
-              <div className="flex items-center gap-4 px-4 py-2 bg-[#A0522D] text-white rounded-md shadow-lg ml-40">
+              <div className="flex items-center gap-4 px-4 py-2 bg-[#A0522D] text-white rounded-md shadow-lg">
                 <div className="relative group">
                   <button className="flex items-center hover:cursor-pointer">
                     <FaUser />
