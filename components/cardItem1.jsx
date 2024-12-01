@@ -88,8 +88,6 @@ export default function CardItem1({id, image, name, description, discount, type,
     setSelectedSize(size)
   }
 
-console.log(type)
-
   return (
     <div className="w-full bg-[#a45c23] rounded-lg shadow-xl">
       <ToastContainer />

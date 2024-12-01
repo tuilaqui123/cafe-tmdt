@@ -298,107 +298,163 @@ const Cart = () => {
         <div className="mx-auto rounded-lg w-[90%] mt-5">
             <ToastContainer />
             {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) ? (
-                <div>
-                    <div className='flex gap-3 justify-center cursor-pointer mb-8'>
-                        {stateOrder.map((ele, index) => {
-                            return (
-                                <div key={index} className='flex items-center gap-2'>
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex items-center justify-center w-10 h-10 bg-[#A0522D] text-white rounded-full font-bold transition-all duration-400 ease-in-out">
-                                            {ele.id}
-                                        </div>
-                                        <span className="text-black">{ele.name}</span>
+                <div className='mb-4'>
+                    <div className='flex flex-col md:flex-row gap-4 md:gap-6 justify-center items-center mb-4 px-4 md:mb-8'>
+                        {stateOrder.map((ele, index) => (
+                            <div key={index} className='flex items-center gap-2'>
+                                <div className="flex items-center gap-2">
+                                    <div className="flex items-center justify-center w-8 h-8 md:w-10 md:h-10 bg-[#A0522D] text-white rounded-full font-bold transition-all duration-400 ease-in-out text-sm md:text-base">
+                                        {ele.id}
                                     </div>
-                                    {ele.id!==3 ? <FaArrowRightLong /> : null}
+                                    <span className="text-black text-sm md:text-base hidden sm:inline">{ele.name}</span>
                                 </div>
-                            )
-                        })}
+                            {ele.id!==3 && <FaArrowRightLong className="hidden md:block" />}
+                            </div>
+                        ))}
                     </div>
 
-                    <table className="w-full table-auto border-collapse mb-6">
-                        <thead>
-                            <tr className="text-left border-b border-gray-200 bg-[#A0522D] rounded-tl-[5px] rounded-bl-[5px] text-white">
-                                <th className="p-2">Product</th>
-                                <th className="p-2">Size</th>
-                                <th className="p-2">Price</th>
-                                <th className="p-2">Quantity</th>
-                                <th className="p-2">Subtotal</th>
-                                <th className="p-2">Note</th>
-                                <th className="p-2"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {(() => {
-                            let itemsToRender = []
-                            if (cart && cart.items?.length > 0) {
-                                itemsToRender = cart.items
-                            } else if (cartNoLog && cartNoLog.items?.length > 0) {
-                                itemsToRender = cartNoLog.items
-                            }
-
-                            return itemsToRender.map((item, index) => (
-                                <tr key={index} className="border-b border-black text-black hover:text-[#A0522D] cursor-pointer">
-                                    <td className="p-2 flex items-center">
-                                        <Image
-                                            src={item.product.image}
-                                            alt={item.product.name}
-                                            className="w-20 h-20 mr-3"
-                                            width={500}
-                                            height={300}
-                                            priority
-                                        />
-                                            {item.product.name}
-                                    </td>
-                                    <td className="p-2">{item.size}</td>
-                                    <td className="p-2">{formatNumber(item.price - (item.price*item.discount)/100)} đ</td>
-                                    <td className="p-2">
-                                        <input
-                                            type="number"
-                                            value={quantities[index] || item.quantity}
-                                            min="1"
-                                            className="w-16 border border-gray-300 p-1 rounded"
-                                            onChange={(e) => handleQuantityChange(index, e.target.value)}
-                                        />
-                                    </td>
-                                    <td className="p-2">{formatNumber((item.price - (item.price*item.discount)/100) * quantities[index] || item.quantity)} đ</td>
-                                    <td className="p-2">
-                                        <button
-                                            className="text-gray-600 hover:text-[#A0522D] transition-colors relative group"
-                                            onClick={() => {
+                    <div className="hidden md:block overflow-x-auto">
+                        <table className="w-full table-auto border-collapse mb-6">
+                            <thead>
+                                <tr className="text-left border-b border-gray-200 bg-[#A0522D] text-white">
+                                    <th className="p-2">Product</th>
+                                    <th className="p-2">Size</th>
+                                    <th className="p-2">Price</th>
+                                    <th className="p-2">Quantity</th>
+                                    <th className="p-2">Subtotal</th>
+                                    <th className="p-2">Note</th>
+                                    <th className="p-2"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {(() => {
+                                let itemsToRender = cart?.items?.length > 0 ? cart.items : cartNoLog?.items || []
+                                return itemsToRender.map((item, index) => (
+                                    <tr key={index} className="border-b border-gray-200 text-black hover:text-[#A0522D]">
+                                        <td className="p-2">
+                                            <div className="flex items-center">
+                                                <Image
+                                                src={item.product.image}
+                                                alt={item.product.name}
+                                                className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg mr-3"
+                                                width={500}
+                                                height={300}
+                                                priority
+                                                />
+                                                <span className="font-medium">{item.product.name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="p-2">{item.size}</td>
+                                        <td className="p-2">{formatNumber(item.price - (item.price*item.discount)/100)} đ</td>
+                                        <td className="p-2">
+                                            <input
+                                                type="number"
+                                                value={quantities[index] || item.quantity}
+                                                min="1"
+                                                className="w-16 border border-gray-300 p-1 rounded"
+                                                onChange={(e) => handleQuantityChange(index, e.target.value)}
+                                            />
+                                        </td>
+                                        <td className="p-2">{formatNumber((item.price - (item.price*item.discount)/100) * (quantities[index] || item.quantity))} đ</td>
+                                        <td className="p-2">
+                                            <button
+                                                className="text-gray-600 hover:text-[#A0522D] transition-colors relative group"
+                                                onClick={() => {
                                                 setSelectedNote(item.note)
                                                 setSelectedNoteIndex(index)
                                                 setShowNoteModal(true)
-                                            }}
-                                        >
-                                            <FaRegStickyNote className="text-xl" />
-                                            {item.note && (
+                                                }}
+                                            >
+                                                <FaRegStickyNote className="text-xl" />
+                                                {item.note && (
                                                 <span className="absolute -top-2 -right-2 w-2 h-2 bg-[#A0522D] rounded-full"></span>
-                                            )}
-                                            <span className="hidden group-hover:block absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded whitespace-nowrap">
-                                                {item.note ? 'Xem ghi chú' : 'Không có ghi chú'}
-                                            </span>
-                                        </button>
-                                    </td>
-                                    <td className="p-2">
-                                        <button
-                                            className="text-red-500 hover:text-red-700"
-                                            onClick={() => handleDeleteClick(item.product._id, item.size)}
-                                        >
-                                            <FaTrashAlt className='text-xl' />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        })()}
-                        </tbody>
-                    </table>
+                                                )}
+                                            </button>
+                                        </td>
+                                        <td className="p-2">
+                                            <button
+                                                className="text-red-500 hover:text-red-700"
+                                                onClick={() => handleDeleteClick(item.product._id, item.size)}
+                                            >
+                                                <FaTrashAlt className='text-xl' />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            })()}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="md:hidden space-y-4 px-4">
+                    {(() => {
+                        let itemsToRender = cart?.items?.length > 0 ? cart.items : cartNoLog?.items || []
+                        return itemsToRender.map((item, index) => (
+                            <div key={index} className="bg-white rounded-lg shadow-md p-4">
+                                <div className="flex items-start space-x-4">
+                                    <Image
+                                        src={item.product.image}
+                                        alt={item.product.name}
+                                        className="w-24 h-24 object-cover rounded-lg"
+                                        width={500}
+                                        height={300}
+                                        priority
+                                    />
+                                    <div className="flex-1">
+                                        <h3 className="font-medium text-gray-900">{item.product.name}</h3>
+                                        <p className="text-sm text-gray-500 mt-1">Size: {item.size}</p>
+                                        <p className="text-sm font-medium text-[#A0522D] mt-1">
+                                            {formatNumber(item.price - (item.price*item.discount)/100)} đ
+                                        </p>
+                                        
+                                        <div className="flex items-center justify-between mt-3">
+                                            <div className="flex items-center space-x-2">
+                                                <input
+                                                    type="number"
+                                                    value={quantities[index] || item.quantity}
+                                                    min="1"
+                                                    className="w-16 border border-gray-300 p-1 rounded text-center"
+                                                    onChange={(e) => handleQuantityChange(index, e.target.value)}
+                                                />
+                                                <button
+                                                    className="text-gray-600 hover:text-[#A0522D] transition-colors"
+                                                    onClick={() => {
+                                                        setSelectedNote(item.note)
+                                                        setSelectedNoteIndex(index)
+                                                        setShowNoteModal(true)
+                                                    }}
+                                                >
+                                                <FaRegStickyNote className="text-xl" />
+                                                </button>
+                                                <button
+                                                    className="text-red-500 hover:text-red-700"
+                                                    onClick={() => handleDeleteClick(item.product._id, item.size)}
+                                                >
+                                                <FaTrashAlt className='text-xl' />
+                                                </button>
+                                            </div>
+                                            <p className="font-medium text-[#A0522D]">
+                                                {formatNumber((item.price - (item.price*item.discount)/100) * (quantities[index] || item.quantity))} đ
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    })()}
+                    </div>
                 </div>
-            ) : (
-                <div className="flex flex-col items-center justify-center py-16 px-4 rounded-lg shadow-sm">
-                    <FaShoppingCart className="text-[#A0522D] text-6xl mb-4" />
-                    <h2 className="text-2xl font-semibold text-gray-800 mb-2">Your Cart is Empty</h2>
-                    <p className="text-gray-500 text-center mb-6">Looks like you haven&apos;t added anything to your cart yet</p>
-                    <Link href="/menu" className="px-6 py-3 bg-[#A0522D] text-white rounded-full hover:bg-[#8B4513] transition-colors">
+                ) : (
+                <div className="flex flex-col items-center justify-center py-8 md:py-16 px-4 rounded-lg shadow-sm">
+                    <FaShoppingCart className="text-[#A0522D] text-4xl md:text-6xl mb-4" />
+                    <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2 text-center">Your Cart is Empty</h2>
+                    <p className="text-gray-500 text-center mb-6 text-sm md:text-base">
+                        Looks like you haven&apos;t added anything to your cart yet
+                    </p>
+                    <Link 
+                        href="/menu" 
+                        className="px-6 py-3 bg-[#A0522D] text-white rounded-full hover:bg-[#8B4513] transition-colors text-sm md:text-base"
+                    >
                         Continue Shopping
                     </Link>
                 </div>
@@ -431,7 +487,7 @@ const Cart = () => {
 
             {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) && (
                 <button
-                    className={`flex-1 px-6 py-3 text-white text-center rounded-lg font-bold transition-colors ${hasChanges ? 'bg-[#A0522D] hover:bg-[#8B4513] cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`}
+                    className={`w-full md:w-auto px-6 py-3 mb-4 text-white text-center rounded-lg font-bold transition-colors ${hasChanges ? 'bg-[#A0522D] hover:bg-[#8B4513] cursor-pointer' : 'bg-gray-400 cursor-not-allowed'}`}
                     onClick={handleUpdateCart}
                     disabled={!hasChanges && !hasNoteChanges}
                 >
@@ -439,53 +495,70 @@ const Cart = () => {
                 </button>
             )}
 
-            <div className={`flex ${(localStorage.user) ? "items-center justify-between" : "justify-end"}`}>   
+            <div className={`flex flex-col md:flex-row ${(localStorage.user) ? "md:items-start md:justify-between" : "md:justify-end"} gap-6 md:gap-8`}>   
                 {((cart.items?.length!=undefined && cart.items?.length!=0) && localStorage.user ) && (
-                    <div className="w-[40%]">
-                        <div className="flex items-center gap-3 p-2 border rounded-full shadow-md bg-white mb-4">
-                            <FaTicketAlt className="text-gray-400 text-xl" />
+                    <div className="w-full md:w-[40%]">
+                        {/* Coupon Input */}
+                        <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 
+                            border rounded-full shadow-md bg-white mb-3 md:mb-4">
+                            <FaTicketAlt className="text-gray-400 text-lg md:text-xl ml-2" />
                             <input
                                 type="text"
                                 value={currentCoupon}
                                 onChange={(e) => setCurrentCoupon(e.target.value)}
                                 placeholder="Coupon Code"
-                                className="flex-1 border-none outline-none text-gray-500 placeholder-gray-400"
+                                className="flex-1 border-none outline-none 
+                                    text-gray-500 placeholder-gray-400
+                                    text-sm md:text-base min-w-0"
                             />
-                            <div className="h-8 border-l border-gray-400"></div>
+                            <div className="h-6 md:h-8 border-l border-gray-400"></div>
                             <button 
                                 onClick={handleCheckVoucher}
-                                className="px-4 py-2 bg-white text-gray-600 font-medium rounded-lg hover:text-[#A0522D] transition cursor-pointer"
+                                className="whitespace-nowrap px-3 md:px-4 py-1.5 md:py-2 
+                                    bg-white text-gray-600 
+                                    text-sm md:text-base font-medium 
+                                    rounded-lg hover:text-[#A0522D] 
+                                    transition cursor-pointer"
                             >
                                 Check
                             </button>
                         </div>
 
                         {coupons.length > 0 && (
-                            <div className="bg-white rounded-lg shadow-md p-4">
-                                <h3 className="text-lg font-semibold mb-3 text-gray-800">Checked Coupons</h3>
+                            <div className="bg-white rounded-lg shadow-md p-3 md:p-4">
+                                <h3 className="text-base md:text-lg font-semibold mb-2 md:mb-3 text-gray-800">
+                                    Checked Coupons
+                                </h3>
                                 <div className="space-y-2">
                                     {coupons.map((coupon, index) => (
                                         <div 
                                             key={index} 
-                                            className="flex items-center justify-between bg-gray-50 p-2 rounded-lg"
+                                            className="flex items-center justify-between 
+                                                bg-gray-50 p-2 md:p-3 rounded-lg"
                                         >
-                                            <div className="flex items-center gap-2">
-                                                <FaTicketAlt className="text-[#A0522D]" />
-                                                <span className="text-gray-700">{coupon}</span>
+                                            <div className="flex items-center gap-2 flex-1 min-w-0">
+                                                <FaTicketAlt className="text-[#A0522D] text-sm md:text-base flex-shrink-0" />
+                                                <span className="text-gray-700 text-sm md:text-base truncate">
+                                                    {coupon}
+                                                </span>
                                             </div>
                                             <button
                                                 onClick={() => handleRemoveCoupon(index)}
-                                                className="text-red-500 hover:text-red-700 transition-colors"
+                                                className="text-red-500 hover:text-red-700 
+                                                    transition-colors p-1 md:p-1.5 flex-shrink-0"
                                             >
-                                                <FaTrashAlt />
+                                                <FaTrashAlt className="text-sm md:text-base" />
                                             </button>
                                         </div>
                                     ))}
                                 </div>
-                                <div className="mt-3 pt-3 border-t border-gray-200">
-                                    <div className="flex justify-between text-sm">
-                                        <span className="text-gray-600">Total Savings:</span>
-                                        <span className="text-green-600 font-semibold">
+
+                                <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-gray-200">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-gray-600 text-sm md:text-base">
+                                            Total Savings:
+                                        </span>
+                                        <span className="text-green-600 font-semibold text-sm md:text-base">
                                             {formatNumber(totalSavings)} đ
                                         </span>
                                     </div>
@@ -496,42 +569,54 @@ const Cart = () => {
                 )}
 
                 {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) && (
-                    <div className="w-1/2">
-                        <div className="bg-white rounded-lg shadow-md p-6">
-                            <h2 className="text-xl font-bold mb-4 text-gray-800">Cart Summary</h2>
+                    <div className="w-full md:w-1/2">
+                        <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
+                            <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-gray-800">
+                                Cart Summary
+                            </h2>
 
-                            <div className="space-y-3 mb-4">
-                                <div className="flex justify-between text-gray-600">
+                            <div className="space-y-2 md:space-y-3 mb-3 md:mb-4">
+                                <div className="flex justify-between text-sm md:text-base text-gray-600">
                                     <span>Subtotal</span>
                                     <span>{formatNumber(totalCart || totalCartNoLog)} đ</span>
                                 </div>
-                                <div className="flex justify-between text-gray-600">
+                                <div className="flex justify-between text-sm md:text-base text-gray-600">
                                     <span>Shipping</span>
                                     <span>Free</span>
                                 </div>
-                                <div className="flex justify-between text-green-600">
+                                <div className="flex justify-between text-sm md:text-base text-green-600">
                                     <span>Discount</span>
                                     <span>- {formatNumber(totalSavings)} đ</span>
                                 </div>
                             </div>
 
-                            <div className="border-t border-gray-200 pt-4 mb-6">
-                                <div className="flex justify-between font-bold text-lg">
-                                    <span>Total</span>
-                                    <span className="text-[#A0522D]">{formatNumber(finalTotal)} đ</span>
+                            <div className="border-t border-gray-200 pt-3 md:pt-4 mb-4 md:mb-6">
+                                <div className="flex justify-between font-bold">
+                                    <span className="text-base md:text-lg">Total</span>
+                                    <span className="text-base md:text-lg text-[#A0522D]">
+                                        {formatNumber(finalTotal)} đ
+                                    </span>
                                 </div>
                             </div>
 
-                            <div className="flex gap-4">
+                            <div className="flex flex-col sm:flex-row gap-2 md:gap-4">
                                 <Link
                                     href="/menu"
-                                    className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 text-center rounded-lg font-bold hover:bg-gray-300 transition-colors"
+                                    className="w-full px-4 md:px-6 py-2 md:py-3 
+                                        bg-gray-200 text-gray-700 
+                                        text-center rounded-lg 
+                                        text-sm md:text-base font-bold 
+                                        hover:bg-gray-300 transition-colors"
                                 >
                                     Continue Shopping
                                 </Link>
                                 <button
                                     onClick={handleCheckout}
-                                    className="flex-1 px-6 py-3 bg-[#A0522D] text-white text-center rounded-lg font-bold hover:bg-[#8B4513] transition-colors"
+                                    className="w-full px-4 md:px-6 py-2 md:py-3 
+                                        bg-[#A0522D] text-white 
+                                        text-center rounded-lg 
+                                        text-sm md:text-base font-bold 
+                                        hover:bg-[#8B4513] transition-colors"
                                 >
                                     Checkout
                                 </button>

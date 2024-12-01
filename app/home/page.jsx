@@ -24,7 +24,7 @@ const Home = () => {
             <div className="relative h-[600px]">
                 <Image
                     src="https://res.cloudinary.com/djbelaeen/image/upload/v1732295812/Cafe/Product/tztc09hvn438b5fxtp44.png"
-                    alt="Coffee Shop Hero"
+                    alt="Caffeine Corner Banner"
                     fill
                     className="object-cover"
                     priority
@@ -36,7 +36,7 @@ const Home = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className="text-5xl font-bold mb-4"
                         >
-                            Welcome to Our Coffee Shop
+                            Welcome to Our Caffeine Corner
                         </motion.h1>
                         <p className="text-xl mb-8">Discover the perfect blend for your day</p>
                         <Link href="/menu">

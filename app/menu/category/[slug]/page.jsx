@@ -10,7 +10,7 @@ import Image from 'next/image';
 
 export default function CategoryPage({ params }) {
   const router = useRouter()
-  const { products, categories, getCategoríes, getCategoryByName } = useContext(AppContext)
+  const { categories, getCategoryByName } = useContext(AppContext)
   const [isCategoryOpen, setIsCategoryOpen] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [categoryProducts, setCategoryProducts] = useState([])
