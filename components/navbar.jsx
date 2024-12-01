@@ -8,6 +8,8 @@ import { FaUser } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { AppContext } from "@/context/AppContext";
 import { RxHamburgerMenu } from "react-icons/rx";
+import { FaUserCircle } from "react-icons/fa";
+import { RiBillFill } from "react-icons/ri";
 
 const navList = [
   {
@@ -216,15 +218,31 @@ const Navbar = () => {
 
             {user ? (
               <div className="flex items-center gap-4 px-4 py-2 bg-[#A0522D] text-white rounded-md shadow-lg ml-40">
-                <Link className="flex items-center hover:cursor-pointer"
-                  href="/user"
-                >
-                  <FaUser />
+                <div className="relative group">
+                  <button className="flex items-center hover:cursor-pointer">
+                    <FaUser />
+                    <span className="text-base font-medium ml-2">
+                      {JSON.parse(localStorage.user).name}
+                    </span>
+                  </button>
 
-                  <span className="text-base font-medium ml-2">
-                    {JSON.parse(localStorage.user).name}
-                  </span>
-                </Link>
+                  <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <div className="py-1">
+                      <Link href="/user">
+                        <p className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
+                          <FaUserCircle className="mr-3"/> 
+                          <span>Personal Information</span>
+                        </p>
+                      </Link>
+                      <Link href="/user/orders">
+                        <p className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
+                          <RiBillFill className="mr-3"/>
+                          <span>Order Management</span> 
+                        </p>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="cursor-pointer"
                   onClick={handleLogout}
