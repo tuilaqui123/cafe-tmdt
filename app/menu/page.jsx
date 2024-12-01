@@ -169,7 +169,7 @@ export default function Page() {
                 className={`cursor-pointer px-3 py-2 shadow rounded-md transition ${selectCategory===category._id ? "bg-[#8B4513] text-white hover:bg-[#A0522D]" : "bg-white hover:bg-gray-200 "}`}
                 onClick={() => handleCategoryChange(category)}
               >
-                <p>{category.name.charAt(0).toUpperCase() + category.name.slice(1)}</p>
+                <p className="capitalize">{category.name}</p>
               </li>
             ))}
           </ul>

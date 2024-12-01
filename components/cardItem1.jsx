@@ -5,13 +5,16 @@ import { AppContext } from "@/context/AppContext";
 import { useContext, useState } from "react";
 import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer, toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 export default function CardItem1({id, image, name, description, discount, type, handleImageClick}) {
   const [showOptions, setShowOptions] = useState(false)
   const [selectedSize, setSelectedSize] = useState(null)
   const [quantity, setQuantity] = useState(1)
   const [note, setNote] = useState('')
-  const {addNewCart, addItemToCart, addItemToCartNoLog, getCartByUserId, getCartById} = useContext(AppContext)
+  const {addNewCart, addItemToCart, addItemToCartNoLog, getCartByUserId, getCartById, setObjCartForOne} = useContext(AppContext)
+
+  const router = useRouter()
 
   const notifySuccess = (message) => {
     toast.success(message, {
@@ -46,6 +49,24 @@ export default function CardItem1({id, image, name, description, discount, type,
         notifySuccess("Thêm vào giỏ hàng thành công")
       }
     }
+  }
+
+  const handleOrder = () => {
+    let price
+    const typeOrder = type.sort((a, b) => {
+      const sizeOrder = { S: 1, M: 2, L: 3 }
+      return sizeOrder[a.size] - sizeOrder[b.size]
+    })
+    setObjCartForOne({
+      productId: id,
+      name: name,
+      quantity: 1,
+      size: typeOrder[0].size,
+      price: typeOrder[0].price,
+      discount: discount,
+      image: image
+    })
+    router.push('/checkout')  
   }
 
   const formatNumber = (number) => {
@@ -102,7 +123,9 @@ export default function CardItem1({id, image, name, description, discount, type,
           <p className="text-sm text-gray-200 py-2 truncate">{description}</p>
         </div>
         <div className="flex flex-row gap-3 mt-4">
-          <button className="text-[#4c2113] w-[80%] hover:before:bg-red relative rounded-md overflow-hidden bg-white shadow-2xl transition-all before:absolute before:bottom-0 before:left-0 before:top-0 before:z-0 before:h-full before:w-0 before:bg-[#4c2113] before:transition-all before:duration-500 hover:text-white hover:shadow-[#4c2113] hover:before:left-0 hover:before:w-full">
+          <button className="text-[#4c2113] w-[80%] hover:before:bg-red relative rounded-md overflow-hidden bg-white shadow-2xl transition-all before:absolute before:bottom-0 before:left-0 before:top-0 before:z-0 before:h-full before:w-0 before:bg-[#4c2113] before:transition-all before:duration-500 hover:text-white hover:shadow-[#4c2113] hover:before:left-0 hover:before:w-full"
+                onClick={handleOrder}
+          >
             <div className="flex items-center justify-center space-x-2">
               <span className="relative z-10 font-bold">
                 {(discount > 0) ? formatNumber(type[type.length - 1].price - (type[type.length - 1].price*discount)/100) : formatNumber(type[type.length - 1].price)}đ

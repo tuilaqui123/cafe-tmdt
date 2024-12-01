@@ -139,7 +139,7 @@ const Navbar = () => {
                           href={`/menu/category/${category.name.toLowerCase().replace(/\s+/g, '-')}`}
                           onClick={() => setSelectNav(value.id)}
                         >
-                          <p className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
+                          <p className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200 capitalize">
                             {category.name}
                           </p>
                         </Link>

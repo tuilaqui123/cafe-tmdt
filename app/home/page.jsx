@@ -126,7 +126,7 @@ const Home = () => {
                                 <Link
                                     href={`/menu/category/${category.name.toLowerCase().replace(/\s+/g, '-')}`}
                                 >
-                                    <h3 className="text-xl font-semibold mb-2">{category.name}</h3>
+                                    <h3 className="text-xl font-semibold mb-2 capitalize">{category.name}</h3>
                                     <p className="text-gray-600">{category.products.length} products</p>
                                 </Link>
                             </motion.div> 
