@@ -16,7 +16,7 @@ export default function Page() {
     }, [])
 
     return (
-        <div className="container mx-auto py-10 px-4">
+        <div className="container mx-auto py-10 px-4 mt-4">
             <h2 className="text-4xl font-semibold text-center text-[#8B4513] mb-6" data-aos="fade-up">  
                 Chào mừng bạn đến với Coffee Shop
             </h2>

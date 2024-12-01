@@ -7,6 +7,8 @@ import { FaCartShopping } from "react-icons/fa6";
 import { FaUser } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { AppContext } from "@/context/AppContext";
+import icon from "@/public/logo_shop.svg"
+import Image from "next/image";
 
 const navList = [
   {
@@ -111,7 +113,13 @@ const Navbar = () => {
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
         <div className="text-xl font-bold text-[#4c2113]">
           <Link href="/">
-            <p>Logo</p>
+            <img
+              src="/logo_shop.svg"
+              className="hover:scale-150 transition-transform duration-300 ease-in-out"
+              alt="Logo"
+              width={100}
+              height={100}
+            />
           </Link>
         </div>
         <ul className="flex space-x-6 text-[#4c2113] font-extralight">

@@ -20,7 +20,7 @@ const Home = () => {
     }
 
     return (
-        <div className="min-h-screen">
+        <div className="min-h-screen mt-4">
             <div className="relative h-[600px]">
                 <Image
                     src="https://res.cloudinary.com/djbelaeen/image/upload/v1732295812/Cafe/Product/tztc09hvn438b5fxtp44.png"

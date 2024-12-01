@@ -295,7 +295,7 @@ const Cart = () => {
     }
 
     return (
-        <div className="mx-auto rounded-lg w-[90%]">
+        <div className="mx-auto rounded-lg w-[90%] mt-5">
             <ToastContainer />
             {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) ? (
                 <div>

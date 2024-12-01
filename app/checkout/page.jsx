@@ -704,7 +704,7 @@ const CheckOut = () => {
     return (
         <>
             {
-                !isLoading ? <div className='lg:mx-20 mx-4 select-none'>
+                !isLoading ? <div className='lg:mx-20 mx-4 select-none mt-5'>
                     <ToastContainer limit={1} />
 
                     {showConfirmModal && (
@@ -1263,7 +1263,7 @@ const CheckOut = () => {
                             <AiOutlineArrowRight />
                         </div>
                     </div>
-                </div >
+                </div>
                     :
                     <></>
             }

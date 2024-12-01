@@ -92,7 +92,32 @@ export default function CategoryPage({ params }) {
   }
 
   return (
-    <div className="w-full flex">
+    <div className="w-full flex mt-5">
+      <div className="w-[25%] px-4">
+        <div className="category-section">
+          <div 
+            className="flex justify-between items-center cursor-pointer mb-2"
+            onClick={() => setIsCategoryOpen(!isCategoryOpen)}
+          >
+            <span className="text-xl font-bold">Category</span>
+            <span className={`text-2xl flex items-center transform transition-transform duration-300 ${isCategoryOpen ? "rotate-180" : "rotate-0"}`}>
+              <IoIosArrowUp />
+            </span>
+          </div>
+          <ul className={`transition-all duration-500 ease-in-out overflow-hidden ${isCategoryOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"} space-y-3`}>
+            {isCategoryOpen && categories.map((category, index) => (
+              <li
+                key={index}
+                className={`cursor-pointer px-3 py-2 shadow rounded-md transition ${activeCategory === category._id ? "bg-[#8B4513] text-white hover:bg-[#A0522D]" : "bg-white hover:bg-gray-200"}`}
+                onClick={() => handleCategoryChange(category)}
+              >
+                <p className="capitalize">{category.name}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
       <div className="w-[75%] flex flex-col gap-5 ml-3">
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
@@ -134,31 +159,6 @@ export default function CategoryPage({ params }) {
             ))}
           </div>
         )}
-      </div>
-
-      <div className="w-[25%] px-4">
-        <div className="category-section">
-          <div 
-            className="flex justify-between items-center cursor-pointer mb-2"
-            onClick={() => setIsCategoryOpen(!isCategoryOpen)}
-          >
-            <span className="text-xl font-bold">Category</span>
-            <span className={`text-2xl flex items-center transform transition-transform duration-300 ${isCategoryOpen ? "rotate-180" : "rotate-0"}`}>
-              <IoIosArrowUp />
-            </span>
-          </div>
-          <ul className={`transition-all duration-500 ease-in-out overflow-hidden ${isCategoryOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"} space-y-3`}>
-            {isCategoryOpen && categories.map((category, index) => (
-              <li
-                key={index}
-                className={`cursor-pointer px-3 py-2 shadow rounded-md transition ${activeCategory === category._id ? "bg-[#8B4513] text-white hover:bg-[#A0522D]" : "bg-white hover:bg-gray-200"}`}
-                onClick={() => handleCategoryChange(category)}
-              >
-                <p className="capitalize">{category.name}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
       </div>
 
       {selectedImage && (
