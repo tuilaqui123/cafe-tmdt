@@ -2,52 +2,66 @@
 import { useState, useEffect } from 'react'
 import { FaSearch } from 'react-icons/fa'
 import Link from 'next/link'
+import ScrollToTop from '@/components/scrollToTop'
 
 const OrderManagement = () => {
   const [orders, setOrders] = useState([])
+  const [filteredOrders, setFilteredOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
 
   const statusColors = {
     'pending': 'bg-yellow-100 text-yellow-800',
-    'processing': 'bg-blue-100 text-blue-800',
+    'doing': 'bg-blue-100 text-blue-800',
     'shipping': 'bg-purple-100 text-purple-800',
-    'delivered': 'bg-green-100 text-green-800',
-    'cancelled': 'bg-red-100 text-red-800'
+    'systemCancel': 'bg-red-100 text-red-800',
+    'success': 'bg-green-100 text-green-800',
+    'fail': 'bg-red-100 text-red-800',
+    'customerCancel': 'bg-red-100 text-red-800',
+    'confirmed': 'bg-cyan-100 text-cyan-800',
   }
 
   const formatNumber = (number) => {
     return new Intl.NumberFormat('de-DE').format(number)
-}
+  }
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await fetch('/api/orders/user', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-        const data = await response.json()
-        if (data.success) {
-          setOrders(data.orders)
-        }
-      } catch (error) {
-        console.error('Error fetching orders:', error)
-      } finally {
-        setLoading(false)
-      }
+    const fetchOrders = () => {
+      fetch(`http://localhost:8081/v1/api/user/orders/users/${JSON.parse(localStorage.user)._id}`)
+        .then(res => res.json())
+        .then(data => { setOrders(data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())) })
+        .finally(() => { setLoading(false) })
     }
 
     fetchOrders()
   }, [])
 
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = filterStatus === 'all' || order.status === filterStatus
-    return matchesSearch && matchesStatus
-  })
+  useEffect(() => {
+    if (!loading) {
+      setFilteredOrders(
+        orders.filter(order => {
+          // const matchesSearch = order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase())
+          // const matchesSearch = order.items.some(item => {
+          //   item.product.name.toLowerCase().includes(searchTerm.toLowerCase())
+          // })
+
+          const matchesSearch = order.items.some(item => {
+            const isMatch = item.product.name.toLowerCase().includes(searchTerm.toLowerCase());
+            return isMatch;
+          })
+
+          console.log(matchesSearch)
+
+          const matchesStatus = filterStatus === 'all' || order.deliveryStatus === filterStatus
+
+          return matchesStatus && matchesSearch
+        })
+      )
+    }
+
+    // setFilteredOrders([...orders])
+  }, [filterStatus, loading, searchTerm])
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -68,7 +82,7 @@ const OrderManagement = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 mt-16">
+    <div className="mx-auto px-4 py-8 mt-16">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Order Management</h1>
 
       {/* Search and Filter Section */}
@@ -77,7 +91,7 @@ const OrderManagement = () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search by order number..."
+              placeholder="Search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-[#A0522D]"
@@ -92,10 +106,12 @@ const OrderManagement = () => {
         >
           <option value="all">All Status</option>
           <option value="pending">Pending</option>
-          <option value="processing">Processing</option>
+          <option value="doing">Proccessing</option>
           <option value="shipping">Shipping</option>
-          <option value="delivered">Delivered</option>
           <option value="cancelled">Cancelled</option>
+          <option value="success">Success</option>
+          <option value="fail">Fail</option>
+          <option value="confirmed">Confirmed</option>
         </select>
       </div>
 
@@ -110,12 +126,12 @@ const OrderManagement = () => {
             <div key={order._id} className="bg-white rounded-lg shadow-md p-6">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">Order #{order.orderNumber}</h3>
+                  <h3 className="text-lg font-semibold">Order {order._id}</h3>
                   <p className="text-gray-500">{formatDate(order.createdAt)}</p>
                 </div>
                 <div className="mt-2 md:mt-0">
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[order.status]}`}>
-                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[order.deliveryStatus]}`}>
+                    {order.deliveryStatus.charAt(0).toUpperCase() + order.deliveryStatus.slice(1)}
                   </span>
                 </div>
               </div>
@@ -147,7 +163,7 @@ const OrderManagement = () => {
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Total Amount:</span>
                   <span className="text-lg font-bold text-[#A0522D]">
-                    {formatNumber(order.totalAmount)} đ
+                    {formatNumber(order.total)} đ
                   </span>
                 </div>
               </div>
@@ -173,6 +189,7 @@ const OrderManagement = () => {
           ))}
         </div>
       )}
+      <ScrollToTop />
     </div>
   )
 }
