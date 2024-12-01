@@ -108,6 +108,17 @@ const Navbar = () => {
     return 0
   }
 
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    alert('Tìm kiếm với từ khóa: ' + searchTerm);
+  };
+
   return (
     <header className="backdrop-blur-lg border border-white/10 shadow-lg fixed top-0 left-0 w-full z-50">
       <nav className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
@@ -122,6 +133,25 @@ const Navbar = () => {
             />
           </Link>
         </div>
+
+        {/* <div className="flex justify-center items-center mt-8">
+          <form onSubmit={handleSearchSubmit} className="flex items-center border-2 border-gray-300 rounded-full p-2 w-96">
+            <input
+              type="text"
+              className="flex-1 px-4 py-2 text-lg rounded-l-full focus:outline-none"
+              placeholder="Tìm kiếm..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+            />
+            <button
+              type="submit"
+              className="bg-red-500 text-white px-4 py-2 rounded-r-full hover:bg-red-400 transition-colors"
+            >
+              🔍
+            </button>
+          </form>
+        </div> */}
+
         <ul className="flex space-x-6 text-[#4c2113] font-extralight">
           {navList.map((value) => (
             <li key={value.id}>
@@ -171,7 +201,7 @@ const Navbar = () => {
         {user ? (
           <div className="flex items-center gap-4 px-4 py-2 bg-[#A0522D] text-white rounded-md shadow-lg">
             <Link className="flex items-center hover:cursor-pointer"
-              href="/user"
+              href="/home"
             >
               <FaUser />
 

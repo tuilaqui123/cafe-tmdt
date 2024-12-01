@@ -18,7 +18,7 @@ export default function Page() {
     return (
         <div className="container mx-auto py-10 px-4 mt-4">
             <h2 className="text-4xl font-semibold text-center text-[#8B4513] mb-6" data-aos="fade-up">  
-                Chào mừng bạn đến với Coffee Shop
+                Chào mừng bạn đến với Caffeine Corner
             </h2>
             <div className="relative py-16 px-4 lg:px-20 flex items-center">
                 <div className="lg:flex lg:items-center lg:space-x-16">
@@ -27,7 +27,7 @@ export default function Page() {
                             GIỚI THIỆU
                         </h2>
                         <p className="text-xl text-gray-700 mb-6" data-aos="fade-up" data-aos-delay="200">
-                            Chào mừng bạn đến với Coffee Shop - nơi mang đến cho bạn những trải nghiệm thưởng thức đồ uống và cà phê tuyệt vời nhất. Với sứ mệnh mang lại không gian thư giãn và năng lượng cho mỗi ngày, chúng tôi tự hào cung cấp những sản phẩm chất lượng, từ những hạt cà phê chọn lọc đến các loại đồ uống sáng tạo và đa dạng.
+                            Chào mừng bạn đến với Caffeine Corner - nơi mang đến cho bạn những trải nghiệm thưởng thức đồ uống và cà phê tuyệt vời nhất. Với sứ mệnh mang lại không gian thư giãn và năng lượng cho mỗi ngày, chúng tôi tự hào cung cấp những sản phẩm chất lượng, từ những hạt cà phê chọn lọc đến các loại đồ uống sáng tạo và đa dạng.
                         </p>
                         <Link
                             href={"/menu"}
@@ -77,7 +77,7 @@ export default function Page() {
                             Cà phê của chúng tôi
                         </h2>
                         <p className="text-xl text-gray-700 mb-6" data-aos="fade-up">
-                            Tại Coffee Shop, chúng tôi không chỉ tập trung vào chất lượng mà còn chú trọng đến nguồn gốc và quy trình sản xuất của mỗi loại nước uống. Chúng tôi vẫn luôn tìm kiếm những thức uống có hương vị độc đáo, những sản phẩm tốt nhất, an toàn cho sức khỏe và được sản xuất theo cách có trách nhiệm với môi trường. Mỗi tách cà phê, mỗi ly nước đều trải qua quy trình kiểm tra nghiêm ngặt để đảm bảo mang đến cho bạn sự thoải mái, tinh khiết và sảng khoái trong từng ngụm nước.
+                            Tại Caffeine Corner, chúng tôi không chỉ tập trung vào chất lượng mà còn chú trọng đến nguồn gốc và quy trình sản xuất của mỗi loại nước uống. Chúng tôi vẫn luôn tìm kiếm những thức uống có hương vị độc đáo, những sản phẩm tốt nhất, an toàn cho sức khỏe và được sản xuất theo cách có trách nhiệm với môi trường. Mỗi tách cà phê, mỗi ly nước đều trải qua quy trình kiểm tra nghiêm ngặt để đảm bảo mang đến cho bạn sự thoải mái, tinh khiết và sảng khoái trong từng ngụm nước.
                         </p>
                     </div>
                 </div>

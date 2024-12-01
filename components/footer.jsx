@@ -82,7 +82,7 @@ const Footer = () => {
                 <div className="border-t border-gray-700 mt-8 pt-8 text-center">
                     <p className="text-gray-300 flex items-center justify-center gap-2">
                         <FaRegCopyright className="text-gray-300" />
-                        <span>{new Date().getFullYear()} Coffee Shop. All rights reserved.</span>
+                        <span>{new Date().getFullYear()} Caffeine Corner. All rights reserved.</span>
                     </p>
                 </div>
             </div>
