@@ -52,8 +52,8 @@ export default function CardItem1({id, image, name, description, discount, type,
   }
 
   const handleOrder = () => {
-    let price
-    const typeOrder = type.sort((a, b) => {
+    const cloneType = [...type]
+    const typeOrder = cloneType.sort((a, b) => {
       const sizeOrder = { S: 1, M: 2, L: 3 }
       return sizeOrder[a.size] - sizeOrder[b.size]
     })
@@ -66,7 +66,7 @@ export default function CardItem1({id, image, name, description, discount, type,
       discount: discount,
       image: image
     })
-    router.push('/checkout')  
+    router.push('/checkout')
   }
 
   const formatNumber = (number) => {
@@ -87,6 +87,8 @@ export default function CardItem1({id, image, name, description, discount, type,
     const size = type.find((t) => t.size === e.target.value)
     setSelectedSize(size)
   }
+
+console.log(type)
 
   return (
     <div className="w-full bg-[#a45c23] rounded-lg shadow-xl">
