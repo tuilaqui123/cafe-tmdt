@@ -129,6 +129,14 @@ const CheckOut = () => {
             return
         }
 
+        if (phone) {
+            const regexPhone = /^(\+?\d{1,4}[\s-]?)?(\(?\d{3}\)?[\s-]?)?\d{3}[\s-]?\d{4}$/;
+            if (!regexPhone.test(phone)) {
+                alert("Nhập sai định dạng số điện thoại")
+                return
+            }
+        }
+
         if (!province) {
             alert("Vui lòng nhập tỉnh nơi bạn ở")
 
