@@ -111,6 +111,8 @@ const Home = () => {
                 </div>
             </div>
 
+            
+
             <div className="py-16 bg-[#FDF5E6]">
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold text-center mb-12">Our Categories</h2>
