@@ -39,7 +39,7 @@ const CartBadge = ({ count }) => {
 }
 
 const Navbar = () => {
-  const { categories, cart, cartNoLog, getCartByUserId, getCartById } = useContext(AppContext)
+  const { categories, getCategoríes, cart, cartNoLog, getCartByUserId, getCartById } = useContext(AppContext)
   const [selectNav, setSelectNav] = useState(null)
   const [user, setUser] = useState(null)
   const [cartCount, setCartCount] = useState(0)
@@ -80,6 +80,7 @@ const Navbar = () => {
     }
 
     updateCartCount()
+    // getCategoríes()
   }, [cart, cartNoLog])
 
   useEffect(() => {
@@ -90,8 +91,11 @@ const Navbar = () => {
         await getCartById(localStorage.cartId)
       }
     }
+    getCategoríes()
     loadCartData()
   }, [])
+
+  console.log(categories)
 
   const handleLogout = () => {
     localStorage.removeItem("token")
