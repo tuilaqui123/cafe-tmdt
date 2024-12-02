@@ -150,7 +150,7 @@ export default function SearchPage() {
                 )}
 
                 {totalPages > 1 && (
-                <div div className="flex justify-center gap-2 mt-8">
+                <div className="flex justify-center gap-2 mt-8">
                     {Array.from({ length: totalPages }, (_, i) => (
                     <button
                         key={i}

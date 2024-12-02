@@ -68,7 +68,7 @@ export default function Page() {
   }
 
   return (
-    <div className="w-full flex mt-5">
+    <div className="w-full flex mt-5 p-10">
       <div className="w-[25%] px-4">
         <div className="category-section">
           <div className="flex justify-between items-center cursor-pointer mb-2"

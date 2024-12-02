@@ -299,7 +299,7 @@ const Cart = () => {
             <ToastContainer />
             {((cart.items!==undefined && cart.items?.length!==0) || (cartNoLog.items!==undefined && cartNoLog.items?.length!==0)) ? (
                 <div className='mb-4'>
-                    <div className='flex flex-col md:flex-row gap-4 md:gap-6 justify-center items-center mb-4 px-4 md:mb-8'>
+                    {/* <div className='flex flex-col md:flex-row gap-4 md:gap-6 justify-center items-center mb-4 px-4 md:mb-8'>
                         {stateOrder.map((ele, index) => (
                             <div key={index} className='flex items-center gap-2'>
                                 <div className="flex items-center gap-2">
@@ -311,7 +311,7 @@ const Cart = () => {
                             {ele.id!==3 && <FaArrowRightLong className="hidden md:block" />}
                             </div>
                         ))}
-                    </div>
+                    </div> */}
 
                     <div className="hidden md:block overflow-x-auto">
                         <table className="w-full table-auto border-collapse mb-6">

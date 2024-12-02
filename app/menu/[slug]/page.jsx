@@ -154,7 +154,7 @@ export default function ItemView() {
   }, [product, products])
 
   return (
-    <div className="w-full h-auto px-4 py-8 m-0">
+    <div className="w-full h-auto px-4 py-8 m-0 ">
       <ToastContainer/>
       {(product._id === undefined) ? (
         <div className="flex justify-center items-center min-h-screen">
