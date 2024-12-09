@@ -28,13 +28,15 @@ const OrderManagement = () => {
 
   useEffect(() => {
     const fetchOrders = () => {
-      fetch(`http://localhost:8081/v1/api/user/orders/users/${JSON.parse(localStorage.user)._id}`)
+      fetch(`http://localhost:8081/v1/api/user/orders/users/${JSON.parse(localStorage?.user)._id}`)
         .then(res => res.json())
         .then(data => { setOrders(data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())) })
         .finally(() => { setLoading(false) })
     }
 
-    fetchOrders()
+    if (localStorage?.user) {
+        fetchOrders()
+    }
   }, [])
 
   useEffect(() => {
@@ -83,7 +85,7 @@ const OrderManagement = () => {
 
   return (
     <div className="mx-auto px-4 py-8 mt-16">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Order Management</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">Quản lý đơn hàng</h1>
 
       {/* Search and Filter Section */}
       <div className="flex flex-col md:flex-row gap-4 mb-6">
@@ -91,7 +93,7 @@ const OrderManagement = () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search"
+              placeholder="Tìm kiếm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:border-[#A0522D]"
@@ -126,7 +128,7 @@ const OrderManagement = () => {
             <div key={order._id} className="bg-white rounded-lg shadow-md p-6">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">Order {order._id}</h3>
+                  <h3 className="text-lg font-semibold">Đơn hàng {order._id}</h3>
                   <p className="text-gray-500">{formatDate(order.createdAt)}</p>
                 </div>
                 <div className="mt-2 md:mt-0">
@@ -161,7 +163,7 @@ const OrderManagement = () => {
               {/* Order Summary */}
               <div className="mt-4 pt-4 border-t">
                 <div className="flex justify-between items-center">
-                  <span className="font-medium">Total Amount:</span>
+                  <span className="font-medium">Tổng số tiền:</span>
                   <span className="text-lg font-bold text-[#A0522D]">
                     {formatNumber(order.total)} đ
                   </span>
@@ -174,14 +176,14 @@ const OrderManagement = () => {
                   href={`/user/orders/${order._id}`}
                   className="px-4 py-2 bg-[#A0522D] text-white rounded-lg hover:bg-[#8B4513] transition-colors"
                 >
-                  View Details
+                  Xem chi tiết
                 </Link>
                 {order.status === 'pending' && (
                   <button
                     onClick={() => handleCancelOrder(order._id)}
                     className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                   >
-                    Cancel Order
+                    Hủy đơn hàng
                   </button>
                 )}
               </div>

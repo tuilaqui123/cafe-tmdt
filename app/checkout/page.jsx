@@ -776,10 +776,10 @@ const CheckOut = () => {
 
                     <div className='flex mt-5 items-center hover:cursor-pointer' onClick={() => router.push('/cart')}>
                         <AiOutlineArrowLeft />
-                        <p className=' text-[15px] text-black ml-2'>Back to cart</p>
+                        <p className=' text-[15px] text-black ml-2'>Quay lại giỏ hàng</p>
                     </div>
 
-                    <p className='lg:text-[38px] text-[30px] font-bold text-black mt-5'>Complete order {cart.userId ? cart.userId?.name + "," : ""}</p>
+                    <p className='lg:text-[38px] text-[30px] font-bold text-black mt-5'>Hoàn thành thanh toán {cart.userId ? cart.userId?.name + "," : ""}</p>
 
                     <div className='mt-3'>
                         {/* <div className='hover:opacity-90 hover:cursor-pointer bg-black h-[40px] md:hidden rounded-[5px]' onClick={() => { setIsOpen(!isOpen) }}>
@@ -799,13 +799,13 @@ const CheckOut = () => {
                                 <thead>
                                     <tr className="border-b border-gray-200 bg-[#A0522D] rounded-tl-[5px] rounded-bl-[5px] text-white">
                                         <th className="p-4 text-center w-[20%]"></th>
-                                        <th className="p-4 text-center">Name</th>
+                                        <th className="p-4 text-center">Tên sản phẩm</th>
 
-                                        <th className="p-4 text-center lg:hidden">Description</th>
+                                        <th className="p-4 text-center lg:hidden">Mô tả</th>
 
-                                        <th className="p-4 text-center lg:table-cell hidden">Size</th>
-                                        <th className="p-4 text-center lg:table-cell hidden">Quantity</th>
-                                        <th className="p-4 text-center lg:table-cell hidden">Price</th>
+                                        <th className="p-4 text-center lg:table-cell hidden">Kích cỡ</th>
+                                        <th className="p-4 text-center lg:table-cell hidden">Số lượng</th>
+                                        <th className="p-4 text-center lg:table-cell hidden">Giá</th>
                                         <th className="p-4 text-center"></th>
                                     </tr>
                                 </thead>
@@ -1061,7 +1061,7 @@ const CheckOut = () => {
 
                     <div className=' lg:mt-20 mt-10 flex flex-col lg:flex-row justify-between w-full lg:w-[86%] mx-auto lg:mb-10'>
                         <div className='lg:order-none lg:w-[40%] w-full order-2 '>
-                            <p className='text-[20px] font-bold text-black mb-4'>Delivery Information: </p>
+                            <p className='text-[20px] font-bold text-black mb-4'>Thông tin giao hàng: </p>
 
                             <div className="relative my-5">
                                 <input
@@ -1071,7 +1071,7 @@ const CheckOut = () => {
                                     placeholder=''
                                     value={name} onChange={(e) => { setName(e.target.value) }}
                                 />
-                                <label htmlFor="name" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#f1debc] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Name</label>
+                                <label htmlFor="name" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#f1debc] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Họ Tên</label>
                             </div>
 
                             <div className="relative my-5">
@@ -1082,7 +1082,7 @@ const CheckOut = () => {
                                     placeholder=''
                                     value={phone} onChange={(e) => { setPhone(e.target.value) }}
                                 />
-                                <label htmlFor="phone" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#f1debc] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Phone</label>
+                                <label htmlFor="phone" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#f1debc] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Số điện thoại</label>
                             </div>
 
                             <select
@@ -1104,7 +1104,7 @@ const CheckOut = () => {
                                 }}
                             >
                                 <option value="">
-                                    Province
+                                    Tỉnh
                                 </option>
                                 {
                                     allProvince.map((p, index) => {
@@ -1134,7 +1134,7 @@ const CheckOut = () => {
                                 }}
                             >
                                 <option value="">
-                                    District
+                                    Quận
                                 </option>
                                 {
                                     allDistrict.map((p, index) => {
@@ -1160,7 +1160,7 @@ const CheckOut = () => {
                                 }}
                             >
                                 <option value="">
-                                    Ward
+                                    Huyện
                                 </option>
                                 {
                                     allWard.map((p, index) => {
@@ -1183,7 +1183,7 @@ const CheckOut = () => {
                                     placeholder=''
                                     value={address} onChange={(e) => { setAddress(e.target.value) }}
                                 />
-                                <label htmlFor="address" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#f1debc] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Address</label>
+                                <label htmlFor="address" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#f1debc] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Địa chỉ</label>
                             </div>
 
                             <div className='relative my-5'>
@@ -1194,7 +1194,7 @@ const CheckOut = () => {
                                     value={note}
                                     onChange={(e) => { setNote(e.target.value) }}
                                 ></textarea>
-                                <label htmlFor="note" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#f1debc] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Note</label>
+                                <label htmlFor="note" className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#f1debc] dark:bg-gray-900 px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1">Ghi chú</label>
                             </div>
                         </div>
 
@@ -1204,18 +1204,18 @@ const CheckOut = () => {
 
                                 <div className=' border-b-2 border-[black] border-solid py-3'>
                                     <div className='text-[#808080] flex justify-between mb-2'>
-                                        <p>Subtotal</p>
+                                        <p>Tổng</p>
                                         <p>{subTotal.toLocaleString('vi-VN')} đ</p>
                                     </div>
 
                                     <div className='text-[#808080] flex justify-between'>
-                                        <p>Discount</p>
+                                        <p>Giảm</p>
                                         <p>- {(subTotal - totalPrice).toLocaleString('vi-VN')} đ</p>
                                     </div>
                                 </div>
 
                                 <div className='border-b-2 border-[black] border-solid flex justify-between py-3 font-bold'>
-                                    <p className='text-[18px] text-black  '>Total: </p>
+                                    <p className='text-[18px] text-black  '>Tổng cộng: </p>
                                     <p className='text-black'>{totalPrice.toLocaleString('vi-VN')} đ</p>
                                 </div>
 
@@ -1227,7 +1227,7 @@ const CheckOut = () => {
                                 <div className=' cursor-pointer flex items-center py-3' onClick={() => { setPaymentMethod('momo') }}>
                                     <div className={`w-5 h-5 bg-white  rounded-full mr-3 ${paymentMethod == 'momo' ? 'border-8 border-black' : ''}`}></div>
                                     <div className='flex justify-between items-center flex-1 mr-3'>
-                                        <p className='mr-10'>Payments with MoMo E-Wallet</p>
+                                        <p className='mr-10'>Thanh toán với ví điện tử MoMo</p>
                                         <img className=' w-[30px]' src="https://upload.wikimedia.org/wikipedia/vi/f/fe/MoMo_Logo.png" alt="momo" />
                                     </div>
                                 </div>
@@ -1235,7 +1235,7 @@ const CheckOut = () => {
                                 <div className=' cursor-pointer flex items-center py-3' onClick={() => { setPaymentMethod('cod') }}>
                                     <div className={`w-5 h-5 bg-white  rounded-full mr-3 ${paymentMethod == 'cod' ? 'border-8 border-black' : ''}`}></div>
                                     <div className='flex justify-between items-center flex-1'>
-                                        <p className='mr-6'>Cash on delivery</p>
+                                        <p className='mr-6'>Thanh toán khi nhận hàng</p>
                                         <img className=' w-[60px]' src="https://cdn.iconscout.com/icon/free/png-256/free-cod-icon-download-in-svg-png-gif-file-formats--credit-debit-bank-transaction-payment-methods-vol-1-pack-business-icons-32260.png" alt="COD" />
                                     </div>
                                 </div>
@@ -1246,7 +1246,7 @@ const CheckOut = () => {
                                     className='flex justify-center items-center text-white  '
                                     onClick={() => { addOrder() }}
                                 >
-                                    <p className='mr-3'>Payment</p>
+                                    <p className='mr-3'>Thanh toán</p>
                                     <AiOutlineArrowRight />
                                 </div>
                             </div>
@@ -1259,7 +1259,7 @@ const CheckOut = () => {
                             className='flex justify-center items-center text-white  '
                             onClick={() => { addOrder() }}
                         >
-                            <p className='mr-3'>Payment</p>
+                            <p className='mr-3'>Thanh toán</p>
                             <AiOutlineArrowRight />
                         </div>
                     </div>

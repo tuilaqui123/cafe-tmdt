@@ -7,9 +7,9 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto px-4 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div>
-                        <h3 className="text-xl font-bold mb-4">About Us</h3>
+                        <h3 className="text-xl font-bold mb-4">Về chúng tôi</h3>
                         <p className="text-gray-300">
-                            We are passionate about serving the finest coffee and creating memorable experiences for our customers.
+                        Chúng tôi đam mê phục vụ những ly cà phê hảo hạng nhất và tạo nên những trải nghiệm đáng nhớ cho khách hàng của mình.
                         </p>
                         <div className="flex space-x-4 mt-4">
                             <a href="#" className="text-gray-300 hover:text-white transition-colors">
@@ -25,7 +25,7 @@ const Footer = () => {
                     </div>
 
                     <div>
-                        <h3 className="text-xl font-bold mb-4">Quick Links</h3>
+                        <h3 className="text-xl font-bold mb-4">Các liên kết nhanh</h3>
                         <ul className="space-y-2">
                             <li>
                                 <Link href="/home" className="text-gray-300 hover:text-white transition-colors">
@@ -39,7 +39,7 @@ const Footer = () => {
                             </li>
                             <li>
                                 <Link href="/about" className="text-gray-300 hover:text-white transition-colors">
-                                    About Us
+                                    Về chúng tôi
                                 </Link>
                             </li>
                             {/* <li>
@@ -51,7 +51,7 @@ const Footer = () => {
                     </div>
 
                     <div>
-                        <h3 className="text-xl font-bold mb-4">Contact Us</h3>
+                        <h3 className="text-xl font-bold mb-4">Liên hệ</h3>
                         <ul className="space-y-2">
                             <li className="flex items-center space-x-2">
                                 <FaPhone className="text-gray-300" />
@@ -69,11 +69,11 @@ const Footer = () => {
                     </div>
 
                     <div>
-                        <h3 className="text-xl font-bold mb-4">Opening Hours</h3>
+                        <h3 className="text-xl font-bold mb-4">Giờ mở cửa</h3>
                         <ul className="space-y-2">
-                            <li className="text-gray-300">Monday - Friday</li>
+                            <li className="text-gray-300">Thứ 2 - Thứ 6</li>
                             <li className="text-white font-semibold">7:00 AM - 10:00 PM</li>
-                            <li className="text-gray-300 mt-2">Saturday - Sunday</li>
+                            <li className="text-gray-300 mt-2">Thứ 7 - Chủ nhât</li>
                             <li className="text-white font-semibold">8:00 AM - 11:00 PM</li>
                         </ul>
                     </div>
@@ -82,7 +82,7 @@ const Footer = () => {
                 <div className="border-t border-gray-700 mt-8 pt-8 text-center">
                     <p className="text-gray-300 flex items-center justify-center gap-2">
                         <FaRegCopyright className="text-gray-300" />
-                        <span>{new Date().getFullYear()} Caffeine Corner. All rights reserved.</span>
+                        <span>{new Date().getFullYear()} Caffeine Corner. Đã đăng ký bản quyền</span>
                     </p>
                 </div>
             </div>

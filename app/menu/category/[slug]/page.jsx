@@ -92,14 +92,14 @@ export default function CategoryPage({ params }) {
   }
 
   return (
-    <div className="w-full flex mt-5">
+    <div className="w-full flex mt-5 p-10">
       <div className="w-[25%] px-4">
         <div className="category-section">
           <div 
             className="flex justify-between items-center cursor-pointer mb-2"
             onClick={() => setIsCategoryOpen(!isCategoryOpen)}
           >
-            <span className="text-xl font-bold">Category</span>
+            <span className="text-xl font-bold">Danh mục</span>
             <span className={`text-2xl flex items-center transform transition-transform duration-300 ${isCategoryOpen ? "rotate-180" : "rotate-0"}`}>
               <IoIosArrowUp />
             </span>

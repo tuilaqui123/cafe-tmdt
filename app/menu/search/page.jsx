@@ -64,13 +64,13 @@ export default function SearchPage() {
         <div className="w-full px-4 py-8">
         <div className="max-w-7xl mx-auto">
             <h1 className="text-2xl font-bold mb-6">
-            Search Results for "{query}"
+            Kết quả tìm kiếm cho "{query}"
             </h1>
 
             {searchResults.length === 0 ? (
             <div className="text-center py-8">
                 <p className="text-xl text-gray-600">
-                No products found matching your search.
+                Không tìm thấy sản phẩm nào phù hợp với tìm kiếm của bạn.
                 </p>
             </div>
             ) : (

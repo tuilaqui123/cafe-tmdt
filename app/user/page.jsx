@@ -254,13 +254,13 @@ const AccountInfo = ({ position, select }) => {
                 <div className="mx-12 mt-8">
                     <ToastContainer />
 
-                    <p className="text-4xl font-bold">Account information</p>
+                    <p className="text-4xl font-bold">Thông tin tài khoản</p>
                     <div className="w-full lg:w-10/12 flex flex-col gap-5 mt-10">
                         <div className="flex flex-row items-center">
-                            <p className="w-1/3 sm:w-1/4 font-bold ">Name</p>
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Họ tên</p>
 
                             <input
-                                placeholder="Enter your name"
+                                placeholder="Nhập họ tên của bạn"
                                 type="text"
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
@@ -268,10 +268,10 @@ const AccountInfo = ({ position, select }) => {
                             />
                         </div>
                         <div className="flex flex-row items-center">
-                            <p className="w-1/3 sm:w-1/4 font-bold ">Phone</p>
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Số điện thoại</p>
                             <input
                                 type="text"
-                                placeholder="Enter your phone"
+                                placeholder="Nhập số điện thoại của bạn"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)}
                                 className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
@@ -281,7 +281,7 @@ const AccountInfo = ({ position, select }) => {
                             <p className="w-1/3 sm:w-1/4 font-bold ">Email</p>
                             <input
                                 type="text"
-                                placeholder="Enter your email"
+                                placeholder="Nhập email của bạn"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
@@ -289,10 +289,10 @@ const AccountInfo = ({ position, select }) => {
                         </div>
 
                         <div className="flex flex-row items-center">
-                            <p className="w-1/3 sm:w-1/4 font-bold ">Old password</p>
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Mật khẩu cũ</p>
                             <input
                                 type="password"
-                                placeholder="Enter your password"
+                                placeholder="Nhập mật khẩu cũ của bạn"
                                 value={oldPassword}
                                 onChange={(e) => setOldPassword(e.target.value)}
                                 className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
@@ -300,10 +300,10 @@ const AccountInfo = ({ position, select }) => {
                         </div>
 
                         <div className="flex flex-row items-center">
-                            <p className="w-1/3 sm:w-1/4 font-bold ">New password</p>
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Mật khẩu mới</p>
                             <input
                                 type="password"
-                                placeholder="Enter new password"
+                                placeholder="Nhập mật khẩu mới của bạn"
                                 value={newPassword}
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
@@ -311,10 +311,10 @@ const AccountInfo = ({ position, select }) => {
                         </div>
 
                         <div className="flex flex-row items-center">
-                            <p className="w-1/3 sm:w-1/4 font-bold ">Confirm new password</p>
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Xác nhận mật khẩu mới</p>
                             <input
                                 type="password"
-                                placeholder="Enter confirm password"
+                                placeholder="Nhập mật khẩu xác nhận"
                                 value={confirmNewPassword}
                                 onChange={(e) => setConfirmNewPassword(e.target.value)}
                                 className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"
@@ -322,7 +322,7 @@ const AccountInfo = ({ position, select }) => {
                         </div>
 
                         <div className="flex flex-row items-center">
-                            <p className="w-1/3 sm:w-1/4 font-bold ">Province</p>
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Tỉnh</p>
                             <select
                                 ref={provinceSelect}
                                 defaultValue=""
@@ -357,7 +357,7 @@ const AccountInfo = ({ position, select }) => {
                         </div>
 
                         <div className="flex flex-row items-center">
-                            <p className="w-1/3 sm:w-1/4 font-bold ">District</p>
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Quận</p>
                             <select
                                 ref={districtSelect}
                                 defaultValue=""
@@ -390,7 +390,7 @@ const AccountInfo = ({ position, select }) => {
                         </div>
 
                         <div className="flex flex-row items-center">
-                            <p className="w-1/3 sm:w-1/4 font-bold ">Ward</p>
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Huyện</p>
                             <select
                                 ref={wardSelect}
                                 defaultValue=""
@@ -421,10 +421,10 @@ const AccountInfo = ({ position, select }) => {
                         </div>
 
                         <div className="flex flex-row items-center">
-                            <p className="w-1/3 sm:w-1/4 font-bold ">Address</p>
+                            <p className="w-1/3 sm:w-1/4 font-bold ">Địa chỉ</p>
                             <input
                                 type="text"
-                                placeholder="Enter your address"
+                                placeholder="Nhập địa chỉ của bạn"
                                 value={address}
                                 onChange={(e) => setAddress(e.target.value)}
                                 className="pl-3 w-3/4 h-[45px] border border-gray-300 rounded-lg focus:ring-[#000] focus:outline-[#000] text-black"

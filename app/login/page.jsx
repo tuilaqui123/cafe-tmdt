@@ -75,27 +75,27 @@ const Login = () => {
 
     const handleSignup = async (name, email, address, phoneNumber, password) => {
         if (!firstName) {
-            notifyError('Please enter your first name')
+            notifyError('Hãy nhập tên của bạn')
             return
         }
         if (!lastName) {
-            notifyError('Please enter your last name')
+            notifyError('Hãy nhập họ tên của bạn')
             return
         }
         if (!email) {
-            notifyError('Please enter your email')
+            notifyError('Hãy nhập email của bạn')
             return
         }
         if (!address) {
-            notifyError('Please enter your address')
+            notifyError('Hãy nhập địa chỉ của bạn')
             return
         }
         if (!phoneNumber) {
-            notifyError('Please enter your phone number')
+            notifyError('Hãy nhập số điện thoại của bạn')
             return
         }
         if (!password) {
-            notifyError('Please enter your password')
+            notifyError('Hãy nhập mật khẩu của bạn')
             return
         }
         const res = await signup(firstName + " " + lastName, email, address, phoneNumber, password)
@@ -115,11 +115,11 @@ const Login = () => {
 
     const handleSignin = async (email, password) => {
         if (!email) {
-            notifyError('Please enter your email')
+            notifyError('Hãy nhập email của bạn')
             return
         }
         if (!password) {
-            notifyError('Please enter your password')
+            notifyError('Hãy nhập mật khẩu của bạn')
             return
         }
 
@@ -164,7 +164,7 @@ const Login = () => {
                             <Link
                                 href="/menu"
                             >
-                                <p className="absolute top-[2px] right-[10px] bg-[rgba(100,88,158,0.7)] text-white px-[10px] py-[5px] rounded-[5px] no-underline transition-colors duration-300">Back to Website →</p>
+                                <p className="absolute top-[2px] right-[10px] bg-[rgba(100,88,158,0.7)] text-white px-[10px] py-[5px] rounded-[5px] no-underline transition-colors duration-300">Trở về Home →</p>
                             </Link>
                         </SwiperSlide>
                     )
@@ -172,22 +172,22 @@ const Login = () => {
             </Swiper>
             <div className="w-full md:w-[60%] px-[15px] md:px-[50px] py-[20px] text-black bg-white text-center rounded-[15px]">
                 <div className="p-[5px]">
-                    <h2 className="text-[24px] md:text-[30px]">Welcome Back</h2>
-                    <p className="text-sm md:text-base">Welcome Back to Our Website, Please enter Your details Informations</p>
+                    <h2 className="text-[24px] md:text-[30px]">Chào mừng trở lại</h2>
+                    <p className="text-sm md:text-base">Chào mừng bạn trở lại trang web của chúng tôi, vui lòng nhập thông tin chi tiết của bạn.</p>
                     <div className="flex justify-center mb-[20px] mx-auto w-full md:w-[70%]">
                         <button
                             type="button"
                             className={`flex-1 p-[10px] cursor-pointer border rounded-tl-[5px] rounded-bl-[5px] transition-all duration-400 ease-in-out ${!isSignUp ? 'bg-[#B38B60] border-black' : 'border-[#ddd] bg-[#f0f0f0]'}`}
                             onClick={() => setIsSignUp(false)}
                         >
-                            Sign In
+                            Đăng nhập
                         </button>
                         <button
                             type="button"
                             className={`flex-1 p-[10px] cursor-pointer border rounded-tr-[5px] rounded-br-[5px] transition-all duration-400 ease-in-out ${isSignUp ? 'bg-[#B38B60] border-black' : 'border-[#ddd] bg-[#f0f0f0]'}`}
                             onClick={() => setIsSignUp(true)}
                         >
-                            Signup
+                            Đăng ký
                         </button>
                     </div>
                 </div>
@@ -198,7 +198,7 @@ const Login = () => {
                                 <input
                                     type="text"
                                     className="w-full p-[10px] mb-[10px] border-2 border-gray-500 rounded-[4px] text-[16px]"
-                                    placeholder="First name"
+                                    placeholder="Tên"
                                     value={firstName}
                                     onChange={(e) => setFirstName(e.target.value)}
                                     required
@@ -206,7 +206,7 @@ const Login = () => {
                                 <input
                                     type="text"
                                     className="w-full p-[10px] mb-[10px] border-2 border-gray-500 rounded-[4px] text-[16px]"
-                                    placeholder="Last name"
+                                    placeholder="Họ"
                                     value={lastName}
                                     onChange={(e) => setLastName(e.target.value)}
                                     required
@@ -224,9 +224,9 @@ const Login = () => {
                             </div>
                             <div className="mb-[15px]">
                                 <input
-                                    type="email"
+                                    type="phone"
                                     className="w-full p-[10px] mb-[10px] border-2 border-gray-500 rounded-[4px] text-[16px]"
-                                    placeholder="Enter your phone Number"
+                                    placeholder="Số điện thoại"
                                     value={phoneNumber}
                                     onChange={(e) => setPhoneNumber(e.target.value)}
                                     required
@@ -236,7 +236,7 @@ const Login = () => {
                                 <input
                                     type="address"
                                     className="w-full p-[10px] mb-[10px] border-2 border-gray-500 rounded-[4px] text-[16px]"
-                                    placeholder="Enter your address"
+                                    placeholder="Địa chỉ"
                                     value={address}
                                     onChange={(e) => setAddress(e.target.value)}
                                     required
@@ -246,7 +246,7 @@ const Login = () => {
                                 <input
                                     type="password"
                                     className="w-full p-[10px] mb-[10px] border-2 border-gray-500 rounded-[4px] text-[16px]"
-                                    placeholder="Enter your password"
+                                    placeholder="Mật khẩu"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
@@ -266,12 +266,12 @@ const Login = () => {
                             </div> */}
                             {/* {errorSignup && <div>{errorSignup}</div>} */}
                             <button type="submit" className="w-full p-[10px] border-none rounded-[4px] bg-[#8B4513] text-white text-[16px] cursor-pointer hover:bg-[#A0522D]"
-                                    onClick={() => handleSignup(firstName + " " + lastName, email, address, phoneNumber, password)}>Sign up</button>
+                                    onClick={() => handleSignup(firstName + " " + lastName, email, address, phoneNumber, password)}>Đăng ký</button>
                         </div>
                         <div className="flex flex-col items-center w-[95%] md:w-[85%] my-[20px] mx-auto">
                             <div className="flex items-center w-full mb-[20px]">
                                 <span className="flex-1 h-[1px] bg-[#a1a1a1]"></span>
-                                <div className="mx-[10px] text-[#a1a1a1] text-[14px]">Or register with</div>
+                                <div className="mx-[10px] text-[#a1a1a1] text-[14px]">Hoặc đăng ký bằng</div>
                                 <span className="flex-1 h-[1px] bg-[#a1a1a1]"></span>
                             </div>    
                             <div className="flex justify-around w-full flex-col md:flex-row gap-2 md:gap-0">
@@ -296,14 +296,14 @@ const Login = () => {
                             <input
                                 type="password"
                                 className="w-full p-[10px] mb-[10px] border-2 border-gray-500 rounded-[4px] text-[16px]"
-                                placeholder="Enter your password"
+                                placeholder="Mật khẩu"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
                         </div>
                         <button type="submit" className="w-full p-[10px] border-none rounded-[4px] bg-[#8B4513] text-white text-[16px] cursor-pointer hover:bg-[#A0522D]"
-                                onClick={() => handleSignin(email, password)}>Sign in</button>
+                                onClick={() => handleSignin(email, password)}>Đăng nhập</button>
                     </div>
                 )}
             </div>  

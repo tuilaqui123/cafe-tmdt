@@ -76,20 +76,20 @@ const OrderId = ({ params }) => {
                 <div
                     className='transition-all duration-500 mx-5'
                 >
-                    <h1 className="font-bold mb-4 text-[40px] ">Detail order</h1>
+                    <h1 className="font-bold mb-4 text-[40px] ">Chi tiết đơn hàng</h1>
 
                     <table className="w-full text-left"
                     >
                         <thead>
                             <tr className="border-b border-gray-200 bg-[#A0522D] rounded-tl-[5px] rounded-bl-[5px] text-white">
                                 <th className="p-4 text-center w-[20%]"></th>
-                                <th className="p-4 text-center">Name</th>
+                                <th className="p-4 text-center">Tên sản phẩm</th>
 
-                                <th className="p-4 text-center lg:hidden">Description</th>
+                                <th className="p-4 text-center lg:hidden">Mô tả</th>
 
-                                <th className="p-4 text-center lg:table-cell hidden">Size</th>
-                                <th className="p-4 text-center lg:table-cell hidden">Quantity</th>
-                                <th className="p-4 text-center lg:table-cell hidden">Price</th>
+                                <th className="p-4 text-center lg:table-cell hidden">Kích cỡ</th>
+                                <th className="p-4 text-center lg:table-cell hidden">Số lượng</th>
+                                <th className="p-4 text-center lg:table-cell hidden">Giá</th>
                                 <th className="p-4 text-center"></th>
                             </tr>
                         </thead>

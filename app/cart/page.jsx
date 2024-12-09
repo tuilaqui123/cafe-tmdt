@@ -317,12 +317,12 @@ const Cart = () => {
                         <table className="w-full table-auto border-collapse mb-6">
                             <thead>
                                 <tr className="text-left border-b border-gray-200 bg-[#A0522D] text-white">
-                                    <th className="p-2">Product</th>
-                                    <th className="p-2">Size</th>
-                                    <th className="p-2">Price</th>
-                                    <th className="p-2">Quantity</th>
-                                    <th className="p-2">Subtotal</th>
-                                    <th className="p-2">Note</th>
+                                    <th className="p-2">Sản phẩm</th>
+                                    <th className="p-2">Kích cỡ</th>
+                                    <th className="p-2">Giá</th>
+                                    <th className="p-2">Số lượng</th>
+                                    <th className="p-2">Tổng</th>
+                                    <th className="p-2">Ghi chú</th>
                                     <th className="p-2"></th>
                                 </tr>
                             </thead>
@@ -447,15 +447,15 @@ const Cart = () => {
                 ) : (
                 <div className="flex flex-col items-center justify-center py-8 md:py-16 px-4 rounded-lg shadow-sm">
                     <FaShoppingCart className="text-[#A0522D] text-4xl md:text-6xl mb-4" />
-                    <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2 text-center">Your Cart is Empty</h2>
+                    <h2 className="text-xl md:text-2xl font-semibold text-gray-800 mb-2 text-center">Giỏ hàng của bạn đang trống</h2>
                     <p className="text-gray-500 text-center mb-6 text-sm md:text-base">
-                        Looks like you haven&apos;t added anything to your cart yet
+                        Có vẻ như bạn chưa thêm sản phẩm nào vào giỏ hàng của mình
                     </p>
                     <Link 
                         href="/menu" 
                         className="px-6 py-3 bg-[#A0522D] text-white rounded-full hover:bg-[#8B4513] transition-colors text-sm md:text-base"
                     >
-                        Continue Shopping
+                        Tiếp tục mua hàng
                     </Link>
                 </div>
             )}
@@ -491,14 +491,13 @@ const Cart = () => {
                     onClick={handleUpdateCart}
                     disabled={!hasChanges && !hasNoteChanges}
                 >
-                    Update Cart
+                    Cập nhật
                 </button>
             )}
 
             <div className={`flex flex-col md:flex-row ${(localStorage.user) ? "md:items-start md:justify-between" : "md:justify-end"} gap-6 md:gap-8`}>   
                 {((cart.items?.length!=undefined && cart.items?.length!=0) && localStorage.user ) && (
                     <div className="w-full md:w-[40%]">
-                        {/* Coupon Input */}
                         <div className="flex items-center gap-2 md:gap-3 p-2 md:p-3 
                             border rounded-full shadow-md bg-white mb-3 md:mb-4">
                             <FaTicketAlt className="text-gray-400 text-lg md:text-xl ml-2" />
@@ -506,7 +505,7 @@ const Cart = () => {
                                 type="text"
                                 value={currentCoupon}
                                 onChange={(e) => setCurrentCoupon(e.target.value)}
-                                placeholder="Coupon Code"
+                                placeholder="Mã giảm giá"
                                 className="flex-1 border-none outline-none 
                                     text-gray-500 placeholder-gray-400
                                     text-sm md:text-base min-w-0"
@@ -520,14 +519,14 @@ const Cart = () => {
                                     rounded-lg hover:text-[#A0522D] 
                                     transition cursor-pointer"
                             >
-                                Check
+                                Kiểm tra
                             </button>
                         </div>
 
                         {coupons.length > 0 && (
                             <div className="bg-white rounded-lg shadow-md p-3 md:p-4">
                                 <h3 className="text-base md:text-lg font-semibold mb-2 md:mb-3 text-gray-800">
-                                    Checked Coupons
+                                    Các mã giảm giá đã kiểm tra
                                 </h3>
                                 <div className="space-y-2">
                                     {coupons.map((coupon, index) => (
@@ -556,7 +555,7 @@ const Cart = () => {
                                 <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-gray-200">
                                     <div className="flex justify-between items-center">
                                         <span className="text-gray-600 text-sm md:text-base">
-                                            Total Savings:
+                                            Tổng tiền giảm:
                                         </span>
                                         <span className="text-green-600 font-semibold text-sm md:text-base">
                                             {formatNumber(totalSavings)} đ
@@ -572,27 +571,27 @@ const Cart = () => {
                     <div className="w-full md:w-1/2">
                         <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
                             <h2 className="text-lg md:text-xl font-bold mb-3 md:mb-4 text-gray-800">
-                                Cart Summary
+                                Tổng thanh toán
                             </h2>
 
                             <div className="space-y-2 md:space-y-3 mb-3 md:mb-4">
                                 <div className="flex justify-between text-sm md:text-base text-gray-600">
-                                    <span>Subtotal</span>
+                                    <span>Tổng tiền</span>
                                     <span>{formatNumber(totalCart || totalCartNoLog)} đ</span>
                                 </div>
                                 <div className="flex justify-between text-sm md:text-base text-gray-600">
-                                    <span>Shipping</span>
+                                    <span>Tiền ship</span>
                                     <span>Free</span>
                                 </div>
                                 <div className="flex justify-between text-sm md:text-base text-green-600">
-                                    <span>Discount</span>
+                                    <span>Giảm giá</span>
                                     <span>- {formatNumber(totalSavings)} đ</span>
                                 </div>
                             </div>
 
                             <div className="border-t border-gray-200 pt-3 md:pt-4 mb-4 md:mb-6">
                                 <div className="flex justify-between font-bold">
-                                    <span className="text-base md:text-lg">Total</span>
+                                    <span className="text-base md:text-lg">Tổng</span>
                                     <span className="text-base md:text-lg text-[#A0522D]">
                                         {formatNumber(finalTotal)} đ
                                     </span>
@@ -608,7 +607,7 @@ const Cart = () => {
                                         text-sm md:text-base font-bold 
                                         hover:bg-gray-300 transition-colors"
                                 >
-                                    Continue Shopping
+                                    Tiếp tục mua hàng
                                 </Link>
                                 <button
                                     onClick={handleCheckout}
@@ -618,7 +617,7 @@ const Cart = () => {
                                         text-sm md:text-base font-bold 
                                         hover:bg-[#8B4513] transition-colors"
                                 >
-                                    Checkout
+                                    Thanh toán
                                 </button>
                             </div>
                         </div>

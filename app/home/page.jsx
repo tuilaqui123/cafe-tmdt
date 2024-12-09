@@ -36,12 +36,12 @@ const Home = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className="text-5xl font-bold mb-4"
                         >
-                            Welcome to Our Caffeine Corner
+                            Chào mừng đến với Caffeine Corner của chúng tôi
                         </motion.h1>
-                        <p className="text-xl mb-8">Discover the perfect blend for your day</p>
+                        <p className="text-xl mb-8">Khám phá sự pha trộn hoàn hảo cho ngày của bạn</p>
                         <Link href="/menu">
                             <button className="bg-[#A0522D] hover:bg-[#8B4513] text-white px-8 py-3 rounded-full transition-colors">
-                                View Menu
+                                Đến Menu
                             </button>
                         </Link>
                     </div>
@@ -50,30 +50,31 @@ const Home = () => {
 
             <div className="py-16 bg-[#FDF5E6]">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-center mb-12">Why Choose Us</h2>
+                    <h2 className="text-3xl font-bold text-center mb-12">Tại sao chọn chúng tôi</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="text-center">
                             <FaCoffee className="mx-auto text-4xl text-[#A0522D] mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Premium Beans</h3>
-                            <p className="text-gray-600">Carefully selected coffee beans from around the world</p>
+                            <h3 className="text-xl font-semibold mb-2">Hạt cà phê cao cấp</h3>
+                            <p className="text-gray-600">Hạt cà phê được chọn lọc kỹ lưỡng từ khắp nơi trên thế giới</p>
                         </div>
                         <div className="text-center">
                             <FaLeaf className="mx-auto text-4xl text-[#A0522D] mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Fresh & Organic</h3>
-                            <p className="text-gray-600">100% organic ingredients for the best taste</p>
+                            <h3 className="text-xl font-semibold mb-2">Tươi & Hữu cơ</h3>
+                            <p className="text-gray-600">Nguyên liệu 100% hữu cơ cho hương vị tuyệt hảo nhất</p>
                         </div>
                         <div className="text-center">
                             <FaMugHot className="mx-auto text-4xl text-[#A0522D] mb-4" />
-                            <h3 className="text-xl font-semibold mb-2">Perfect Brew</h3>
-                            <p className="text-gray-600">Expertly crafted by our skilled baristas</p>
+                            <h3 className="text-xl font-semibold mb-2">Pha chế hoàn hảo</h3>
+                            <p className="text-gray-600">Được tạo ra một cách tinh tế bởi các barista chuyên nghiệp của chúng tôi</p>
                         </div>
                     </div>
                 </div>
             </div>
 
+
             <div className="py-16">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-center mb-12">Featured Products</h2>
+                    <h2 className="text-3xl font-bold text-center mb-12">Sản phẩm nổi bật</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {featuredProducts.map((product, index) => (
                             <motion.div
@@ -100,7 +101,7 @@ const Home = () => {
                                         </span>
                                         <Link href={`/menu/${encodeURIComponent(product.name.split(" ").join("-"))}`}>
                                             <button className="bg-[#A0522D] text-white px-4 py-2 rounded hover:bg-[#8B4513] transition-colors">
-                                                View Details
+                                                Xem chi tiết
                                             </button>
                                         </Link>
                                     </div>
@@ -115,7 +116,7 @@ const Home = () => {
 
             <div className="py-16 bg-[#FDF5E6]">
                 <div className="container mx-auto px-4">
-                    <h2 className="text-3xl font-bold text-center mb-12">Our Categories</h2>
+                    <h2 className="text-3xl font-bold text-center mb-12">Danh mục của chúng tôi</h2>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         {categories.map((category, index) => (
                             <motion.div

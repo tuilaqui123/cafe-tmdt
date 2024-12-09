@@ -23,7 +23,7 @@ const navList = [
     id: 1,
   },
   {
-    name: "About us",
+    name: "Về chúng tôi",
     href: "/about",
     id: 2,
   },
@@ -168,7 +168,7 @@ const Navbar = () => {
                         <div className="py-1">
                           <Link href="/menu">
                             <p className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
-                              All Products
+                              Tất cả
                             </p>
                           </Link>
                           {categories.map((category) => (
@@ -202,7 +202,7 @@ const Navbar = () => {
                   <input
                     type="text"
                     className="w-full px-4 py-2 rounded-full border-2 border-[#A0522D] focus:outline-none focus:border-[#4c2113] transition-colors"
-                    placeholder="Search products..."
+                    placeholder="Tìm kiếm sản phẩm..."
                     value={searchTerm}
                     onChange={handleSearchChange}
                     onFocus={() => setIsSearchFocused(true)}
@@ -235,13 +235,13 @@ const Navbar = () => {
                       <Link href="/user">
                         <p className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
                           <FaUserCircle className="mr-3"/> 
-                          <span>Personal Information</span>
+                          <span>Thông tin cá nhân</span>
                         </p>
                       </Link>
                       <Link href="/user/orders">
                         <p className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-[#A0522D] hover:text-white transition-colors duration-200">
                           <RiBillFill className="mr-3"/>
-                          <span>Order Management</span> 
+                          <span>Quản lý đơn hàng</span> 
                         </p>
                       </Link>
                     </div>
@@ -265,7 +265,7 @@ const Navbar = () => {
               <div className="flex items-center gap-3">
                 <button className="relative flex px-6 py-2 rounded-md items-center justify-center overflow-hidden bg-gray-800 text-white shadow-2xl transition-all before:absolute before:h-0 before:w-0 before:rounded-full before:bg-orange-600 before:duration-500 before:ease-out hover:shadow-orange-600 hover:before:h-56 hover:before:w-56">
                   <Link href="/login">
-                    <span className="relative z-10">Login</span>
+                    <span className="relative z-10">Đăng nhập</span>
                   </Link>
                 </button>
                 <Link href="/cart" className="relative">
@@ -286,7 +286,7 @@ const Navbar = () => {
               <input
                 type="text"
                 className="w-full px-4 py-2 rounded-full border-2 border-[#A0522D] focus:outline-none focus:border-[#4c2113] transition-colors"
-                placeholder="Search products..."
+                placeholder="Tìm kiếm sản phẩm..."
                 value={searchTerm}
                 onChange={handleSearchChange}
               />

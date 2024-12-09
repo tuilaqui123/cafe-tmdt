@@ -18,7 +18,7 @@ export default function Page() {
     return (
         <div className="container mx-auto py-10 px-4 mt-4">
             <h2 className="text-4xl font-semibold text-center text-[#8B4513] mb-6" data-aos="fade-up">  
-                Welcome to Caffeine Corner
+                Chào mừng bạn đến với Caffeine Corner
             </h2>
             <div className="relative py-16 px-4 lg:px-20 flex items-center">
                 <div className="lg:flex lg:items-center lg:space-x-16">
@@ -27,8 +27,7 @@ export default function Page() {
                             Caffeine Corner
                         </h2>
                         <p className="text-xl text-gray-700 mb-6" data-aos="fade-up" data-aos-delay="200">
-                            Welcome to Caffeine Corner - the place that brings you the best coffee and beverage enjoyment experiences. With the mission of bringing relaxation and energy to every day, we are proud to provide quality products, from selected coffee beans to creative and diverse drinks.
-
+                            Chào mừng bạn đến với Caffeine Corner - nơi mang đến cho bạn những trải nghiệm thưởng thức cà phê và đồ uống tuyệt vời nhất. Với sứ mệnh mang lại sự thư giãn và năng lượng mỗi ngày, chúng tôi tự hào cung cấp những sản phẩm chất lượng, từ những hạt cà phê được chọn lọc kỹ lưỡng đến các loại đồ uống sáng tạo và đa dạng.
                         </p>
                         <Link
                             href={"/menu"}
@@ -53,10 +52,10 @@ export default function Page() {
             </div>
 
             <h2 className="text-3xl font-semibold text-[#8B4513] mb-6 text-center" data-aos="fade-up">
-                Statement
+                Tuyên bố
             </h2>
             <p className="text-center text-xl mb-6 italic" data-aos="fade-up">
-                <strong>&quot;Awaken inspiration and create connection through each cup of coffee - where each flavor tells a story, and each moment becomes a memory
+                <strong>&quot;Khơi dậy niềm cảm hứng và tạo nên sự gắn kết qua từng tách cà phê - nơi mỗi hương vị kể một câu chuyện, và mỗi khoảnh khắc trở thành kỷ niệm
                 &quot;.</strong>
             </p>
 
@@ -76,11 +75,10 @@ export default function Page() {
                     </div>
                     <div className="lg:w-1/2 text-center lg:text-left">
                         <h2 className="text-3xl font-semibold text-[#8B4513] mb-6" data-aos="fade-up">
-                            Our Products
+                            Cà phê của chúng tôi
                         </h2>
                         <p className="text-xl text-gray-700 mb-6" data-aos="fade-up">
-                        At Caffeine Corner, we not only focus on quality but also on the origin and production process of each drink. We are always looking for drinks with unique flavors, the best products, safe for health and produced in an environmentally responsible way. Every cup of coffee, every glass of water goes through a strict testing process to ensure you get comfort, purity and refreshment in every sip.
-
+                            Tại Caffeine Corner, chúng tôi không chỉ tập trung vào chất lượng mà còn chú trọng đến nguồn gốc và quy trình sản xuất của mỗi loại nước uống. Chúng tôi vẫn luôn tìm kiếm những thức uống có hương vị độc đáo, những sản phẩm tốt nhất, an toàn cho sức khỏe và được sản xuất theo cách có trách nhiệm với môi trường. Mỗi tách cà phê, mỗi ly nước đều trải qua quy trình kiểm tra nghiêm ngặt để đảm bảo mang đến cho bạn sự thoải mái, tinh khiết và sảng khoái trong từng ngụm nước.
                         </p>
                     </div>
                 </div>
@@ -90,10 +88,10 @@ export default function Page() {
                 <div className="lg:flex lg:items-center lg:space-x-16">
                     <div className="lg:w-1/2 text-center lg:text-left">
                         <h2 className="text-3xl font-semibold text-[#8B4513] mb-6" data-aos="fade-up">
-                            Our customers
+                            Khách hàng của chúng tôi
                         </h2>
                         <p className="text-xl text-gray-700 mb-6" data-aos="fade-up">
-                            We focus on connecting with customers, creating meaningful moments through genuine communication and smiles. Our desire is not only to provide quality products, but also to enhance our customers' experiences and lives every time they come to us. We believe that it is human connection that truly creates different value.
+                            Chúng tôi tập trung vào việc kết nối với khách hàng, tạo ra những khoảnh khắc ý nghĩa thông qua sự giao tiếp và nụ cười chân thành. Mong muốn của chúng tôi không chỉ là cung cấp sản phẩm chất lượng, mà còn là nâng cao trải nghiệm và cuộc sống của khách hàng mỗi khi họ đến với chúng tôi. Chúng tôi tin rằng chính sự kết nối con người mới thực sự làm nên giá trị khác biệt.
                         </p>
                     </div>
 
@@ -128,10 +126,10 @@ export default function Page() {
                     </div>
                     <div className="lg:w-1/2 text-center lg:text-left">
                         <h2 className="text-3xl font-semibold text-[#8B4513] mb-6" data-aos="fade-up">
-                            Our store
+                            Cửa hàng của chúng tôi
                         </h2>
                         <p className="text-xl text-gray-700 mb-6" data-aos="fade-up">
-                            We promise that the store will be a destination for people with the same passion for enjoying coffee, creating a cozy and intimate space where customers can find peace and comfort. Our store is not just a place to enjoy a drink, but also a place for you to meet friends, relax, and enjoy moments at your own pace – whether slow or fast. Every moment at the store is filled with humanity and sincere connection.
+                            Chúng tôi hứa hẹn cửa hàng sẽ là điểm đến hội tụ những người có cùng đam mê thưởng thức cà phê, tạo nên một không gian ấm cúng và gần gũi, nơi mà khách hàng có thể tìm thấy sự bình yên và thoải mái. Cửa hàng của chúng tôi không chỉ là nơi thưởng thức đồ uống, mà còn là nơi để bạn gặp gỡ bạn bè, thư giãn, và tận hưởng những khoảnh khắc theo nhịp sống của riêng mình – dù là chậm rãi hay nhanh chóng. Mỗi khoảnh khắc tại cửa hàng đều mang đậm tính nhân văn và sự kết nối chân thành.
                         </p>
                     </div>
                 </div>

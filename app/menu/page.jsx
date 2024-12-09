@@ -74,7 +74,7 @@ export default function Page() {
           <div className="flex justify-between items-center cursor-pointer mb-2"
                onClick={toggleCategoryVisibility}
           >
-            <span className="text-xl font-bold">Category</span>
+            <span className="text-xl font-bold">Danh mục</span>
             <span 
               className={`text-2xl flex items-center transform transition-transform duration-300 ${isCategoryOpen ? "rotate-180" : "rotate-0"}`}
             >
