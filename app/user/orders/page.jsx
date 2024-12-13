@@ -87,7 +87,6 @@ const OrderManagement = () => {
     <div className="mx-auto px-4 py-8 mt-16">
       <h1 className="text-2xl font-bold text-gray-800 mb-6">Quản lý đơn hàng</h1>
 
-      {/* Search and Filter Section */}
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="flex-1">
           <div className="relative">
@@ -106,7 +105,7 @@ const OrderManagement = () => {
           onChange={(e) => setFilterStatus(e.target.value)}
           className="px-4 py-2 border rounded-lg focus:outline-none focus:border-[#A0522D]"
         >
-          <option value="all">All Status</option>
+          <option value="all">Tình trạng</option>
           <option value="pending">Pending</option>
           <option value="doing">Proccessing</option>
           <option value="shipping">Shipping</option>
@@ -117,18 +116,17 @@ const OrderManagement = () => {
         </select>
       </div>
 
-      {/* Orders List */}
       {filteredOrders.length === 0 ? (
         <div className="text-center py-8">
           <p className="text-gray-500">No orders found</p>
         </div>
       ) : (
         <div className="grid gap-6">
-          {filteredOrders.map((order) => (
+          {filteredOrders.map((order, index) => (
             <div key={order._id} className="bg-white rounded-lg shadow-md p-6">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold">Đơn hàng {order._id}</h3>
+                  <h3 className="text-lg font-semibold">Đơn hàng #{index+1}</h3>
                   <p className="text-gray-500">{formatDate(order.createdAt)}</p>
                 </div>
                 <div className="mt-2 md:mt-0">
@@ -138,7 +136,6 @@ const OrderManagement = () => {
                 </div>
               </div>
 
-              {/* Order Items */}
               <div className="space-y-4">
                 {order.items.map((item, index) => (
                   <div key={index} className="flex items-center gap-4">
@@ -160,7 +157,6 @@ const OrderManagement = () => {
                 ))}
               </div>
 
-              {/* Order Summary */}
               <div className="mt-4 pt-4 border-t">
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Tổng số tiền:</span>
@@ -170,7 +166,6 @@ const OrderManagement = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="mt-4 flex justify-end gap-4">
                 <Link
                   href={`/user/orders/${order._id}`}
